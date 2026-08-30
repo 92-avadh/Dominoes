@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ui="UnityEngine.UIElements"
+    xmlns:uie="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
+    editor-extension-mode="False">
+    <ui:Style src="../Styles/HomeScreen.uss" />
+
+    <ui:VisualElement name="home-root" class="home-root">
+        <ui:VisualElement name="safe-content" class="safe-content">
+            
+            <!-- 1. TOP HEADER HUD BAR -->
+            <ui:VisualElement name="top-bar" class="top-bar">
+                <!-- Profile & Level Capsule -->
+                <ui:Button name="profile-button" class="profile-capsule-btn" tooltip="View Profile &amp; Stats">
+                    <ui:VisualElement class="profile-avatar-icon" />
+                    <ui:VisualElement class="profile-meta-column">
+                        <ui:Label name="profile-name-label" class="profile-name-text" text="Player 1" />
+                        <ui:VisualElement class="profile-level-badge">
+                            <ui:Label name="profile-level-text" class="profile-level-text" text="LVL 5" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:Button>
+
+                <!-- Currency Row -->
+                <ui:VisualElement class="currencies-group">
+                    <!-- Coins Capsule -->
+                    <ui:Button name="coins-badge-btn" class="currency-pill-btn currency-pill--coins" tooltip="Coins &amp; Store">
+                        <ui:VisualElement class="currency-icon-img currency-icon-img--coin" />
+                        <ui:Label name="coins-amount-label" class="currency-amount" text="12,500" />
+                        <ui:VisualElement class="currency-plus-badge">
+                            <ui:Label class="currency-plus-text" text="+" />
+                        </ui:VisualElement>
+                    </ui:Button>
+
+                    <!-- Gems Capsule -->
+                    <ui:Button name="gems-badge-btn" class="currency-pill-btn currency-pill--gems" tooltip="Gems &amp; VIP">
+                        <ui:VisualElement class="currency-icon-img currency-icon-img--gem" />
+                        <ui:Label name="gems-amount-label" class="currency-amount" text="50" />
+                        <ui:VisualElement class="currency-plus-badge">
+                            <ui:Label class="currency-plus-text" text="+" />
+                        </ui:VisualElement>
+                    </ui:Button>
+
+                    <!-- Settings Button -->
+                    <ui:Button name="home-settings-button" class="icon-button top-bar-button" tooltip="Settings">
+                        <ui:Label class="top-bar-icon-text" text="⚙" />
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- 2. SCROLLABLE MAIN LOBBY CONTENT -->
+            <ui:ScrollView name="home-scroll-view" class="home-scroll-view" mode="Vertical">
+                
+                <!-- Welcome Banner & Daily Bonus Callout -->
+                <ui:Button name="daily-bonus-banner-btn" class="daily-bonus-banner" tooltip="Claim Daily Rewards">
+                    <ui:VisualElement class="daily-banner-icon-wrap">
+                        <ui:VisualElement class="daily-banner-icon-img" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="daily-banner-info">
+                        <ui:Label class="daily-banner-title" text="DAILY BONUS READY!" />
+                        <ui:Label name="daily-banner-subtitle" class="daily-banner-sub" text="Day 3 • Tap to claim +1,000 Coins" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="daily-banner-claim-pill">
+                        <ui:Label class="daily-banner-claim-text" text="CLAIM" />
+                    </ui:VisualElement>
+                </ui:Button>
+
+                <!-- Section Divider -->
+                <ui:VisualElement class="section-divider">
+                    <ui:VisualElement class="divider-line" />
+                    <ui:Label class="section-title" text="GAME MODES" />
+                    <ui:VisualElement class="divider-line" />
+                </ui:VisualElement>
+
+                <!-- HERO MODE CARD: Classic Draw (4 Players) with 3D Artwork -->
+                <ui:Button name="dominoes-card" class="game-card game-card--hero dominoes-card" tooltip="Play Classic Dominoes">
+                    <!-- Tag Header -->
+                    <ui:VisualElement class="card-eyebrow-container">
+                        <ui:Label class="card-eyebrow-text" text="⭐ FEATURED • 4 PLAYERS" />
+                    </ui:VisualElement>
+
+                    <!-- 3D Domino Banner Artwork -->
+                    <ui:VisualElement class="hero-banner-image-wrap">
+                        <ui:VisualElement class="hero-banner-image" />
+                    </ui:VisualElement>
+
+                    <!-- Bottom Info & Play Button -->
+                    <ui:VisualElement class="card-meta-container">
+                        <ui:VisualElement class="card-title-stack">
+                            <ui:Label class="card-game-title" text="Classic Draw" />
+                            <ui:Label class="card-game-subtitle" text="Traditional Boneyard Match" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card-play-pill">
+                            <ui:Label class="card-play-text" text="PLAY" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:Button>
+
+                <!-- ADDITIONAL GAME MODES GRID -->
+                <ui:VisualElement class="modes-grid-row">
+                    <!-- Mode 2: All Fives -->
+                    <ui:Button name="mode-allfives-btn" class="sub-game-card sub-game-card--fives" tooltip="Play All Fives">
+                        <ui:VisualElement class="sub-card-badge">
+                            <ui:Label class="sub-card-badge-text" text="POINTS" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="sub-card-icon-img sub-card-icon-img--fives" />
+                        <ui:Label class="sub-card-title" text="All Fives" />
+                        <ui:Label class="sub-card-desc" text="Score on 5s" />
+                        <ui:VisualElement class="sub-card-play-btn">
+                            <ui:Label class="sub-card-play-text" text="PLAY" />
+                        </ui:VisualElement>
+                    </ui:Button>
+
+                    <!-- Mode 3: Block Dominoes -->
+                    <ui:Button name="mode-block-btn" class="sub-game-card sub-game-card--block" tooltip="Play Block Dominoes">
+                        <ui:VisualElement class="sub-card-badge">
+                            <ui:Label class="sub-card-badge-text" text="TACTICAL" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="sub-card-icon-img sub-card-icon-img--block" />
+                        <ui:Label class="sub-card-title" text="Block" />
+                        <ui:Label class="sub-card-desc" text="No Draw" />
+                        <ui:VisualElement class="sub-card-play-btn">
+                            <ui:Label class="sub-card-play-text" text="PLAY" />
+                        </ui:VisualElement>
+                    </ui:Button>
+
+                    <!-- Mode 4: 2-Player Duel -->
+                    <ui:Button name="mode-duel-btn" class="sub-game-card sub-game-card--duel" tooltip="Play 1v1 Duel">
+                        <ui:VisualElement class="sub-card-badge">
+                            <ui:Label class="sub-card-badge-text" text="1 VS 1" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="sub-card-icon-img sub-card-icon-img--duel" />
+                        <ui:Label class="sub-card-title" text="Heads-Up" />
+                        <ui:Label class="sub-card-desc" text="Fast Duel" />
+                        <ui:VisualElement class="sub-card-play-btn">
+                            <ui:Label class="sub-card-play-text" text="PLAY" />
+                        </ui:VisualElement>
+                    </ui:Button>
+                </ui:VisualElement>
+
+            </ui:ScrollView>
+
+            <!-- 3. BOTTOM NAVIGATION BAR -->
+            <ui:VisualElement name="bottom-nav-bar" class="bottom-nav-bar">
+                <ui:Button name="nav-play-btn" class="nav-tab-btn nav-tab-btn--active">
+                    <ui:VisualElement class="nav-tab-icon-img nav-tab-icon-img--dice" />
+                    <ui:Label class="nav-tab-label" text="Play" />
+                </ui:Button>
+
+                <ui:Button name="nav-leaderboard-btn" class="nav-tab-btn">
+                    <ui:VisualElement class="nav-tab-icon-img nav-tab-icon-img--trophy" />
+                    <ui:Label class="nav-tab-label" text="Ranks" />
+                </ui:Button>
+
+                <ui:Button name="nav-rewards-btn" class="nav-tab-btn">
+                    <ui:VisualElement class="nav-tab-icon-img nav-tab-icon-img--gift" />
+                    <ui:Label class="nav-tab-label" text="Bonus" />
+                </ui:Button>
+
+                <ui:Button name="nav-shop-btn" class="nav-tab-btn">
+                    <ui:VisualElement class="nav-tab-icon-img nav-tab-icon-img--shop" />
+                    <ui:Label class="nav-tab-label" text="Shop" />
+                </ui:Button>
+
+                <ui:Button name="nav-stats-btn" class="nav-tab-btn">
+                    <ui:VisualElement class="nav-tab-icon-img nav-tab-icon-img--stats" />
+                    <ui:Label class="nav-tab-label" text="Stats" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <!-- 4. PROFILE & STATS MODAL -->
+            <ui:VisualElement name="profile-stats-modal" class="home-modal" style="display: none;">
+                <ui:VisualElement class="modal-backdrop" />
+                <ui:VisualElement class="modal-card">
+                    <ui:Label class="modal-eyebrow" text="• PLAYER CAREER •" />
+                    <ui:Label class="modal-title" text="PLAYER PROFILE" />
+
+                    <!-- Profile Header Card -->
+                    <ui:VisualElement class="modal-profile-header">
+                        <ui:VisualElement class="modal-avatar-lg" />
+                        <ui:VisualElement class="modal-profile-info">
+                            <ui:Label name="modal-player-name" class="modal-player-name" text="Player 1" />
+                            <ui:Label name="modal-player-rank-tier" class="modal-rank-tier" text="Grandmaster Tier III" />
+                            <ui:Label name="modal-player-level" class="modal-level-tag" text="Level 5 (1,450 / 2,000 XP)" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <!-- Stats Grid -->
+                    <ui:VisualElement class="modal-stats-grid">
+                        <ui:VisualElement class="modal-stat-box">
+                            <ui:Label class="modal-stat-val" text="48" />
+                            <ui:Label class="modal-stat-lbl" text="Matches" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="modal-stat-box">
+                            <ui:Label class="modal-stat-val" text="68%" />
+                            <ui:Label class="modal-stat-lbl" text="Win Rate" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="modal-stat-box">
+                            <ui:Label class="modal-stat-val" text="33" />
+                            <ui:Label class="modal-stat-lbl" text="Victories" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="modal-stat-box">
+                            <ui:Label class="modal-stat-val" text="7" />
+                            <ui:Label class="modal-stat-lbl" text="Best Streak" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:Button name="profile-close-btn" class="modal-btn-primary" text="CLOSE" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- 5. LEADERBOARD MODAL -->
+            <ui:VisualElement name="leaderboard-modal" class="home-modal" style="display: none;">
+                <ui:VisualElement class="modal-backdrop" />
+                <ui:VisualElement class="modal-card">
+                    <ui:Label class="modal-eyebrow" text="• GLOBAL RANKINGS •" />
+                    <ui:Label class="modal-title" text="TOP PLAYERS" />
+
+                    <ui:ScrollView class="leaderboard-scroll">
+                        <!-- Rank 1 -->
+                        <ui:VisualElement class="rank-row rank-row--gold">
+                            <ui:Label class="rank-num" text="1" />
+                            <ui:VisualElement class="rank-avatar rank-avatar--0" />
+                            <ui:VisualElement class="rank-info">
+                                <ui:Label class="rank-name" text="Marcus the Legend" />
+                                <ui:Label class="rank-sub" text="Rating: 2,840 • Win: 84%" />
+                            </ui:VisualElement>
+                            <ui:Label class="rank-trophy" text="👑" />
+                        </ui:VisualElement>
+
+                        <!-- Rank 2 -->
+                        <ui:VisualElement class="rank-row rank-row--silver">
+                            <ui:Label class="rank-num" text="2" />
+                            <ui:VisualElement class="rank-avatar rank-avatar--1" />
+                            <ui:VisualElement class="rank-info">
+                                <ui:Label class="rank-name" text="Sophia Domino" />
+                                <ui:Label class="rank-sub" text="Rating: 2,710 • Win: 79%" />
+                            </ui:VisualElement>
+                            <ui:Label class="rank-trophy" text="🥈" />
+                        </ui:VisualElement>
+
+                        <!-- Rank 3 -->
+                        <ui:VisualElement class="rank-row rank-row--bronze">
+                            <ui:Label class="rank-num" text="3" />
+                            <ui:VisualElement class="rank-avatar rank-avatar--2" />
+                            <ui:VisualElement class="rank-info">
+                                <ui:Label class="rank-name" text="Elena Star" />
+                                <ui:Label class="rank-sub" text="Rating: 2,590 • Win: 75%" />
+                            </ui:VisualElement>
+                            <ui:Label class="rank-trophy" text="🥉" />
+                        </ui:VisualElement>
+
+                        <!-- User Rank -->
+                        <ui:VisualElement class="rank-row rank-row--user">
+                            <ui:Label class="rank-num" text="42" />
+                            <ui:VisualElement class="rank-avatar rank-avatar--you" />
+                            <ui:VisualElement class="rank-info">
+                                <ui:Label class="rank-name" text="Player 1 (You)" />
+                                <ui:Label class="rank-sub" text="Rating: 1,850 • Win: 68%" />
+                            </ui:VisualElement>
+                            <ui:Label class="rank-trophy" text="⭐" />
+                        </ui:VisualElement>
+                    </ui:ScrollView>
+
+                    <ui:Button name="leaderboard-close-btn" class="modal-btn-primary" text="CLOSE" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- 6. DAILY REWARDS MODAL -->
+            <ui:VisualElement name="daily-rewards-modal" class="home-modal" style="display: none;">
+                <ui:VisualElement class="modal-backdrop" />
+                <ui:VisualElement class="modal-card">
+                    <ui:Label class="modal-eyebrow" text="• 7-DAY STREAK •" />
+                    <ui:Label class="modal-title" text="DAILY REWARDS" />
+
+                    <!-- 7 Days Grid -->
+                    <ui:VisualElement class="rewards-days-grid">
+                        <ui:VisualElement class="reward-day-box reward-day--claimed">
+                            <ui:Label class="reward-day-lbl" text="Day 1" />
+                            <ui:Label class="reward-day-amt" text="+250" />
+                            <ui:Label class="reward-day-status" text="✓" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="reward-day-box reward-day--claimed">
+                            <ui:Label class="reward-day-lbl" text="Day 2" />
+                            <ui:Label class="reward-day-amt" text="+500" />
+                            <ui:Label class="reward-day-status" text="✓" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="reward-day-box reward-day--active">
+                            <ui:Label class="reward-day-lbl" text="Day 3" />
+                            <ui:Label class="reward-day-amt" text="+1,000" />
+                            <ui:Label class="reward-day-status" text="TODAY" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="reward-day-box">
+                            <ui:Label class="reward-day-lbl" text="Day 4" />
+                            <ui:Label class="reward-day-amt" text="+1,500" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="reward-day-box">
+                            <ui:Label class="reward-day-lbl" text="Day 5" />
+                            <ui:Label class="reward-day-amt" text="+2,500" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="reward-day-box">
+                            <ui:Label class="reward-day-lbl" text="Day 6" />
+                            <ui:Label class="reward-day-amt" text="+4,000" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="reward-day-box reward-day--grand">
+                            <ui:Label class="reward-day-lbl" text="Day 7" />
+                            <ui:Label class="reward-day-amt" text="+10,000 👑" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:Button name="claim-daily-reward-btn" class="modal-btn-primary modal-btn--claim" text="CLAIM +1,000 COINS" />
+                    <ui:Button name="daily-rewards-close-btn" class="modal-btn-secondary" text="CLOSE" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- 7. SHOP / CUSTOMIZATION MODAL -->
+            <ui:VisualElement name="shop-modal" class="home-modal" style="display: none;">
+                <ui:VisualElement class="modal-backdrop" />
+                <ui:VisualElement class="modal-card">
+                    <ui:Label class="modal-eyebrow" text="• CUSTOMIZE •" />
+                    <ui:Label class="modal-title" text="THEMES &amp; STORE" />
+
+                    <!-- Tile Themes -->
+                    <ui:Label class="shop-section-title" text="DOMINO TILE THEMES" />
+                    <ui:VisualElement class="shop-items-row">
+                        <ui:Button name="theme-tile-ivory-btn" class="shop-item-card shop-item-card--equipped">
+                            <ui:VisualElement class="shop-tile-preview shop-tile-preview--ivory" />
+                            <ui:Label class="shop-item-name" text="Ivory" />
+                            <ui:Label class="shop-item-status" text="EQUIPPED" />
+                        </ui:Button>
+
+                        <ui:Button name="theme-tile-obsidian-btn" class="shop-item-card">
+                            <ui:VisualElement class="shop-tile-preview shop-tile-preview--obsidian" />
+                            <ui:Label class="shop-item-name" text="Obsidian" />
+                            <ui:Label class="shop-item-status" text="5,000 🪙" />
+                        </ui:Button>
+
+                        <ui:Button name="theme-tile-gold-btn" class="shop-item-card">
+                            <ui:VisualElement class="shop-tile-preview shop-tile-preview--gold" />
+                            <ui:Label class="shop-item-name" text="Royal Gold" />
+                            <ui:Label class="shop-item-status" text="10,000 🪙" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <!-- Table Felt Themes -->
+                    <ui:Label class="shop-section-title" text="TABLE FELT THEMES" />
+                    <ui:VisualElement class="shop-items-row">
+                        <ui:Button name="theme-felt-green-btn" class="shop-item-card shop-item-card--equipped">
+                            <ui:VisualElement class="shop-felt-preview shop-felt-preview--green" />
+                            <ui:Label class="shop-item-name" text="Emerald" />
+                            <ui:Label class="shop-item-status" text="EQUIPPED" />
+                        </ui:Button>
+
+                        <ui:Button name="theme-felt-blue-btn" class="shop-item-card">
+                            <ui:VisualElement class="shop-felt-preview shop-felt-preview--blue" />
+                            <ui:Label class="shop-item-name" text="Royal Navy" />
+                            <ui:Label class="shop-item-status" text="3,000 🪙" />
+                        </ui:Button>
+
+                        <ui:Button name="theme-felt-ruby-btn" class="shop-item-card">
+                            <ui:VisualElement class="shop-felt-preview shop-felt-preview--ruby" />
+                            <ui:Label class="shop-item-name" text="Sunset Ruby" />
+                            <ui:Label class="shop-item-status" text="3,000 🪙" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <ui:Button name="shop-close-btn" class="modal-btn-primary" text="CLOSE" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- 8. SETTINGS MODAL -->
+            <ui:VisualElement name="home-settings-modal" class="home-modal" style="display: none;">
+                <ui:VisualElement class="modal-backdrop" />
+                <ui:VisualElement class="modal-card">
+                    <ui:Label class="modal-eyebrow" text="• PREFERENCES •" />
+                    <ui:Label class="modal-title" text="GAME SETTINGS" />
+
+                    <ui:VisualElement class="settings-row">
+                        <ui:Label class="settings-row-label" text="Background Music" />
+                        <ui:Button name="home-settings-music-btn" class="settings-toggle-btn settings-toggle-btn--on">
+                            <ui:Label name="home-settings-music-txt" class="settings-toggle-text" text="ON" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="settings-row">
+                        <ui:Label class="settings-row-label" text="Sound Effects" />
+                        <ui:Button name="home-settings-sfx-btn" class="settings-toggle-btn settings-toggle-btn--on">
+                            <ui:Label name="home-settings-sfx-txt" class="settings-toggle-text" text="ON" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="settings-row">
+                        <ui:Label class="settings-row-label" text="Vibration / Haptics" />
+                        <ui:Button name="home-settings-haptics-btn" class="settings-toggle-btn settings-toggle-btn--on">
+                            <ui:Label name="home-settings-haptics-txt" class="settings-toggle-text" text="ON" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <ui:Button name="home-replay-tutorial-btn" class="modal-btn-secondary" text="Replay Tutorial" />
+                    <ui:Button name="home-settings-close-btn" class="modal-btn-primary" text="SAVE &amp; CLOSE" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

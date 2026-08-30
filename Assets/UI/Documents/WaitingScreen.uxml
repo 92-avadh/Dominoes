@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ui="UnityEngine.UIElements"
+    xmlns:uie="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
+    editor-extension-mode="False">
+    <ui:Style src="../Styles/WaitingScreen.uss" />
+
+    <!-- Starts hidden by default (display: none) to prevent overlaying HomeScreen before matchmaking -->
+    <ui:VisualElement name="waiting-root" class="waiting-root" style="display: none;">
+        <!-- Header Section -->
+        <ui:VisualElement name="waiting-header" class="waiting-header">
+            <ui:Label name="waiting-eyebrow" class="waiting-eyebrow" text="• QUICK MATCH •" />
+            <ui:Label name="waiting-title" class="waiting-title" text="Finding Players" />
+            <ui:Label name="waiting-subtitle" class="waiting-subtitle" text="Classic Dominoes • 4 Players" />
+        </ui:VisualElement>
+
+        <!-- Main Card Section -->
+        <ui:VisualElement name="waiting-card" class="waiting-card">
+            <!-- Center Domino Radar Graphic -->
+            <ui:VisualElement name="radar-container" class="radar-container">
+                <ui:VisualElement name="radar-outer-ring" class="radar-outer-ring">
+                    <ui:VisualElement name="radar-inner-ring" class="radar-inner-ring">
+                        <ui:VisualElement name="radar-center-icon" class="radar-center-icon">
+                            <ui:VisualElement class="domino-pip" />
+                            <ui:VisualElement class="domino-divider" />
+                            <ui:VisualElement class="domino-pip" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- Status & Countdown Info -->
+            <ui:VisualElement name="status-container" class="status-container">
+                <ui:Label name="countdown-label" class="countdown-label" text="Starting in 15" />
+                <ui:Label name="waiting-message-label" class="waiting-message-label" text="Waiting for more players..." />
+            </ui:VisualElement>
+
+            <!-- Player Slots Container (4 Slots) -->
+            <ui:VisualElement name="player-slots-container" class="player-slots-container">
+                <ui:Label name="player-count-label" class="player-count-label" text="Players Ready: 1 / 4" />
+
+                <ui:VisualElement name="player-slot-list" class="player-slot-list">
+                    <ui:VisualElement name="slot-0" class="player-slot player-slot--filled">
+                        <ui:VisualElement class="slot-avatar slot-avatar--you" />
+                        <ui:Label name="slot-name-0" class="slot-name" text="You (Player 1)" />
+                        <ui:Label name="slot-status-0" class="slot-status slot-status--ready" text="READY" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement name="slot-1" class="player-slot">
+                        <ui:VisualElement class="slot-avatar" />
+                        <ui:Label name="slot-name-1" class="slot-name" text="Waiting..." />
+                        <ui:Label name="slot-status-1" class="slot-status" text="EMPTY" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement name="slot-2" class="player-slot">
+                        <ui:VisualElement class="slot-avatar" />
+                        <ui:Label name="slot-name-2" class="slot-name" text="Waiting..." />
+                        <ui:Label name="slot-status-2" class="slot-status" text="EMPTY" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement name="slot-3" class="player-slot">
+                        <ui:VisualElement class="slot-avatar" />
+                        <ui:Label name="slot-name-3" class="slot-name" text="Waiting..." />
+                        <ui:Label name="slot-status-3" class="slot-status" text="EMPTY" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Footer / Leave Button -->
+        <ui:VisualElement name="waiting-footer" class="waiting-footer">
+            <ui:Button name="leave-button" class="leave-button" text="Cancel Match" />
+        </ui:VisualElement>
+
+        <!-- Leave Queue Confirmation Alert Dialog -->
+        <ui:VisualElement name="leave-confirm-modal" class="alert-dialog-overlay" style="display: none;">
+            <ui:VisualElement name="leave-modal-backdrop" class="alert-dialog-backdrop" />
+            <ui:VisualElement name="leave-modal-card" class="alert-dialog-card">
+                <ui:VisualElement class="alert-dialog-header">
+                    <ui:Label class="alert-dialog-eyebrow" text="• CONFIRMATION •" />
+                    <ui:Label class="alert-dialog-title" text="CANCEL MATCHMAKING?" />
+                    <ui:Label class="alert-dialog-desc" text="Are you sure you want to leave the queue and return to the main menu?" />
+                </ui:VisualElement>
+                <ui:VisualElement class="alert-dialog-footer">
+                    <ui:Button name="leave-modal-cancel-btn" class="alert-dialog-btn alert-dialog-btn--cancel" text="STAY" />
+                    <ui:Button name="leave-modal-confirm-btn" class="alert-dialog-btn alert-dialog-btn--action" text="LEAVE" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

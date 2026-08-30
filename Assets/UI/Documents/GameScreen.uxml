@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ui="UnityEngine.UIElements"
+    xmlns:uie="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
+    editor-extension-mode="False">
+    <ui:Style src="../Styles/GameScreen.uss" />
+
+    <!-- Pure Flexbox Game Root (Safe-Area Aware, Responsive for Modern Android Devices) -->
+    <ui:VisualElement name="game-root" class="game-root" style="display: none;">
+        
+        <!-- Table Background Surface & Atmosphere -->
+        <ui:VisualElement name="table-surface" class="table-surface">
+            
+            <!-- Safe Area Inner Content Container -->
+            <ui:VisualElement name="safe-content" class="safe-content">
+
+                <!-- 1. TOP BAR (HUD Header) -->
+                <ui:VisualElement name="top-bar" class="top-bar">
+                    <ui:Button name="game-menu-button" class="top-bar-btn top-bar-btn--exit" tooltip="Exit to Menu">
+                        <ui:Label class="top-bar-btn-icon" text="←" />
+                    </ui:Button>
+
+                    <ui:VisualElement class="top-bar-center">
+                        <ui:VisualElement class="top-bar-badge">
+                            <ui:Label class="top-bar-title" text="DOMINOES" />
+                            <ui:VisualElement class="top-bar-badge-divider" />
+                            <ui:Label name="round-info-label" class="top-bar-subtitle" text="ROUND 1" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="top-bar-right-group">
+                        <ui:Button name="settings-button" class="top-bar-btn top-bar-btn--settings" tooltip="Settings">
+                            <ui:Label class="top-bar-btn-icon" text="⚙" />
+                        </ui:Button>
+                        <ui:Button name="help-button" class="top-bar-btn top-bar-btn--help" tooltip="Game Rules">
+                            <ui:Label class="top-bar-btn-icon" text="?" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- 2. OPPONENTS HUD BAR (Compact Header Row) -->
+                <ui:VisualElement name="opponents-bar" class="opponents-bar">
+                    <!-- Opponent 1 -->
+                    <ui:VisualElement name="opponent-slot-0" class="opponent-card">
+                        <ui:VisualElement class="opponent-avatar-wrap">
+                            <ui:VisualElement class="opponent-avatar opponent-avatar--0" />
+                            <ui:VisualElement name="opponent-active-indicator-0" class="opponent-turn-indicator" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="opponent-info">
+                            <ui:Label name="opponent-name-0" class="opponent-name" text="Sophia" />
+                            <ui:VisualElement class="opponent-badge">
+                                <ui:VisualElement class="opponent-badge-icon" />
+                                <ui:Label name="opponent-tile-count-0" class="opponent-tile-count" text="6 tiles" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <!-- Opponent 2 -->
+                    <ui:VisualElement name="opponent-slot-1" class="opponent-card">
+                        <ui:VisualElement class="opponent-avatar-wrap">
+                            <ui:VisualElement class="opponent-avatar opponent-avatar--1" />
+                            <ui:VisualElement name="opponent-active-indicator-1" class="opponent-turn-indicator" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="opponent-info">
+                            <ui:Label name="opponent-name-1" class="opponent-name" text="Marcus" />
+                            <ui:VisualElement class="opponent-badge">
+                                <ui:VisualElement class="opponent-badge-icon" />
+                                <ui:Label name="opponent-tile-count-1" class="opponent-tile-count" text="6 tiles" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <!-- Opponent 3 -->
+                    <ui:VisualElement name="opponent-slot-2" class="opponent-card">
+                        <ui:VisualElement class="opponent-avatar-wrap">
+                            <ui:VisualElement class="opponent-avatar opponent-avatar--2" />
+                            <ui:VisualElement name="opponent-active-indicator-2" class="opponent-turn-indicator" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="opponent-info">
+                            <ui:Label name="opponent-name-2" class="opponent-name" text="Elena" />
+                            <ui:VisualElement class="opponent-badge">
+                                <ui:VisualElement class="opponent-badge-icon" />
+                                <ui:Label name="opponent-tile-count-2" class="opponent-tile-count" text="6 tiles" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- 3. BOARD TABLETOP AREA (Hero Felt Canvas) -->
+                <ui:VisualElement name="board-area" class="board-area">
+                    <ui:VisualElement name="board-felt" class="board-felt">
+                        
+                        <!-- Floating Interactive Boneyard Stack (Top-Left of Board) -->
+                        <ui:Button name="boneyard-pile-btn" class="boneyard-stack-btn" tooltip="Draw from Boneyard">
+                            <ui:VisualElement class="boneyard-stack-icon" />
+                            <ui:VisualElement class="boneyard-badge-wrap">
+                                <ui:Label name="boneyard-count-label" class="boneyard-badge-text" text="14" />
+                            </ui:VisualElement>
+                            <ui:Label name="boneyard-action-hint" class="boneyard-action-hint" text="DRAW" style="display: none;" />
+                        </ui:Button>
+
+                        <!-- 2D Absolute Coordinate Board Canvas populated by DominoBoardLayoutEngine -->
+                        <ui:VisualElement name="board-tiles-container" class="board-canvas">
+                            <ui:Label name="empty-board-message" class="empty-board-message" text="TABLE IS OPEN • Drag or tap a tile from your hand" />
+                        </ui:VisualElement>
+
+                        <!-- Interactive Drop Zone Indicators Anchored on Board Ends -->
+                        <ui:VisualElement name="left-end-target" class="board-endpoint-dropzone" style="display: none;">
+                            <ui:Label name="left-target-num" class="endpoint-dropzone-val" text="6" />
+                            <ui:Label class="endpoint-dropzone-tag" text="DROP" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement name="right-end-target" class="board-endpoint-dropzone" style="display: none;">
+                            <ui:Label name="right-target-num" class="endpoint-dropzone-val" text="3" />
+                            <ui:Label class="endpoint-dropzone-tag" text="DROP" />
+                        </ui:VisualElement>
+
+                        <!-- Compact Turn Guidance Banner Inside Board Bottom -->
+                        <ui:VisualElement name="turn-guidance-bar" class="turn-guidance-bar">
+                            <ui:VisualElement name="turn-status-dot" class="turn-status-dot" />
+                            <ui:VisualElement class="turn-guidance-content">
+                                <ui:Label name="turn-title-label" class="turn-guidance-title" text="YOUR TURN" />
+                                <ui:Label name="turn-subtitle-label" class="turn-guidance-desc" text="Drag a matching domino onto the board" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- 4. FLOATING ACTION CONTROLS (Pass Button & Circular Lamp Hint Button) -->
+                <ui:VisualElement class="floating-controls-bar">
+                    <!-- Pass Turn Button (Enabled when player must pass) -->
+                    <ui:Button name="pass-button" class="pass-btn-compact" style="visibility: hidden;">
+                        <ui:Label class="pass-btn-title" text="PASS TURN" />
+                    </ui:Button>
+
+                    <!-- Circular Lamp Hint Button -->
+                    <ui:Button name="hint-button" class="hint-lamp-btn" tooltip="Hint">
+                        <ui:Label class="hint-lamp-icon" text="💡" />
+                        <ui:Label class="hint-lamp-label" text="HINT" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <!-- 5. PLAYER HAND AREA (Ivory Domino Rack on Wooden Tray) -->
+                <ui:VisualElement name="player-hand-area" class="player-hand-area">
+                    <ui:VisualElement name="hand-header" class="hand-header">
+                        <ui:Label class="hand-header-title" text="YOUR HAND" />
+                        <ui:Label name="hand-tile-count-label" class="hand-header-count" text="7 TILES" />
+                    </ui:VisualElement>
+
+                    <!-- Horizontally Scrollable Standing Ivory Dominoes -->
+                    <ui:ScrollView name="hand-scroll-view" class="hand-scroll-view" mode="Horizontal">
+                        <ui:VisualElement name="hand-tiles-container" class="hand-tiles-container">
+                            <!-- Dynamic Ivory Domino Tiles injected by C# controller -->
+                        </ui:VisualElement>
+                    </ui:ScrollView>
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- 6. DRAG GHOST ELEMENT (Follows Pointer during Drag-and-Drop) -->
+        <ui:VisualElement name="drag-ghost-tile" class="drag-ghost-tile" style="display: none; position: absolute;" />
+
+        <!-- 7. SETTINGS MODAL (Audio, Haptics & Tutorial Replay) -->
+        <ui:VisualElement name="settings-modal" class="overlay-modal" style="display: none;">
+            <ui:VisualElement class="modal-backdrop" />
+            <ui:VisualElement class="modal-card settings-card">
+                <ui:Label class="modal-eyebrow" text="• PREFERENCES •" />
+                <ui:Label class="modal-title" text="GAME SETTINGS" />
+
+                <!-- Music Setting Row -->
+                <ui:VisualElement class="settings-row">
+                    <ui:Label class="settings-row-label" text="Background Music" />
+                    <ui:Button name="settings-music-toggle-btn" class="settings-toggle-btn settings-toggle-btn--on">
+                        <ui:Label name="settings-music-toggle-text" class="settings-toggle-text" text="ON" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <!-- SFX Setting Row -->
+                <ui:VisualElement class="settings-row">
+                    <ui:Label class="settings-row-label" text="Sound Effects" />
+                    <ui:Button name="settings-sfx-toggle-btn" class="settings-toggle-btn settings-toggle-btn--on">
+                        <ui:Label name="settings-sfx-toggle-text" class="settings-toggle-text" text="ON" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <!-- Haptics Setting Row -->
+                <ui:VisualElement class="settings-row">
+                    <ui:Label class="settings-row-label" text="Vibration / Haptics" />
+                    <ui:Button name="settings-haptics-toggle-btn" class="settings-toggle-btn settings-toggle-btn--on">
+                        <ui:Label name="settings-haptics-toggle-text" class="settings-toggle-text" text="ON" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <ui:Button name="settings-replay-tutorial-btn" class="modal-btn-secondary" text="Replay Tutorial" />
+                <ui:Button name="settings-close-btn" class="modal-btn-primary" text="SAVE &amp; CLOSE" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- 8. INTERACTIVE PLAYABLE FIRST-TIME TUTORIAL OVERLAY -->
+        <ui:VisualElement name="tutorial-overlay" class="tutorial-overlay" style="display: none;">
+            <ui:VisualElement name="tutorial-backdrop" class="tutorial-backdrop" />
+            
+            <ui:VisualElement name="tutorial-card" class="tutorial-card">
+                <ui:Label name="tutorial-eyebrow" class="tutorial-eyebrow" text="• INTERACTIVE GUIDE •" />
+                <ui:Label name="tutorial-title" class="tutorial-title" text="HOW TO PLAY DOMINOES" />
+                <ui:Label name="tutorial-desc" class="tutorial-desc" text="Match the number on one side of your tile with an open end on the board. Drag your tile onto the board to place it!" />
+
+                <ui:Button name="tutorial-primary-btn" class="tutorial-primary-btn" text="LET'S PLAY" />
+                <ui:Button name="tutorial-skip-btn" class="tutorial-skip-btn" text="Skip Tutorial" />
+            </ui:VisualElement>
+
+            <!-- Animated Pointer for Interactive Steps -->
+            <ui:VisualElement name="tutorial-pointer" class="tutorial-pointer" style="display: none;">
+                <ui:Label class="tutorial-pointer-icon" text="👆" />
+                <ui:Label class="tutorial-pointer-label" text="Drag here!" />
+            </ui:VisualElement>
+
+            <!-- Non-blocking Guidance Toast Hint -->
+            <ui:VisualElement name="tutorial-hint-toast" class="tutorial-hint-toast" style="display: none;">
+                <ui:Label name="tutorial-hint-text" class="tutorial-hint-text" text="Drag the highlighted tile to the board." />
+            </ui:VisualElement>
+
+            <!-- Skip Tutorial Confirmation Modal -->
+            <ui:VisualElement name="tutorial-skip-modal" class="tutorial-skip-modal" style="display: none;">
+                <ui:VisualElement class="tutorial-skip-card">
+                    <ui:Label class="tutorial-skip-title" text="SKIP TUTORIAL?" />
+                    <ui:Label class="tutorial-skip-desc" text="You can learn while playing normally. Are you sure you want to skip?" />
+                    <ui:VisualElement class="tutorial-skip-btn-row">
+                        <ui:Button name="skip-continue-btn" class="tutorial-modal-btn tutorial-modal-btn--cancel" text="CONTINUE" />
+                        <ui:Button name="skip-confirm-btn" class="tutorial-modal-btn tutorial-modal-btn--confirm" text="SKIP" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- 9. HELP / RULES MODAL -->
+        <ui:VisualElement name="help-rules-modal" class="overlay-modal" style="display: none;">
+            <ui:VisualElement class="modal-backdrop" />
+            <ui:VisualElement class="modal-card help-rules-card">
+                <ui:Label class="modal-eyebrow" text="• HOW TO PLAY •" />
+                <ui:Label class="modal-title" text="DOMINOES RULES" />
+                <ui:ScrollView class="help-rules-scroll">
+                    <ui:Label class="help-rule-item" text="1. Match Numbers: Connect your tile's pip number to a matching open end on the board." />
+                    <ui:Label class="help-rule-item" text="2. Drag &amp; Drop: Drag a tile from your hand and drop it onto the matching board end." />
+                    <ui:Label class="help-rule-item" text="3. Doubles: Double tiles (e.g. 6|6, 5|5) are placed perpendicular to the chain." />
+                    <ui:Label class="help-rule-item" text="4. Draw from Boneyard: Tap the Boneyard stack on the top-left if you have no moves." />
+                    <ui:Label class="help-rule-item" text="5. Passing: If the boneyard is empty and you cannot move, tap PASS TURN." />
+                    <ui:Label class="help-rule-item" text="6. Winning: The first player to play all their dominoes wins the round!" />
+                </ui:ScrollView>
+                <ui:Button name="replay-tutorial-btn" class="modal-btn-secondary" text="Play Interactive Tutorial" />
+                <ui:Button name="help-rules-close-btn" class="modal-btn-primary" text="GOT IT" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- 10. ROUND COMPLETE / RESULT MODAL (With Animated Score Count-Up) -->
+        <ui:VisualElement name="result-modal" class="overlay-modal" style="display: none;">
+            <ui:VisualElement class="modal-backdrop" />
+            <ui:VisualElement class="modal-card result-modal-card">
+                <ui:Label class="modal-eyebrow" text="• ROUND COMPLETE •" />
+                <ui:Label name="result-title" class="result-title" text="VICTORY!" />
+                <ui:Label name="result-winner-label" class="result-winner-text" text="Sophia Wins the Round" />
+
+                <!-- Animated Score Banner -->
+                <ui:VisualElement class="score-banner-box">
+                    <ui:Label class="score-banner-title" text="ROUND POINTS" />
+                    <ui:Label name="animated-score-label" class="score-banner-number" text="+25" />
+                </ui:VisualElement>
+
+                <ui:VisualElement name="result-scores-list" class="result-scores-list" />
+
+                <ui:Button name="play-again-button" class="modal-btn-primary" text="Continue Match" />
+                <ui:Button name="exit-home-button" class="modal-btn-secondary" text="Main Menu" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- 11. LEAVE MATCH CONFIRMATION ALERT DIALOG -->
+        <ui:VisualElement name="leave-confirm-modal" class="alert-dialog-overlay" style="display: none;">
+            <ui:VisualElement name="leave-modal-backdrop" class="alert-dialog-backdrop" />
+            <ui:VisualElement name="leave-modal-card" class="alert-dialog-card">
+                <ui:VisualElement class="alert-dialog-header">
+                    <ui:Label class="alert-dialog-eyebrow" text="• CONFIRMATION •" />
+                    <ui:Label class="alert-dialog-title" text="LEAVE MATCH?" />
+                    <ui:Label class="alert-dialog-desc" text="Are you sure you want to forfeit this match and return to the main menu?" />
+                </ui:VisualElement>
+                <ui:VisualElement class="alert-dialog-footer">
+                    <ui:Button name="leave-modal-cancel-btn" class="alert-dialog-btn alert-dialog-btn--cancel" text="STAY" />
+                    <ui:Button name="leave-modal-confirm-btn" class="alert-dialog-btn alert-dialog-btn--action" text="LEAVE" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

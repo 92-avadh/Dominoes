@@ -1,0 +1,440 @@
+/* ==========================================================================
+   WaitingScreen.uss - UI Toolkit Styles for Dominoes Waiting / Matchmaking
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Root Container (Full Screen Portrait Layout)
+   -------------------------------------------------------------------------- */
+.waiting-root {
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #0F172A;
+    padding-top: 24px;
+    padding-bottom: 28px;
+    padding-left: 20px;
+    padding-right: 20px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* --------------------------------------------------------------------------
+   Header Section
+   -------------------------------------------------------------------------- */
+.waiting-header {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-top: 6px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+}
+
+.waiting-eyebrow {
+    font-size: 10.5px;
+    color: #FBBF24;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+    padding: 0;
+}
+
+.waiting-title {
+    font-size: 28px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    margin-bottom: 4px;
+    padding: 0;
+}
+
+.waiting-subtitle {
+    font-size: 13.5px;
+    color: #94A3B8;
+    padding: 0;
+    margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Main Waiting Card
+   -------------------------------------------------------------------------- */
+.waiting-card {
+    width: 100%;
+    max-width: 380px;
+    flex-grow: 1;
+    border-radius: 28px;
+    background-color: #1E293B;
+    border-width: 2px;
+    border-color: rgba(217, 119, 6, 0.4);
+    padding-top: 24px;
+    padding-bottom: 24px;
+    padding-left: 20px;
+    padding-right: 20px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    min-height: 400px;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+}
+
+/* --------------------------------------------------------------------------
+   Domino Radar Graphic
+   -------------------------------------------------------------------------- */
+.radar-container {
+    align-items: center;
+    justify-content: center;
+    margin-top: 4px;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+}
+
+.radar-outer-ring {
+    width: 104px;
+    height: 104px;
+    border-radius: 52px;
+    background-color: rgba(30, 58, 138, 0.25);
+    border-width: 1.5px;
+    border-color: rgba(59, 130, 246, 0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.radar-inner-ring {
+    width: 74px;
+    height: 74px;
+    border-radius: 37px;
+    background-color: rgba(59, 130, 246, 0.3);
+    justify-content: center;
+    align-items: center;
+}
+
+.radar-center-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background-color: #0F172A;
+    border-width: 1.5px;
+    border-color: #F59E0B;
+    justify-content: center;
+    align-items: center;
+}
+
+.domino-pip {
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    background-color: #FFFFFF;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.domino-divider {
+    width: 18px;
+    height: 1.5px;
+    background-color: rgba(255, 255, 255, 0.4);
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Status & Countdown Info
+   -------------------------------------------------------------------------- */
+.status-container {
+    align-items: center;
+    justify-content: center;
+    margin-top: 4px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+}
+
+.countdown-label {
+    font-size: 20px;
+    color: #FBBF24;
+    -unity-font-style: bold;
+    margin-bottom: 2px;
+    padding: 0;
+}
+
+.waiting-message-label {
+    font-size: 12px;
+    color: #94A3B8;
+    padding: 0;
+    margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Player Slots Container
+   -------------------------------------------------------------------------- */
+.player-slots-container {
+    width: 100%;
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+.player-count-label {
+    font-size: 11px;
+    color: #38BDF8;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    padding: 0;
+}
+
+.player-slot-list {
+    width: 100%;
+    flex-direction: column;
+}
+
+.player-slot {
+    width: 100%;
+    height: 48px;
+    border-radius: 14px;
+    background-color: rgba(15, 23, 42, 0.6);
+    border-width: 1px;
+    border-color: #334155;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 10px;
+    padding-right: 14px;
+    margin-bottom: 8px;
+}
+
+.player-slot--filled {
+    border-color: #D97706;
+    background-color: rgba(217, 119, 6, 0.12);
+}
+
+.slot-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    background-color: #CBD5E1;
+    border-width: 1.5px;
+    border-color: #94A3B8;
+}
+
+.slot-avatar--you {
+    background-image: url('../Textures/avatar_you.jpg');
+    border-color: #10B981;
+    border-width: 2px;
+}
+
+.slot-avatar--0 {
+    background-image: url('../Textures/avatar_sophia.jpg');
+    border-color: #3B82F6;
+    border-width: 2px;
+}
+
+.slot-avatar--1 {
+    background-image: url('../Textures/avatar_marcus.jpg');
+    border-color: #F59E0B;
+    border-width: 2px;
+}
+
+.slot-avatar--2 {
+    background-image: url('../Textures/avatar_elena.jpg');
+    border-color: #EC4899;
+    border-width: 2px;
+}
+
+.slot-name {
+    flex-grow: 1;
+    font-size: 13px;
+    color: #F8FAFC;
+    -unity-font-style: bold;
+    margin-left: 10px;
+    padding: 0;
+}
+
+.slot-status {
+    font-size: 10px;
+    color: #64748B;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background-color: rgba(51, 65, 85, 0.6);
+}
+
+.slot-status--ready {
+    color: #10B981;
+    background-color: rgba(16, 185, 129, 0.15);
+}
+
+/* --------------------------------------------------------------------------
+   Footer / Leave Button
+   -------------------------------------------------------------------------- */
+.waiting-footer {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+    flex-shrink: 0;
+}
+
+.leave-button {
+    width: 100%;
+    max-width: 380px;
+    height: 46px;
+    border-radius: 23px;
+    background-color: rgba(239, 68, 68, 0.15);
+    border-width: 1.5px;
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #FCA5A5;
+    font-size: 13px;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+    transition-property: scale, background-color, border-color;
+    transition-duration: 0.12s;
+}
+
+.leave-button:hover {
+    background-color: rgba(239, 68, 68, 0.25);
+    border-color: #EF4444;
+}
+
+.leave-button:active {
+    scale: 0.96;
+}
+
+/* --------------------------------------------------------------------------
+   Animated Alert Dialog Modal (Smooth Scale & Fade In)
+   -------------------------------------------------------------------------- */
+.alert-dialog-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    justify-content: center;
+    align-items: center;
+    z-index: 150;
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-out;
+    picking-mode: ignore;
+}
+
+.alert-dialog-overlay--visible {
+    opacity: 1;
+}
+
+.alert-dialog-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(9, 14, 26, 0.82);
+    picking-mode: position;
+}
+
+.alert-dialog-card {
+    width: 86%;
+    max-width: 360px;
+    background-color: #FFFFFF;
+    border-radius: 24px;
+    border-width: 1.5px;
+    border-color: #E2E8F0;
+    padding: 24px 20px 20px 20px;
+    align-items: center;
+    scale: 0.85;
+    opacity: 0;
+    transition-property: scale, opacity;
+    transition-duration: 0.22s;
+    transition-timing-function: ease-out;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.2);
+    picking-mode: position;
+}
+
+.alert-dialog-card--visible {
+    scale: 1;
+    opacity: 1;
+}
+
+.alert-dialog-header {
+    width: 100%;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.alert-dialog-eyebrow {
+    font-size: 10.5px;
+    color: #D97706;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+    padding: 0;
+}
+
+.alert-dialog-title {
+    font-size: 19px;
+    color: #0F172A;
+    -unity-font-style: bold;
+    margin-bottom: 8px;
+    padding: 0;
+    text-align: center;
+}
+
+.alert-dialog-desc {
+    font-size: 13px;
+    color: #64748B;
+    padding: 0;
+    text-align: center;
+    white-space: normal;
+}
+
+.alert-dialog-footer {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.alert-dialog-btn {
+    flex-grow: 1;
+    height: 44px;
+    border-radius: 22px;
+    margin: 0 4px;
+    font-size: 13px;
+    -unity-font-style: bold;
+    letter-spacing: 0.5px;
+    justify-content: center;
+    align-items: center;
+    transition-property: scale, background-color, border-color;
+    transition-duration: 0.1s;
+    picking-mode: position;
+}
+
+.alert-dialog-btn:active {
+    scale: 0.94;
+}
+
+.alert-dialog-btn--cancel {
+    background-color: #F1F5F9;
+    border-width: 1.5px;
+    border-color: #CBD5E1;
+    color: #334155;
+}
+
+.alert-dialog-btn--cancel:hover {
+    background-color: #E2E8F0;
+}
+
+.alert-dialog-btn--action {
+    background-color: #DC2626;
+    border-width: 1.5px;
+    border-color: #EF4444;
+    color: #FFFFFF;
+}
+
+.alert-dialog-btn--action:hover {
+    background-color: #B91C1C;
+}

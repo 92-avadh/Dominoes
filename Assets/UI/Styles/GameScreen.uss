@@ -1,0 +1,1390 @@
+/* ==========================================================================
+   GameScreen.uss - Production Skeuomorphic Mobile Dominoes UI Toolkit Stylesheet
+   Casual Game Visual Polish • Tactile Ivory Dominoes • 2D Smart-Fit Board
+   Drag-and-Drop Placement • Floating Boneyard Stack & Lamp Hint Button
+   Audio & Haptics Settings • Smooth Transitions • Android Safe-Area Responsive
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Root Fullscreen Container
+   -------------------------------------------------------------------------- */
+.game-root {
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #042F24;
+    overflow: hidden;
+}
+
+/* Table Background Surface & Atmosphere */
+.table-surface {
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    background-image: url('../Textures/bg_table_green_leaves.jpg');
+    -unity-background-scale-mode: scale-and-crop;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+/* Safe Area Inner Content Container */
+.safe-content {
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 12px;
+    padding-right: 12px;
+    justify-content: space-between;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   Hide All Scrollbars Across All ScrollViews for Clean Mobile Look
+   -------------------------------------------------------------------------- */
+.unity-scroller {
+    display: none;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.unity-scroll-view__horizontal-scroller {
+    display: none;
+    opacity: 0;
+    height: 0;
+}
+
+.unity-scroll-view__vertical-scroller {
+    display: none;
+    opacity: 0;
+    width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   1. TOP BAR (HUD Header)
+   -------------------------------------------------------------------------- */
+.top-bar {
+    width: 100%;
+    height: 40px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    margin-bottom: 4px;
+}
+
+.top-bar-right-group {
+    flex-direction: row;
+    align-items: center;
+}
+
+.top-bar-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    background-color: #1E293B;
+    border-width: 1.5px;
+    border-color: #F59E0B;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0 2px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    transition-property: scale, background-color;
+    transition-duration: 0.1s;
+}
+
+.top-bar-btn:active {
+    scale: 0.92;
+    background-color: #0F172A;
+}
+
+.top-bar-btn-icon {
+    font-size: 16px;
+    color: #FEF3C7;
+    -unity-font-style: bold;
+    margin-top: -1px;
+    padding: 0;
+}
+
+.top-bar-center {
+    align-items: center;
+    justify-content: center;
+}
+
+.top-bar-badge {
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(15, 23, 42, 0.88);
+    border-radius: 18px;
+    border-width: 1.5px;
+    border-color: #D97706;
+    padding: 4px 14px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
+}
+
+.top-bar-title {
+    font-size: 12px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    letter-spacing: 1.5px;
+    padding: 0;
+}
+
+.top-bar-badge-divider {
+    width: 1px;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.3);
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.top-bar-subtitle {
+    font-size: 11px;
+    color: #F59E0B;
+    -unity-font-style: bold;
+    letter-spacing: 0.5px;
+    padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   2. OPPONENTS HUD BAR (Compact Header Row)
+   -------------------------------------------------------------------------- */
+.opponents-bar {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(15, 23, 42, 0.84);
+    border-radius: 14px;
+    border-width: 1.5px;
+    border-color: rgba(245, 158, 11, 0.35);
+    padding: 4px 6px;
+    margin-bottom: 4px;
+    flex-shrink: 0;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.opponent-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 6px;
+    border-radius: 10px;
+    border-width: 1.5px;
+    border-color: transparent;
+    flex-shrink: 1;
+    flex-grow: 1;
+    margin: 0 2px;
+    min-width: 0;
+    transition-property: background-color, border-color, scale;
+    transition-duration: 0.2s;
+}
+
+.opponent-card--active {
+    background-color: rgba(34, 197, 94, 0.28);
+    border-color: #22C55E;
+    scale: 1.04;
+    box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+}
+
+.opponent-avatar-wrap {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    justify-content: center;
+    align-items: center;
+    margin-right: 5px;
+    flex-shrink: 0;
+}
+
+.opponent-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 13px;
+    border-width: 1.5px;
+    border-color: #CBD5E1;
+    background-image: url('../Textures/avatar_sophia.jpg');
+}
+
+.opponent-avatar--0 { background-image: url('../Textures/avatar_sophia.jpg'); }
+.opponent-avatar--1 { background-image: url('../Textures/avatar_marcus.jpg'); }
+.opponent-avatar--2 { background-image: url('../Textures/avatar_elena.jpg'); }
+
+.opponent-turn-indicator {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background-color: #22C55E;
+    border-width: 1.5px;
+    border-color: #0F172A;
+    display: none;
+}
+
+.opponent-info {
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.opponent-name {
+    font-size: 10px;
+    color: #F8FAFC;
+    -unity-font-style: bold;
+    padding: 0;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.opponent-badge {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 1px;
+}
+
+.opponent-badge-icon {
+    width: 6px;
+    height: 9px;
+    border-radius: 2px;
+    background-color: #FFFDF7;
+    border-width: 1px;
+    border-color: #0F172A;
+    margin-right: 3px;
+    flex-shrink: 0;
+}
+
+.opponent-tile-count {
+    font-size: 8.5px;
+    color: #CBD5E1;
+    padding: 0;
+    white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   3. BOARD TABLETOP AREA (Hero Felt Canvas)
+   -------------------------------------------------------------------------- */
+.board-area {
+    width: 100%;
+    flex-grow: 1;
+    min-height: 220px;
+    margin-bottom: 2px;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.board-felt {
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    background-color: rgba(6, 78, 59, 0.88);
+    border-radius: 20px;
+    border-width: 2px;
+    border-color: rgba(245, 158, 11, 0.35);
+    padding: 4px;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.55);
+}
+
+/* Floating Boneyard Stack Button on Top-Left of Felt Table */
+.boneyard-stack-btn {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 44px;
+    height: 52px;
+    border-radius: 12px;
+    background-color: rgba(30, 41, 59, 0.92);
+    border-width: 1.5px;
+    border-color: #D97706;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    margin: 0;
+    z-index: 50;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45);
+    transition-property: scale, border-color;
+    transition-duration: 0.15s;
+}
+
+.boneyard-stack-btn:active {
+    scale: 0.93;
+}
+
+.boneyard-stack-btn--glowing {
+    border-color: #FDE047;
+    border-width: 2.5px;
+    background-color: rgba(217, 119, 6, 0.92);
+    scale: 1.06;
+    box-shadow: 0 0 14px rgba(253, 224, 71, 0.7);
+}
+
+.boneyard-stack-icon {
+    width: 26px;
+    height: 26px;
+    background-image: url('../Textures/boneyard_sack.png');
+    -unity-background-scale-mode: scale-to-fit;
+    margin-bottom: 2px;
+}
+
+.boneyard-badge-wrap {
+    background-color: #D97706;
+    border-radius: 8px;
+    padding: 1px 6px;
+    border-width: 1px;
+    border-color: #FEF08A;
+}
+
+.boneyard-badge-text {
+    font-size: 10px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    padding: 0;
+}
+
+.boneyard-action-hint {
+    position: absolute;
+    bottom: -16px;
+    font-size: 9px;
+    color: #FEF08A;
+    -unity-font-style: bold;
+    letter-spacing: 0.5px;
+}
+
+.board-canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+.empty-board-message {
+    position: absolute;
+    align-self: center;
+    top: 45%;
+    font-size: 11.5px;
+    color: #FEF08A;
+    -unity-font-style: bold;
+    text-align: center;
+    padding: 8px 16px;
+    background-color: rgba(15, 23, 42, 0.76);
+    border-radius: 12px;
+    border-width: 1px;
+    border-color: rgba(254, 240, 138, 0.4);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Interactive Drop Zone Indicators Anchored on Board Ends */
+.board-endpoint-dropzone {
+    position: absolute;
+    width: 38px;
+    height: 38px;
+    border-radius: 19px;
+    background-color: rgba(217, 119, 6, 0.92);
+    border-width: 2px;
+    border-color: #FEF08A;
+    align-items: center;
+    justify-content: center;
+    z-index: 40;
+    box-shadow: 0 0 12px rgba(254, 240, 138, 0.6);
+    transition-property: scale, background-color;
+    transition-duration: 0.12s;
+}
+
+.board-endpoint-dropzone--highlighted {
+    scale: 1.18;
+    background-color: rgba(34, 197, 94, 0.95);
+    border-color: #86EFAC;
+    box-shadow: 0 0 16px rgba(134, 239, 172, 0.85);
+}
+
+.endpoint-dropzone-val {
+    font-size: 13px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    padding: 0;
+    margin-top: -1px;
+}
+
+.endpoint-dropzone-tag {
+    font-size: 7px;
+    color: #FEF08A;
+    -unity-font-style: bold;
+    letter-spacing: 0.5px;
+    padding: 0;
+}
+
+/* Compact Turn Guidance Banner Inside Board Bottom */
+.turn-guidance-bar {
+    position: absolute;
+    bottom: 6px;
+    align-self: center;
+    min-height: 28px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(15, 23, 42, 0.94);
+    border-radius: 14px;
+    border-width: 1px;
+    border-color: #334155;
+    padding: 2px 12px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    z-index: 30;
+    transition-property: scale, border-color;
+    transition-duration: 0.2s;
+}
+
+.turn-guidance-bar--human {
+    border-color: #F59E0B;
+    scale: 1.02;
+}
+
+.turn-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 3.5px;
+    background-color: #F59E0B;
+    margin-right: 6px;
+    flex-shrink: 0;
+}
+
+.turn-status-dot--bot {
+    background-color: #94A3B8;
+}
+
+.turn-guidance-content {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.turn-guidance-title {
+    font-size: 9.5px;
+    color: #FBBF24;
+    -unity-font-style: bold;
+    letter-spacing: 0.5px;
+    padding: 0;
+}
+
+.turn-guidance-desc {
+    font-size: 8.5px;
+    color: #E2E8F0;
+    margin-top: 1px;
+    padding: 0;
+    text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   4. FLOATING ACTION CONTROLS (Pass Button & Lamp Hint Button)
+   -------------------------------------------------------------------------- */
+.floating-controls-bar {
+    width: 100%;
+    height: 36px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px;
+    margin-bottom: 2px;
+    flex-shrink: 0;
+}
+
+.pass-btn-compact {
+    height: 32px;
+    border-radius: 16px;
+    background-color: #DC2626;
+    border-width: 1.5px;
+    border-color: #F87171;
+    padding: 0 14px;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
+    transition-property: scale;
+    transition-duration: 0.1s;
+}
+
+.pass-btn-compact:active {
+    scale: 0.95;
+}
+
+.pass-btn-title {
+    font-size: 10.5px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    letter-spacing: 0.5px;
+    padding: 0;
+}
+
+/* Circular Lamp Hint Button */
+.hint-lamp-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 22px;
+    background-color: #D97706;
+    border-width: 2px;
+    border-color: #FDE047;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
+    transition-property: scale, background-color;
+    transition-duration: 0.12s;
+}
+
+.hint-lamp-btn:active {
+    scale: 0.92;
+    background-color: #B45309;
+}
+
+.hint-lamp-icon {
+    font-size: 16px;
+    margin-top: -2px;
+    padding: 0;
+}
+
+.hint-lamp-label {
+    font-size: 7.5px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    letter-spacing: 0.5px;
+    margin-top: -2px;
+    padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   5. PLAYER HAND AREA (Ivory Domino Rack on Wooden Tray)
+   -------------------------------------------------------------------------- */
+.player-hand-area {
+    width: 100%;
+    height: 126px;
+    background-color: #3E1E08;
+    background-image: url('../Textures/wood_rack_texture.png');
+    -unity-background-scale-mode: stretch-to-fill;
+    border-radius: 16px;
+    border-width: 2px;
+    border-color: #78350F;
+    border-top-color: #B45309;
+    padding: 4px 6px 6px 6px;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-shrink: 0;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.45);
+}
+
+.hand-header {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2px;
+    padding: 0 4px;
+    flex-shrink: 0;
+}
+
+.hand-header-title {
+    font-size: 10px;
+    color: #FEF3C7;
+    -unity-font-style: bold;
+    letter-spacing: 1.5px;
+    padding: 0;
+}
+
+.hand-header-count {
+    font-size: 10px;
+    color: #F59E0B;
+    -unity-font-style: bold;
+    padding: 0;
+}
+
+.hand-scroll-view {
+    width: 100%;
+    height: 94px;
+}
+
+.hand-tiles-container {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
+    min-height: 90px;
+    padding: 2px 2px;
+}
+
+/* Standing Ivory Domino in Hand */
+.domino-tile-hand {
+    width: 42px;
+    height: 78px;
+    border-radius: 7px;
+    background-color: #FAF7EE;
+    border-width: 1.5px;
+    border-color: #CBD5E1;
+    border-top-color: #FFFFFF;
+    border-left-color: #FFFFFF;
+    border-bottom-color: #94A3B8;
+    border-right-color: #94A3B8;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 1px;
+    margin: 0 2px;
+    flex-shrink: 0;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+    transition-property: scale, border-color, margin-bottom, opacity;
+    transition-duration: 0.12s;
+}
+
+/* Playable Tile: Warm Gold Border with Lift */
+.domino-tile-hand--playable {
+    border-color: #F59E0B;
+    border-width: 2px;
+    margin-bottom: 3px;
+    scale: 1.03;
+}
+
+.domino-tile-hand--playable:hover {
+    scale: 1.08;
+    margin-bottom: 6px;
+}
+
+/* Selected Tile: Lifted Significantly + Amber Glow */
+.domino-tile-hand--selected {
+    border-color: #FDE047;
+    border-width: 2.5px;
+    scale: 1.08;
+    margin-bottom: 8px;
+    background-color: #FFFDF0;
+    box-shadow: 0 8px 16px rgba(253, 224, 71, 0.45);
+}
+
+/* Unplayable Tile: Soft ivory with slightly reduced opacity */
+.domino-tile-hand--unplayable {
+    opacity: 0.55;
+    border-color: #94A3B8;
+}
+
+.domino-tile-hand--tutorial-target {
+    border-color: #FBBF24;
+    border-width: 2.5px;
+    scale: 1.06;
+    margin-bottom: 8px;
+}
+
+.domino-tile-hand--dimmed {
+    opacity: 0.35;
+}
+
+.domino-half-hand {
+    width: 36px;
+    height: 34px;
+    justify-content: center;
+    align-items: center;
+}
+
+.domino-divider-hand {
+    width: 34px;
+    height: 2px;
+    background-color: #64748B;
+    border-bottom-width: 1px;
+    border-bottom-color: #FFFFFF;
+}
+
+/* --------------------------------------------------------------------------
+   Skeuomorphic Domino Tile Styling on 2D Board
+   -------------------------------------------------------------------------- */
+.domino-tile-board-2d {
+    position: absolute;
+    border-radius: 5px;
+    background-color: #FAF7EE;
+    border-width: 1.5px;
+    border-color: #CBD5E1;
+    border-top-color: #FFFFFF;
+    border-left-color: #FFFFFF;
+    border-bottom-color: #94A3B8;
+    border-right-color: #94A3B8;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    flex-shrink: 0;
+    transition-property: scale, opacity;
+    transition-duration: 0.15s;
+}
+
+.domino-tile-board-2d--horizontal {
+    flex-direction: row;
+    padding: 2px 2px;
+}
+
+.domino-tile-board-2d--vertical {
+    flex-direction: column;
+    padding: 2px 2px;
+}
+
+.domino-half-board-2d {
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.domino-divider-board-h {
+    width: 2px;
+    height: 80%;
+    background-color: #64748B;
+    border-right-width: 1px;
+    border-right-color: #FFFFFF;
+    margin: 0 1px;
+}
+
+.domino-divider-board-v {
+    width: 80%;
+    height: 2px;
+    background-color: #64748B;
+    border-bottom-width: 1px;
+    border-bottom-color: #FFFFFF;
+    margin: 1px 0;
+}
+
+/* --------------------------------------------------------------------------
+   6. DRAG GHOST ELEMENT
+   -------------------------------------------------------------------------- */
+.drag-ghost-tile {
+    width: 44px;
+    height: 80px;
+    border-radius: 8px;
+    background-color: #FAF7EE;
+    border-width: 2.5px;
+    border-color: #FDE047;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.65);
+    z-index: 500;
+    picking-mode: ignore;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 1px;
+    scale: 1.12;
+}
+
+/* --------------------------------------------------------------------------
+   Authentic 3x3 Pip Layout Engine for Domino Halves
+   -------------------------------------------------------------------------- */
+.pip-matrix-3x3 {
+    width: 26px;
+    height: 26px;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pip-row {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 6px;
+}
+
+.pip-cell {
+    width: 6px;
+    height: 6px;
+    justify-content: center;
+    align-items: center;
+}
+
+.pip-dot-hand {
+    width: 5px;
+    height: 5px;
+    border-radius: 2.5px;
+    background-color: #0F172A;
+    border-width: 0.5px;
+    border-color: #334155;
+}
+
+/* Board Pip Matrix */
+.pip-matrix-3x3-board {
+    width: 16px;
+    height: 16px;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pip-row-board {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 4.5px;
+}
+
+.pip-cell-board {
+    width: 4.5px;
+    height: 4.5px;
+    justify-content: center;
+    align-items: center;
+}
+
+.pip-dot-board {
+    width: 3.4px;
+    height: 3.4px;
+    border-radius: 1.7px;
+    background-color: #0F172A;
+}
+
+/* --------------------------------------------------------------------------
+   7. SETTINGS MODAL
+   -------------------------------------------------------------------------- */
+.settings-card {
+    border-color: #3B82F6;
+}
+
+.settings-row {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4px;
+    margin-bottom: 6px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.settings-row-label {
+    font-size: 13px;
+    color: #F8FAFC;
+    -unity-font-style: bold;
+}
+
+.settings-toggle-btn {
+    width: 64px;
+    height: 32px;
+    border-radius: 16px;
+    justify-content: center;
+    align-items: center;
+    border-width: 1.5px;
+    transition-property: background-color, scale;
+    transition-duration: 0.12s;
+}
+
+.settings-toggle-btn:active {
+    scale: 0.94;
+}
+
+.settings-toggle-btn--on {
+    background-color: #22C55E;
+    border-color: #86EFAC;
+}
+
+.settings-toggle-btn--off {
+    background-color: #64748B;
+    border-color: #94A3B8;
+}
+
+.settings-toggle-text {
+    font-size: 11px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    letter-spacing: 0.5px;
+    padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   8. RESULT MODAL (With Animated Score Banner)
+   -------------------------------------------------------------------------- */
+.score-banner-box {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(34, 197, 94, 0.2);
+    border-radius: 12px;
+    border-width: 1.5px;
+    border-color: #22C55E;
+    padding: 8px;
+    margin-bottom: 12px;
+}
+
+.score-banner-title {
+    font-size: 10px;
+    color: #86EFAC;
+    -unity-font-style: bold;
+    letter-spacing: 1.5px;
+}
+
+.score-banner-number {
+    font-size: 26px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   9. INTERACTIVE TUTORIAL OVERLAY & DIALOGS
+   -------------------------------------------------------------------------- */
+.tutorial-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    picking-mode: ignore;
+}
+
+.tutorial-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(9, 14, 26, 0.78);
+    picking-mode: position;
+}
+
+.tutorial-card {
+    width: 88%;
+    max-width: 360px;
+    background-color: #1E293B;
+    border-radius: 22px;
+    border-width: 2px;
+    border-color: #F59E0B;
+    padding: 22px 18px;
+    align-items: center;
+    z-index: 102;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+    picking-mode: position;
+}
+
+.tutorial-eyebrow {
+    font-size: 10.5px;
+    color: #F59E0B;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    margin-bottom: 3px;
+    padding: 0;
+}
+
+.tutorial-title {
+    font-size: 20px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    margin-bottom: 12px;
+    padding: 0;
+    text-align: center;
+}
+
+.tutorial-desc {
+    font-size: 12.5px;
+    color: #E2E8F0;
+    margin-bottom: 18px;
+    padding: 0;
+    text-align: center;
+    white-space: normal;
+}
+
+.tutorial-primary-btn {
+    width: 100%;
+    height: 46px;
+    border-radius: 23px;
+    background-color: #D97706;
+    border-width: 2px;
+    border-color: #F59E0B;
+    color: #FFFFFF;
+    font-size: 14px;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    picking-mode: position;
+}
+
+.tutorial-primary-btn:active {
+    scale: 0.96;
+}
+
+.tutorial-skip-btn {
+    background-color: transparent;
+    border-width: 0;
+    color: #94A3B8;
+    font-size: 11.5px;
+    padding: 6px 12px;
+    margin-top: 4px;
+    picking-mode: position;
+}
+
+.tutorial-pointer {
+    position: absolute;
+    bottom: 190px;
+    align-items: center;
+    justify-content: center;
+    z-index: 110;
+    picking-mode: ignore;
+}
+
+.tutorial-pointer-icon {
+    font-size: 28px;
+    margin-bottom: 2px;
+}
+
+.tutorial-pointer-label {
+    background-color: #D97706;
+    color: #FFFFFF;
+    font-size: 11px;
+    -unity-font-style: bold;
+    border-radius: 12px;
+    border-width: 1.5px;
+    border-color: #FEF08A;
+    padding: 4px 10px;
+}
+
+.tutorial-hint-toast {
+    position: absolute;
+    top: 70px;
+    align-self: center;
+    background-color: rgba(15, 23, 42, 0.92);
+    border-radius: 16px;
+    border-width: 1.5px;
+    border-color: #F59E0B;
+    padding: 6px 16px;
+    z-index: 105;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    picking-mode: ignore;
+}
+
+.tutorial-hint-text {
+    color: #FEF3C7;
+    font-size: 11.5px;
+    -unity-font-style: bold;
+    text-align: center;
+}
+
+.tutorial-skip-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 150;
+    picking-mode: position;
+}
+
+.tutorial-skip-card {
+    width: 82%;
+    max-width: 320px;
+    background-color: #1E293B;
+    border-radius: 18px;
+    border-width: 2px;
+    border-color: #D97706;
+    padding: 20px 16px;
+    align-items: center;
+}
+
+.tutorial-skip-title {
+    font-size: 16px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    margin-bottom: 8px;
+}
+
+.tutorial-skip-desc {
+    font-size: 12px;
+    color: #CBD5E1;
+    text-align: center;
+    margin-bottom: 16px;
+    white-space: normal;
+}
+
+.tutorial-skip-btn-row {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.tutorial-modal-btn {
+    flex-grow: 1;
+    height: 38px;
+    border-radius: 19px;
+    font-size: 12px;
+    -unity-font-style: bold;
+    margin: 0 4px;
+    align-items: center;
+    justify-content: center;
+}
+
+.tutorial-modal-btn--cancel {
+    background-color: #334155;
+    border-width: 1.5px;
+    border-color: #64748B;
+    color: #FFFFFF;
+}
+
+.tutorial-modal-btn--confirm {
+    background-color: #D97706;
+    border-width: 1.5px;
+    border-color: #F59E0B;
+    color: #FFFFFF;
+}
+
+/* --------------------------------------------------------------------------
+   10. MODALS BASE STYLING
+   -------------------------------------------------------------------------- */
+.overlay-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(9, 14, 26, 0.85);
+}
+
+.modal-card {
+    width: 88%;
+    max-width: 360px;
+    background-color: #1E293B;
+    border-radius: 22px;
+    border-width: 2px;
+    border-color: #F59E0B;
+    padding: 22px 18px;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    z-index: 202;
+}
+
+.modal-eyebrow {
+    font-size: 10.5px;
+    color: #F59E0B;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    margin-bottom: 2px;
+    padding: 0;
+}
+
+.modal-title {
+    font-size: 18px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    padding: 0;
+}
+
+.help-rules-scroll {
+    max-height: 200px;
+    width: 100%;
+    margin-bottom: 14px;
+}
+
+.help-rule-item {
+    font-size: 12px;
+    color: #E2E8F0;
+    margin-bottom: 8px;
+    white-space: normal;
+    padding-left: 4px;
+}
+
+.modal-btn-primary {
+    width: 100%;
+    height: 44px;
+    border-radius: 22px;
+    background-color: #D97706;
+    border-width: 2px;
+    border-color: #F59E0B;
+    color: #FFFFFF;
+    font-size: 13.5px;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.modal-btn-primary:active {
+    scale: 0.96;
+}
+
+.modal-btn-secondary {
+    width: 100%;
+    height: 40px;
+    border-radius: 20px;
+    background-color: #334155;
+    border-width: 1.5px;
+    border-color: #64748B;
+    color: #CBD5E1;
+    font-size: 12.5px;
+    -unity-font-style: bold;
+    margin-bottom: 4px;
+}
+
+.modal-btn-secondary:active {
+    scale: 0.96;
+}
+
+.result-modal-card {
+    border-color: #22C55E;
+}
+
+.result-title {
+    font-size: 24px;
+    color: #22C55E;
+    -unity-font-style: bold;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+}
+
+.result-winner-text {
+    font-size: 14px;
+    color: #F8FAFC;
+    -unity-font-style: bold;
+    margin-bottom: 14px;
+    text-align: center;
+}
+
+.result-scores-list {
+    width: 100%;
+    background-color: rgba(15, 23, 42, 0.6);
+    border-radius: 12px;
+    padding: 8px 10px;
+    margin-bottom: 16px;
+}
+
+.result-score-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 2px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.result-score-name {
+    font-size: 12px;
+    color: #F8FAFC;
+    -unity-font-style: bold;
+}
+
+.result-score-val {
+    font-size: 11.5px;
+    color: #CBD5E1;
+}
+
+/* --------------------------------------------------------------------------
+   11. LEAVE MATCH ALERT DIALOG
+   -------------------------------------------------------------------------- */
+.alert-dialog-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    justify-content: center;
+    align-items: center;
+    z-index: 220;
+}
+
+.alert-dialog-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(9, 14, 26, 0.85);
+}
+
+.alert-dialog-card {
+    width: 82%;
+    max-width: 320px;
+    background-color: #1E293B;
+    border-radius: 20px;
+    border-width: 2px;
+    border-color: #EF4444;
+    padding: 20px 16px;
+    align-items: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+    z-index: 222;
+}
+
+.alert-dialog-header {
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.alert-dialog-eyebrow {
+    font-size: 10px;
+    color: #EF4444;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    margin-bottom: 2px;
+}
+
+.alert-dialog-title {
+    font-size: 17px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    margin-bottom: 8px;
+}
+
+.alert-dialog-desc {
+    font-size: 12px;
+    color: #CBD5E1;
+    text-align: center;
+    white-space: normal;
+}
+
+.alert-dialog-footer {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.alert-dialog-btn {
+    flex-grow: 1;
+    height: 40px;
+    border-radius: 20px;
+    font-size: 12px;
+    -unity-font-style: bold;
+    margin: 0 4px;
+    align-items: center;
+    justify-content: center;
+}
+
+.alert-dialog-btn--cancel {
+    background-color: #334155;
+    border-width: 1.5px;
+    border-color: #64748B;
+    color: #FFFFFF;
+}
+
+.alert-dialog-btn--action {
+    background-color: #DC2626;
+    border-width: 1.5px;
+    border-color: #EF4444;
+    color: #FFFFFF;
+}
