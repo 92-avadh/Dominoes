@@ -40,7 +40,7 @@
                     </ui:VisualElement>
                 </ui:VisualElement>
 
-                <!-- 2. OPPONENTS HUD BAR (Compact Header Row) -->
+                <!-- 2. OPPONENTS HUD BAR (Compact Header Row with Highlight) -->
                 <ui:VisualElement name="opponents-bar" class="opponents-bar">
                     <!-- Opponent 1 -->
                     <ui:VisualElement name="opponent-slot-0" class="opponent-card">
@@ -88,11 +88,11 @@
                     </ui:VisualElement>
                 </ui:VisualElement>
 
-                <!-- 3. BOARD TABLETOP AREA (Hero Felt Canvas) -->
+                <!-- 3. BOARD TABLETOP AREA (Realistic Emerald Felt Canvas) -->
                 <ui:VisualElement name="board-area" class="board-area">
                     <ui:VisualElement name="board-felt" class="board-felt">
                         
-                        <!-- Floating Interactive Boneyard Stack (Top-Left of Board) -->
+                        <!-- Floating Interactive Boneyard Stack (Top-Left of Felt Table) -->
                         <ui:Button name="boneyard-pile-btn" class="boneyard-stack-btn" tooltip="Draw from Boneyard">
                             <ui:VisualElement class="boneyard-stack-icon" />
                             <ui:VisualElement class="boneyard-badge-wrap">
@@ -107,14 +107,14 @@
                         </ui:VisualElement>
 
                         <!-- Interactive Drop Zone Indicators Anchored on Board Ends -->
-                        <ui:VisualElement name="left-end-target" class="board-endpoint-dropzone" style="display: none;">
+                        <ui:VisualElement name="left-end-target" class="board-endpoint-dropzone board-endpoint-dropzone--left" style="display: none;">
+                            <ui:Label name="left-target-tag" class="endpoint-dropzone-tag" text="← PLAY LEFT" />
                             <ui:Label name="left-target-num" class="endpoint-dropzone-val" text="6" />
-                            <ui:Label class="endpoint-dropzone-tag" text="DROP" />
                         </ui:VisualElement>
 
-                        <ui:VisualElement name="right-end-target" class="board-endpoint-dropzone" style="display: none;">
+                        <ui:VisualElement name="right-end-target" class="board-endpoint-dropzone board-endpoint-dropzone--right" style="display: none;">
+                            <ui:Label name="right-target-tag" class="endpoint-dropzone-tag" text="PLAY RIGHT →" />
                             <ui:Label name="right-target-num" class="endpoint-dropzone-val" text="3" />
-                            <ui:Label class="endpoint-dropzone-tag" text="DROP" />
                         </ui:VisualElement>
 
                         <!-- Compact Turn Guidance Banner Inside Board Bottom -->
@@ -122,7 +122,7 @@
                             <ui:VisualElement name="turn-status-dot" class="turn-status-dot" />
                             <ui:VisualElement class="turn-guidance-content">
                                 <ui:Label name="turn-title-label" class="turn-guidance-title" text="YOUR TURN" />
-                                <ui:Label name="turn-subtitle-label" class="turn-guidance-desc" text="Drag a matching domino onto the board" />
+                                <ui:Label name="turn-subtitle-label" class="turn-guidance-desc" text="Choose a highlighted domino" />
                             </ui:VisualElement>
                         </ui:VisualElement>
 
@@ -133,7 +133,7 @@
                 <ui:VisualElement class="floating-controls-bar">
                     <!-- Pass Turn Button (Enabled when player must pass) -->
                     <ui:Button name="pass-button" class="pass-btn-compact" style="visibility: hidden;">
-                        <ui:Label class="pass-btn-title" text="PASS TURN" />
+                        <ui:Label name="pass-btn-title" class="pass-btn-title" text="PASS TURN" />
                     </ui:Button>
 
                     <!-- Circular Lamp Hint Button -->
@@ -145,12 +145,12 @@
 
                 <!-- 5. PLAYER HAND AREA (Ivory Domino Rack on Wooden Tray) -->
                 <ui:VisualElement name="player-hand-area" class="player-hand-area">
-                    <ui:VisualElement name="hand-header" class="hand-header">
+                    <ui:VisualElement class="hand-header">
                         <ui:Label class="hand-header-title" text="YOUR HAND" />
                         <ui:Label name="hand-tile-count-label" class="hand-header-count" text="7 TILES" />
                     </ui:VisualElement>
 
-                    <!-- Horizontally Scrollable Standing Ivory Dominoes -->
+                    <!-- Horizontally Scrollable Standing Ivory Dominoes in Rack -->
                     <ui:ScrollView name="hand-scroll-view" class="hand-scroll-view" mode="Horizontal">
                         <ui:VisualElement name="hand-tiles-container" class="hand-tiles-container">
                             <!-- Dynamic Ivory Domino Tiles injected by C# controller -->
@@ -168,6 +168,9 @@
         <ui:VisualElement name="settings-modal" class="overlay-modal" style="display: none;">
             <ui:VisualElement class="modal-backdrop" />
             <ui:VisualElement class="modal-card settings-card">
+                <ui:VisualElement class="modal-gear-badge">
+                    <ui:Label class="modal-gear-icon" text="⚙" />
+                </ui:VisualElement>
                 <ui:Label class="modal-eyebrow" text="• PREFERENCES •" />
                 <ui:Label class="modal-title" text="GAME SETTINGS" />
 
@@ -256,40 +259,63 @@
             </ui:VisualElement>
         </ui:VisualElement>
 
-        <!-- 10. ROUND COMPLETE / RESULT MODAL (With Animated Score Count-Up) -->
+        <!-- 10. ROUND COMPLETE / RESULT MODAL (Commercial Victory / Loss Presentation) -->
         <ui:VisualElement name="result-modal" class="overlay-modal" style="display: none;">
             <ui:VisualElement class="modal-backdrop" />
             <ui:VisualElement class="modal-card result-modal-card">
-                <ui:Label class="modal-eyebrow" text="• ROUND COMPLETE •" />
-                <ui:Label name="result-title" class="result-title" text="VICTORY!" />
-                <ui:Label name="result-winner-label" class="result-winner-text" text="Sophia Wins the Round" />
+                <!-- Result Trophy / Badge Crest -->
+                <ui:VisualElement class="result-trophy-badge">
+                    <ui:Label name="result-trophy-icon" class="result-trophy-icon" text="🏆" />
+                </ui:VisualElement>
+
+                <ui:Label class="modal-eyebrow" text="• MATCH RESULT •" />
+                <ui:Label name="result-title" class="result-title" text="YOU WIN!" />
+                <ui:Label name="result-winner-label" class="result-winner-text" text="Excellent Play!" />
 
                 <!-- Animated Score Banner -->
                 <ui:VisualElement class="score-banner-box">
-                    <ui:Label class="score-banner-title" text="ROUND POINTS" />
-                    <ui:Label name="animated-score-label" class="score-banner-number" text="+25" />
+                    <ui:Label class="score-banner-title" text="YOUR SCORE" />
+                    <ui:Label name="animated-score-label" class="score-banner-number" text="+125" />
                 </ui:VisualElement>
 
                 <ui:VisualElement name="result-scores-list" class="result-scores-list" />
 
-                <ui:Button name="play-again-button" class="modal-btn-primary" text="Continue Match" />
-                <ui:Button name="exit-home-button" class="modal-btn-secondary" text="Main Menu" />
+                <!-- Action Buttons: [ PLAY AGAIN ] and [ HOME ] -->
+                <ui:VisualElement class="result-actions-row">
+                    <ui:Button name="play-again-button" class="modal-btn-primary result-btn--play-again" text="PLAY AGAIN" />
+                    <ui:Button name="exit-home-button" class="modal-btn-secondary result-btn--home" text="HOME" />
+                </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
 
-        <!-- 11. LEAVE MATCH CONFIRMATION ALERT DIALOG -->
+        <!-- 11. LEAVE MATCH CONFIRMATION ALERT DIALOG (Matching Image 3: Broken Domino, Green Felt, Gold Bevels, Red Exit & Green Play) -->
         <ui:VisualElement name="leave-confirm-modal" class="alert-dialog-overlay" style="display: none;">
             <ui:VisualElement name="leave-modal-backdrop" class="alert-dialog-backdrop" />
-            <ui:VisualElement name="leave-modal-card" class="alert-dialog-card">
-                <ui:VisualElement class="alert-dialog-header">
-                    <ui:Label class="alert-dialog-eyebrow" text="• CONFIRMATION •" />
-                    <ui:Label class="alert-dialog-title" text="LEAVE MATCH?" />
-                    <ui:Label class="alert-dialog-desc" text="Are you sure you want to forfeit this match and return to the main menu?" />
+            
+            <ui:VisualElement name="leave-modal-card" class="alert-felt-card">
+                
+                <!-- Close X Button on Top Right -->
+                <ui:Button name="alert-close-x-btn" class="alert-close-x-btn">
+                    <ui:Label class="alert-close-x-icon" text="✕" />
+                </ui:Button>
+
+                <!-- Top Gold-Framed Header Tab -->
+                <ui:VisualElement class="alert-header-tab">
+                    <ui:Label class="alert-header-tab-text" text="Are You Sure?" />
                 </ui:VisualElement>
-                <ui:VisualElement class="alert-dialog-footer">
-                    <ui:Button name="leave-modal-cancel-btn" class="alert-dialog-btn alert-dialog-btn--cancel" text="STAY" />
-                    <ui:Button name="leave-modal-confirm-btn" class="alert-dialog-btn alert-dialog-btn--action" text="LEAVE" />
+
+                <!-- Center 3D Broken Domino Illustration -->
+                <ui:VisualElement class="alert-broken-domino-img" />
+
+                <!-- Confirmation Text -->
+                <ui:Label class="alert-message-text" text="Do you want to exit? You will lose the match." />
+
+                <!-- Two 3D Game Buttons (Red Exit & Green Play) -->
+                <ui:VisualElement class="alert-btn-row">
+                    <ui:Button name="leave-modal-confirm-btn" class="alert-game-btn alert-game-btn--exit" text="Exit" />
+                    <ui:Button name="leave-modal-cancel-btn" class="alert-game-btn alert-game-btn--play" text="Play" />
                 </ui:VisualElement>
+
             </ui:VisualElement>
         </ui:VisualElement>
 

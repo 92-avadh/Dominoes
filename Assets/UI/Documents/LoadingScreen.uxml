@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ui="UnityEngine.UIElements"
+    xmlns:uie="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
+    editor-extension-mode="False">
+    <ui:Style src="../Styles/LoadingScreen.uss" />
+
+    <ui:VisualElement name="loading-root" class="loading-root">
+        <ui:VisualElement name="loading-safe-content" class="loading-safe-content">
+            
+            <!-- Top Spacer -->
+            <ui:VisualElement class="loading-spacer" />
+
+            <!-- Center Logo & Branding -->
+            <ui:VisualElement class="loading-brand-container">
+                <!-- Gold Dominoes Title Crest (Matching Master Design System) -->
+                <ui:VisualElement class="loading-logo-box">
+                    <ui:VisualElement class="loading-logo-tile loading-logo-tile--left">
+                        <ui:VisualElement class="loading-mini-pip" />
+                        <ui:VisualElement class="loading-mini-divider" />
+                        <ui:VisualElement class="loading-mini-pip" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="loading-title-column">
+                        <ui:Label class="loading-brand-title" text="DOMINOES" />
+                        <ui:Label class="loading-brand-subtitle" text="CLASSIC TABLE GAME" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="loading-logo-tile loading-logo-tile--right">
+                        <ui:VisualElement class="loading-mini-pip" />
+                        <ui:VisualElement class="loading-mini-divider" />
+                        <ui:VisualElement class="loading-mini-pip" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- Bottom Progress & Status Bar -->
+            <ui:VisualElement class="loading-footer">
+                <ui:VisualElement class="loading-status-row">
+                    <ui:Label name="loading-status-text" class="loading-status-text" text="Preparing your table..." />
+                    <ui:Label name="loading-percent-text" class="loading-percent-text" text="67%" />
+                </ui:VisualElement>
+                
+                <!-- Game-Style Rounded Capsule Progress Bar -->
+                <ui:VisualElement class="loading-progress-track">
+                    <ui:VisualElement name="loading-progress-bar" class="loading-progress-fill" style="width: 0%;" />
+                </ui:VisualElement>
+                
+                <ui:Label class="loading-version-text" text="v1.0.0 • Mobile Edition" />
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

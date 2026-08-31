@@ -7,21 +7,17 @@ namespace Dominoes
     /// <summary>
     /// UI Toolkit controller for the commercial Dominoes HomeScreen (HomeScreen.uxml).
     /// Pure presentation layer managing:
-    /// - Interactive Game Mode cards (Classic Draw, All Fives, Block, 2-Player Duel)
-    /// - Live Currencies (Coins, Gems) & Player Profile HUD
-    /// - Full Modals (Career Stats, Global Leaderboard, Daily Rewards Claimer, Themes & Shop, Settings)
-    /// - Audio clicks and haptic feedback on all interactions
+    /// - Header HUD (Left: Menu Button opening Settings/Audio/Haptics, Center: Tappable Profile Avatar/Level)
+    /// - 3 Commercial Game Mode buttons (ONLINE, VS COMPUTER, WITH FRIENDS)
+    /// - Interactive Game Mode touch states & haptics
+    /// - Clean Modals (Player Profile, Settings & Options with Audio/Haptics)
+    /// - Device Safe-Area responsive padding
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(UIDocument))]
     public class DominoHomeScreenController : MonoBehaviour
     {
-        private const string PrefCoins = "Dominoes_Coins";
-        private const string PrefGems = "Dominoes_Gems";
         private const string PrefPlayerName = "Dominoes_PlayerName";
-        private const string PrefDailyClaimed = "Dominoes_DailyBonusClaimedDate";
-        private const string PrefTileTheme = "Dominoes_TileTheme";
-        private const string PrefFeltTheme = "Dominoes_FeltTheme";
 
         [Header("UI Document")]
         [Tooltip("The UIDocument component hosting HomeScreen.uxml.")]
@@ -34,54 +30,31 @@ namespace Dominoes
         [Tooltip("Reference to the UI Toolkit DominoWaitingScreenUIToolkitController.")]
         [SerializeField] private DominoWaitingScreenUIToolkitController waitingScreenUIToolkitController;
 
+        [Tooltip("Reference to the UI Toolkit DominoGameScreenUIToolkitController.")]
+        [SerializeField] private DominoGameScreenUIToolkitController gameScreenUIToolkitController;
+
         private VisualElement rootElement;
         private VisualElement safeContent;
 
-        // Top Bar Elements
+        // Header Elements
+        private Button hamburgerButton;
         private Button profileButton;
         private Label profileNameLabel;
         private Label profileLevelText;
-        private Button coinsBadgeBtn;
-        private Label coinsAmountLabel;
-        private Button gemsBadgeBtn;
-        private Label gemsAmountLabel;
-        private Button homeSettingsButton;
 
-        // Banner & Game Mode Cards
-        private Button dailyBonusBannerBtn;
-        private Label dailyBannerSubtitle;
-        private Button dominoesCardButton;
-        private Button modeAllFivesBtn;
-        private Button modeBlockBtn;
-        private Button modeDuelBtn;
+        // 3 Game Mode Buttons
+        private Button modeOnlineBtn;
+        private Button modeComputerBtn;
+        private Button modeFriendsBtn;
+        private Button homeTutorialBtn;
 
-        // Bottom Navigation Bar
-        private Button navPlayBtn;
-        private Button navLeaderboardBtn;
-        private Button navRewardsBtn;
-        private Button navShopBtn;
-        private Button navStatsBtn;
-
-        // Modals
+        // Profile Modal
         private VisualElement profileStatsModal;
+        private Label modalPlayerName;
+        private Label modalPlayerLevel;
         private Button profileCloseBtn;
 
-        private VisualElement leaderboardModal;
-        private Button leaderboardCloseBtn;
-
-        private VisualElement dailyRewardsModal;
-        private Button claimDailyRewardBtn;
-        private Button dailyRewardsCloseBtn;
-
-        private VisualElement shopModal;
-        private Button themeTileIvoryBtn;
-        private Button themeTileObsidianBtn;
-        private Button themeTileGoldBtn;
-        private Button themeFeltGreenBtn;
-        private Button themeFeltBlueBtn;
-        private Button themeFeltRubyBtn;
-        private Button shopCloseBtn;
-
+        // Settings Modal
         private VisualElement homeSettingsModal;
         private Button homeSettingsMusicBtn;
         private Label homeSettingsMusicTxt;
@@ -92,9 +65,7 @@ namespace Dominoes
         private Button homeReplayTutorialBtn;
         private Button homeSettingsCloseBtn;
 
-        // Runtime Currency & Profile State
-        private int coins = 12500;
-        private int gems = 50;
+        // Runtime Profile State
         private string playerName = "Player 1";
 
         public UIDocument UIDocument => uiDocument;
@@ -135,7 +106,16 @@ namespace Dominoes
 #endif
             }
 
-            LoadProfileAndCurrencies();
+            if (gameScreenUIToolkitController == null)
+            {
+#if UNITY_2023_1_OR_NEWER
+                gameScreenUIToolkitController = FindAnyObjectByType<DominoGameScreenUIToolkitController>();
+#else
+                gameScreenUIToolkitController = FindObjectOfType<DominoGameScreenUIToolkitController>();
+#endif
+            }
+
+            LoadProfile();
         }
 
         private void OnEnable()
@@ -143,7 +123,7 @@ namespace Dominoes
             RegisterUICallbacks();
             SubscribeWaitingEvents();
             ShowHomeScreen();
-            RefreshCurrenciesUI();
+            RefreshProfileUI();
         }
 
         private void OnDisable()
@@ -158,18 +138,9 @@ namespace Dominoes
             UnsubscribeWaitingEvents();
         }
 
-        private void LoadProfileAndCurrencies()
+        private void LoadProfile()
         {
-            coins = PlayerPrefs.GetInt(PrefCoins, 12500);
-            gems = PlayerPrefs.GetInt(PrefGems, 50);
             playerName = PlayerPrefs.GetString(PrefPlayerName, "Player 1");
-        }
-
-        private void SaveCurrencies()
-        {
-            PlayerPrefs.SetInt(PrefCoins, coins);
-            PlayerPrefs.SetInt(PrefGems, gems);
-            PlayerPrefs.Save();
         }
 
         private void RegisterUICallbacks()
@@ -187,80 +158,36 @@ namespace Dominoes
             safeContent = rootElement.Q<VisualElement>("safe-content") ?? rootElement;
             rootElement.RegisterCallback<GeometryChangedEvent>(OnRootGeometryChanged);
 
-            // 1. Top Bar Elements
+            // 1. Top Header Elements
+            hamburgerButton = rootElement.Q<Button>("hamburger-button");
             profileButton = rootElement.Q<Button>("profile-button");
             profileNameLabel = rootElement.Q<Label>("profile-name-label");
             profileLevelText = rootElement.Q<Label>("profile-level-text");
-            coinsBadgeBtn = rootElement.Q<Button>("coins-badge-btn");
-            coinsAmountLabel = rootElement.Q<Label>("coins-amount-label");
-            gemsBadgeBtn = rootElement.Q<Button>("gems-badge-btn");
-            gemsAmountLabel = rootElement.Q<Label>("gems-amount-label");
-            homeSettingsButton = rootElement.Q<Button>("home-settings-button");
 
+            // Hamburger button opens Settings & Game Options
+            if (hamburgerButton != null) hamburgerButton.clicked += OnSettingsButtonClicked;
             if (profileButton != null) profileButton.clicked += OnProfileButtonClicked;
-            if (coinsBadgeBtn != null) coinsBadgeBtn.clicked += OnShopButtonClicked;
-            if (gemsBadgeBtn != null) gemsBadgeBtn.clicked += OnShopButtonClicked;
-            if (homeSettingsButton != null) homeSettingsButton.clicked += OnSettingsButtonClicked;
 
-            // 2. Banner & Game Modes
-            dailyBonusBannerBtn = rootElement.Q<Button>("daily-bonus-banner-btn");
-            dailyBannerSubtitle = rootElement.Q<Label>("daily-banner-subtitle");
-            dominoesCardButton = rootElement.Q<Button>("dominoes-card");
-            modeAllFivesBtn = rootElement.Q<Button>("mode-allfives-btn");
-            modeBlockBtn = rootElement.Q<Button>("mode-block-btn");
-            modeDuelBtn = rootElement.Q<Button>("mode-duel-btn");
+            // 2. 3 Game Mode Buttons
+            modeOnlineBtn = rootElement.Q<Button>("mode-online-btn");
+            modeComputerBtn = rootElement.Q<Button>("mode-computer-btn");
+            modeFriendsBtn = rootElement.Q<Button>("mode-friends-btn");
+            homeTutorialBtn = rootElement.Q<Button>("home-tutorial-btn");
 
-            if (dailyBonusBannerBtn != null) dailyBonusBannerBtn.clicked += OnDailyRewardsButtonClicked;
-            if (dominoesCardButton != null) dominoesCardButton.clicked += () => LaunchGameMode("Classic Draw");
-            if (modeAllFivesBtn != null) modeAllFivesBtn.clicked += () => LaunchGameMode("All Fives");
-            if (modeBlockBtn != null) modeBlockBtn.clicked += () => LaunchGameMode("Block");
-            if (modeDuelBtn != null) modeDuelBtn.clicked += () => LaunchGameMode("Heads-Up Duel");
+            if (modeOnlineBtn != null) modeOnlineBtn.clicked += () => LaunchGameMode("Online");
+            if (modeComputerBtn != null) modeComputerBtn.clicked += () => LaunchGameMode("Vs Computer");
+            if (modeFriendsBtn != null) modeFriendsBtn.clicked += () => LaunchGameMode("With Friends");
+            if (homeTutorialBtn != null) homeTutorialBtn.clicked += OnTutorialCalloutClicked;
 
-            // 3. Bottom Nav Tabs
-            navPlayBtn = rootElement.Q<Button>("nav-play-btn");
-            navLeaderboardBtn = rootElement.Q<Button>("nav-leaderboard-btn");
-            navRewardsBtn = rootElement.Q<Button>("nav-rewards-btn");
-            navShopBtn = rootElement.Q<Button>("nav-shop-btn");
-            navStatsBtn = rootElement.Q<Button>("nav-stats-btn");
-
-            if (navPlayBtn != null) navPlayBtn.clicked += HideAllModals;
-            if (navLeaderboardBtn != null) navLeaderboardBtn.clicked += OnLeaderboardButtonClicked;
-            if (navRewardsBtn != null) navRewardsBtn.clicked += OnDailyRewardsButtonClicked;
-            if (navShopBtn != null) navShopBtn.clicked += OnShopButtonClicked;
-            if (navStatsBtn != null) navStatsBtn.clicked += OnProfileButtonClicked;
-
-            // 4. Modals
+            // 3. Profile Modal
             profileStatsModal = rootElement.Q<VisualElement>("profile-stats-modal");
+            modalPlayerName = rootElement.Q<Label>("modal-player-name");
+            modalPlayerLevel = rootElement.Q<Label>("modal-player-level");
             profileCloseBtn = rootElement.Q<Button>("profile-close-btn");
+
             if (profileCloseBtn != null) profileCloseBtn.clicked += HideAllModals;
 
-            leaderboardModal = rootElement.Q<VisualElement>("leaderboard-modal");
-            leaderboardCloseBtn = rootElement.Q<Button>("leaderboard-close-btn");
-            if (leaderboardCloseBtn != null) leaderboardCloseBtn.clicked += HideAllModals;
-
-            dailyRewardsModal = rootElement.Q<VisualElement>("daily-rewards-modal");
-            claimDailyRewardBtn = rootElement.Q<Button>("claim-daily-reward-btn");
-            dailyRewardsCloseBtn = rootElement.Q<Button>("daily-rewards-close-btn");
-            if (claimDailyRewardBtn != null) claimDailyRewardBtn.clicked += OnClaimDailyRewardClicked;
-            if (dailyRewardsCloseBtn != null) dailyRewardsCloseBtn.clicked += HideAllModals;
-
-            shopModal = rootElement.Q<VisualElement>("shop-modal");
-            themeTileIvoryBtn = rootElement.Q<Button>("theme-tile-ivory-btn");
-            themeTileObsidianBtn = rootElement.Q<Button>("theme-tile-obsidian-btn");
-            themeTileGoldBtn = rootElement.Q<Button>("theme-tile-gold-btn");
-            themeFeltGreenBtn = rootElement.Q<Button>("theme-felt-green-btn");
-            themeFeltBlueBtn = rootElement.Q<Button>("theme-felt-blue-btn");
-            themeFeltRubyBtn = rootElement.Q<Button>("theme-felt-ruby-btn");
-            shopCloseBtn = rootElement.Q<Button>("shop-close-btn");
-
-            if (themeTileIvoryBtn != null) themeTileIvoryBtn.clicked += () => EquipTileTheme("Ivory");
-            if (themeTileObsidianBtn != null) themeTileObsidianBtn.clicked += () => EquipTileTheme("Obsidian");
-            if (themeTileGoldBtn != null) themeTileGoldBtn.clicked += () => EquipTileTheme("Gold");
-            if (themeFeltGreenBtn != null) themeFeltGreenBtn.clicked += () => EquipFeltTheme("Green");
-            if (themeFeltBlueBtn != null) themeFeltBlueBtn.clicked += () => EquipFeltTheme("Blue");
-            if (themeFeltRubyBtn != null) themeFeltRubyBtn.clicked += () => EquipFeltTheme("Ruby");
-            if (shopCloseBtn != null) shopCloseBtn.clicked += HideAllModals;
-
+            // 4. Settings Modal
             homeSettingsModal = rootElement.Q<VisualElement>("home-settings-modal");
             homeSettingsMusicBtn = rootElement.Q<Button>("home-settings-music-btn");
             homeSettingsMusicTxt = rootElement.Q<Label>("home-settings-music-txt");
@@ -278,7 +205,7 @@ namespace Dominoes
             if (homeSettingsCloseBtn != null) homeSettingsCloseBtn.clicked += HideAllModals;
 
             ApplySafeArea();
-            RefreshCurrenciesUI();
+            RefreshProfileUI();
         }
 
         private void OnRootGeometryChanged(GeometryChangedEvent evt)
@@ -301,10 +228,10 @@ namespace Dominoes
             float topPercent = ((screenH - safeArea.yMax) / screenH) * 100f;
             float bottomPercent = (safeArea.yMin / screenH) * 100f;
 
-            safeContent.style.paddingLeft = Length.Percent(Mathf.Max(2.5f, leftPercent));
-            safeContent.style.paddingRight = Length.Percent(Mathf.Max(2.5f, rightPercent));
-            safeContent.style.paddingTop = Length.Percent(Mathf.Max(3f, topPercent));
-            safeContent.style.paddingBottom = Length.Percent(Mathf.Max(2f, bottomPercent));
+            safeContent.style.paddingLeft = Length.Percent(Mathf.Max(3f, leftPercent));
+            safeContent.style.paddingRight = Length.Percent(Mathf.Max(3f, rightPercent));
+            safeContent.style.paddingTop = Length.Percent(Mathf.Max(3.5f, topPercent));
+            safeContent.style.paddingBottom = Length.Percent(Mathf.Max(2.5f, bottomPercent));
         }
 
         private void UnregisterUICallbacks()
@@ -313,6 +240,12 @@ namespace Dominoes
             {
                 rootElement.UnregisterCallback<GeometryChangedEvent>(OnRootGeometryChanged);
             }
+
+            if (hamburgerButton != null) hamburgerButton.clicked -= OnSettingsButtonClicked;
+            if (profileButton != null) profileButton.clicked -= OnProfileButtonClicked;
+
+            if (profileCloseBtn != null) profileCloseBtn.clicked -= HideAllModals;
+            if (homeSettingsCloseBtn != null) homeSettingsCloseBtn.clicked -= HideAllModals;
 
             safeContent = null;
             rootElement = null;
@@ -335,11 +268,10 @@ namespace Dominoes
             }
         }
 
-        public void RefreshCurrenciesUI()
+        public void RefreshProfileUI()
         {
-            if (coinsAmountLabel != null) coinsAmountLabel.text = $"{coins:N0}";
-            if (gemsAmountLabel != null) gemsAmountLabel.text = $"{gems:N0}";
             if (profileNameLabel != null) profileNameLabel.text = playerName;
+            if (modalPlayerName != null) modalPlayerName.text = playerName;
         }
 
         #region Game Mode Launches
@@ -367,31 +299,25 @@ namespace Dominoes
             }
         }
 
+        private void OnTutorialCalloutClicked()
+        {
+            DominoAudioManager.Instance?.PlayClick();
+            DominoHapticsManager.TriggerLightTap();
+            HideAllModals();
+
+            DominoTutorialController.ResetTutorial();
+            LaunchGameMode("Tutorial Practice");
+        }
+
         #endregion
 
-        #region Modals & Tabs
+        #region Modals
 
         public void HideAllModals()
         {
             DominoAudioManager.Instance?.PlayClick();
             if (profileStatsModal != null) profileStatsModal.style.display = DisplayStyle.None;
-            if (leaderboardModal != null) leaderboardModal.style.display = DisplayStyle.None;
-            if (dailyRewardsModal != null) dailyRewardsModal.style.display = DisplayStyle.None;
-            if (shopModal != null) shopModal.style.display = DisplayStyle.None;
             if (homeSettingsModal != null) homeSettingsModal.style.display = DisplayStyle.None;
-
-            UpdateNavTabs(navPlayBtn);
-        }
-
-        private void UpdateNavTabs(Button activeBtn)
-        {
-            if (navPlayBtn != null) navPlayBtn.RemoveFromClassList("nav-tab-btn--active");
-            if (navLeaderboardBtn != null) navLeaderboardBtn.RemoveFromClassList("nav-tab-btn--active");
-            if (navRewardsBtn != null) navRewardsBtn.RemoveFromClassList("nav-tab-btn--active");
-            if (navShopBtn != null) navShopBtn.RemoveFromClassList("nav-tab-btn--active");
-            if (navStatsBtn != null) navStatsBtn.RemoveFromClassList("nav-tab-btn--active");
-
-            if (activeBtn != null) activeBtn.AddToClassList("nav-tab-btn--active");
         }
 
         private void OnProfileButtonClicked()
@@ -399,31 +325,6 @@ namespace Dominoes
             DominoAudioManager.Instance?.PlayClick();
             HideAllModals();
             if (profileStatsModal != null) profileStatsModal.style.display = DisplayStyle.Flex;
-            UpdateNavTabs(navStatsBtn);
-        }
-
-        private void OnLeaderboardButtonClicked()
-        {
-            DominoAudioManager.Instance?.PlayClick();
-            HideAllModals();
-            if (leaderboardModal != null) leaderboardModal.style.display = DisplayStyle.Flex;
-            UpdateNavTabs(navLeaderboardBtn);
-        }
-
-        private void OnDailyRewardsButtonClicked()
-        {
-            DominoAudioManager.Instance?.PlayClick();
-            HideAllModals();
-            if (dailyRewardsModal != null) dailyRewardsModal.style.display = DisplayStyle.Flex;
-            UpdateNavTabs(navRewardsBtn);
-        }
-
-        private void OnShopButtonClicked()
-        {
-            DominoAudioManager.Instance?.PlayClick();
-            HideAllModals();
-            if (shopModal != null) shopModal.style.display = DisplayStyle.Flex;
-            UpdateNavTabs(navShopBtn);
         }
 
         private void OnSettingsButtonClicked()
@@ -432,43 +333,6 @@ namespace Dominoes
             HideAllModals();
             UpdateSettingsUI();
             if (homeSettingsModal != null) homeSettingsModal.style.display = DisplayStyle.Flex;
-        }
-
-        private void OnClaimDailyRewardClicked()
-        {
-            coins += 1000;
-            SaveCurrencies();
-            RefreshCurrenciesUI();
-
-            DominoAudioManager.Instance?.PlayWin();
-            DominoHapticsManager.TriggerWinCelebration();
-
-            if (claimDailyRewardBtn != null)
-            {
-                claimDailyRewardBtn.text = "CLAIMED! ✓";
-                claimDailyRewardBtn.SetEnabled(false);
-            }
-
-            if (dailyBannerSubtitle != null)
-            {
-                dailyBannerSubtitle.text = "Reward Claimed! Next in 24h";
-            }
-        }
-
-        private void EquipTileTheme(string theme)
-        {
-            DominoAudioManager.Instance?.PlayClick();
-            PlayerPrefs.SetString(PrefTileTheme, theme);
-            PlayerPrefs.Save();
-            Debug.Log($"[DominoHomeScreenController] Equipped Tile Theme: {theme}");
-        }
-
-        private void EquipFeltTheme(string theme)
-        {
-            DominoAudioManager.Instance?.PlayClick();
-            PlayerPrefs.SetString(PrefFeltTheme, theme);
-            PlayerPrefs.Save();
-            Debug.Log($"[DominoHomeScreenController] Equipped Table Felt Theme: {theme}");
         }
 
         private void UpdateSettingsUI()
@@ -548,7 +412,7 @@ namespace Dominoes
             {
                 rootElement.style.display = DisplayStyle.Flex;
                 HideAllModals();
-                RefreshCurrenciesUI();
+                RefreshProfileUI();
                 ApplySafeArea();
             }
 

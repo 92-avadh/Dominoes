@@ -49,6 +49,9 @@ ehthumbs.db
 *.pidb
 *.booproj
 *.svd
-*.pdb
-*.opendb
 *.VC.db
+
+# Unity Native Build Artifacts & Tools
+/.utmp/
+/graphify-out/
+

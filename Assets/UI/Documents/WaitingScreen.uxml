@@ -7,87 +7,132 @@
     editor-extension-mode="False">
     <ui:Style src="../Styles/WaitingScreen.uss" />
 
-    <!-- Starts hidden by default (display: none) to prevent overlaying HomeScreen before matchmaking -->
+    <!-- Pure Flexbox Waiting Root (Dynamic VS Matchmaking Arena) -->
     <ui:VisualElement name="waiting-root" class="waiting-root" style="display: none;">
-        <!-- Header Section -->
-        <ui:VisualElement name="waiting-header" class="waiting-header">
-            <ui:Label name="waiting-eyebrow" class="waiting-eyebrow" text="• QUICK MATCH •" />
-            <ui:Label name="waiting-title" class="waiting-title" text="Finding Players" />
-            <ui:Label name="waiting-subtitle" class="waiting-subtitle" text="Classic Dominoes • 4 Players" />
-        </ui:VisualElement>
+        <ui:VisualElement name="safe-content" class="safe-content">
+            
+            <!-- 1. TOP HEADER: Metallic Ribbon with Golden 3D "VS" Crest -->
+            <ui:VisualElement class="vs-header-ribbon">
+                <ui:VisualElement class="vs-mode-badge-left">
+                    <ui:Label class="vs-mode-badge-text" text="🁡" />
+                </ui:VisualElement>
 
-        <!-- Main Card Section -->
-        <ui:VisualElement name="waiting-card" class="waiting-card">
-            <!-- Center Domino Radar Graphic -->
-            <ui:VisualElement name="radar-container" class="radar-container">
-                <ui:VisualElement name="radar-outer-ring" class="radar-outer-ring">
-                    <ui:VisualElement name="radar-inner-ring" class="radar-inner-ring">
-                        <ui:VisualElement name="radar-center-icon" class="radar-center-icon">
-                            <ui:VisualElement class="domino-pip" />
-                            <ui:VisualElement class="domino-divider" />
-                            <ui:VisualElement class="domino-pip" />
+                <ui:VisualElement class="vs-crest-wrap">
+                    <ui:Label class="vs-crest-text" text="VS" />
+                    <ui:Label name="waiting-subtitle" class="vs-mode-title" text="CLASSIC DOMINOES" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="vs-mode-badge-right">
+                    <ui:Label class="vs-mode-badge-text" text="🁡" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- 2. DYNAMIC VS BATTLE ARENA (Bottom-Left Cyan [YOU] vs Top-Right Crimson [OPPONENTS]) -->
+            <ui:VisualElement class="vs-arena-container">
+                
+                <!-- TOP-RIGHT: OPPONENTS SECTOR (Crimson Energy Zone) -->
+                <ui:VisualElement class="vs-opponents-sector">
+                    
+                    <!-- Opponent Slot 1 -->
+                    <ui:VisualElement name="slot-1" class="vs-avatar-slot vs-avatar-slot--searching">
+                        <ui:VisualElement class="vs-avatar-ring vs-avatar-ring--red">
+                            <ui:VisualElement name="slot-avatar-1" class="vs-avatar-img vs-avatar-img--opp1" />
+                            <ui:VisualElement name="slot-radar-1" class="vs-radar-spinner" />
                         </ui:VisualElement>
+                        <ui:VisualElement class="vs-name-pill vs-name-pill--red">
+                            <ui:Label name="slot-name-1" class="vs-name-text" text="Searching..." />
+                        </ui:VisualElement>
+                        <ui:Label name="slot-status-1" class="vs-status-pill vs-status-pill--searching" text="SEARCHING" />
+                    </ui:VisualElement>
+
+                    <!-- Opponent Slot 2 -->
+                    <ui:VisualElement name="slot-2" class="vs-avatar-slot vs-avatar-slot--searching">
+                        <ui:VisualElement class="vs-avatar-ring vs-avatar-ring--red">
+                            <ui:VisualElement name="slot-avatar-2" class="vs-avatar-img vs-avatar-img--opp2" />
+                            <ui:VisualElement name="slot-radar-2" class="vs-radar-spinner" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="vs-name-pill vs-name-pill--red">
+                            <ui:Label name="slot-name-2" class="vs-name-text" text="Searching..." />
+                        </ui:VisualElement>
+                        <ui:Label name="slot-status-2" class="vs-status-pill vs-status-pill--searching" text="SEARCHING" />
+                    </ui:VisualElement>
+
+                    <!-- Opponent Slot 3 -->
+                    <ui:VisualElement name="slot-3" class="vs-avatar-slot vs-avatar-slot--searching">
+                        <ui:VisualElement class="vs-avatar-ring vs-avatar-ring--red">
+                            <ui:VisualElement name="slot-avatar-3" class="vs-avatar-img vs-avatar-img--opp3" />
+                            <ui:VisualElement name="slot-radar-3" class="vs-radar-spinner" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="vs-name-pill vs-name-pill--red">
+                            <ui:Label name="slot-name-3" class="vs-name-text" text="Searching..." />
+                        </ui:VisualElement>
+                        <ui:Label name="slot-status-3" class="vs-status-pill vs-status-pill--searching" text="SEARCHING" />
+                    </ui:VisualElement>
+
+                </ui:VisualElement>
+
+                <!-- CENTER FLOATING MATCH STATUS & COUNTDOWN -->
+                <ui:VisualElement class="vs-center-status-card">
+                    <ui:Label name="waiting-title" class="vs-status-eyebrow" text="FINDING PLAYERS" />
+                    <ui:Label name="countdown-label" class="vs-countdown-hero" text="Starting in 15" />
+                    <ui:Label name="player-count-label" class="vs-players-ready-text" text="Players Ready: 1 / 4" />
+                </ui:VisualElement>
+
+                <!-- BOTTOM-LEFT: HUMAN PLAYER SECTOR (Cyan/Blue Energy Zone) -->
+                <ui:VisualElement class="vs-human-sector">
+                    <ui:VisualElement name="slot-0" class="vs-avatar-slot vs-avatar-slot--human">
+                        <ui:VisualElement class="vs-avatar-ring vs-avatar-ring--blue">
+                            <ui:VisualElement class="vs-avatar-img vs-avatar-img--you" />
+                            <ui:VisualElement class="vs-star-level">
+                                <ui:Label class="vs-star-num" text="1" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="vs-name-pill vs-name-pill--blue">
+                            <ui:Label name="slot-name-0" class="vs-name-text" text="Player 1 (You)" />
+                        </ui:VisualElement>
+                        <ui:Label name="slot-status-0" class="vs-status-pill vs-status-pill--ready" text="READY" />
                     </ui:VisualElement>
                 </ui:VisualElement>
+
             </ui:VisualElement>
 
-            <!-- Status & Countdown Info -->
-            <ui:VisualElement name="status-container" class="status-container">
-                <ui:Label name="countdown-label" class="countdown-label" text="Starting in 15" />
-                <ui:Label name="waiting-message-label" class="waiting-message-label" text="Waiting for more players..." />
+            <!-- 3. FOOTER: Cancel Match Button -->
+            <ui:VisualElement class="waiting-footer">
+                <ui:Button name="leave-button" class="vs-cancel-btn" text="Cancel Match" />
             </ui:VisualElement>
 
-            <!-- Player Slots Container (4 Slots) -->
-            <ui:VisualElement name="player-slots-container" class="player-slots-container">
-                <ui:Label name="player-count-label" class="player-count-label" text="Players Ready: 1 / 4" />
-
-                <ui:VisualElement name="player-slot-list" class="player-slot-list">
-                    <ui:VisualElement name="slot-0" class="player-slot player-slot--filled">
-                        <ui:VisualElement class="slot-avatar slot-avatar--you" />
-                        <ui:Label name="slot-name-0" class="slot-name" text="You (Player 1)" />
-                        <ui:Label name="slot-status-0" class="slot-status slot-status--ready" text="READY" />
-                    </ui:VisualElement>
-
-                    <ui:VisualElement name="slot-1" class="player-slot">
-                        <ui:VisualElement class="slot-avatar" />
-                        <ui:Label name="slot-name-1" class="slot-name" text="Waiting..." />
-                        <ui:Label name="slot-status-1" class="slot-status" text="EMPTY" />
-                    </ui:VisualElement>
-
-                    <ui:VisualElement name="slot-2" class="player-slot">
-                        <ui:VisualElement class="slot-avatar" />
-                        <ui:Label name="slot-name-2" class="slot-name" text="Waiting..." />
-                        <ui:Label name="slot-status-2" class="slot-status" text="EMPTY" />
-                    </ui:VisualElement>
-
-                    <ui:VisualElement name="slot-3" class="player-slot">
-                        <ui:VisualElement class="slot-avatar" />
-                        <ui:Label name="slot-name-3" class="slot-name" text="Waiting..." />
-                        <ui:Label name="slot-status-3" class="slot-status" text="EMPTY" />
-                    </ui:VisualElement>
-                </ui:VisualElement>
-            </ui:VisualElement>
         </ui:VisualElement>
 
-        <!-- Footer / Leave Button -->
-        <ui:VisualElement name="waiting-footer" class="waiting-footer">
-            <ui:Button name="leave-button" class="leave-button" text="Cancel Match" />
-        </ui:VisualElement>
-
-        <!-- Leave Queue Confirmation Alert Dialog -->
+        <!-- 4. ALERT CONFIRMATION MODAL (Matching Image 3: Broken Domino, Green Felt, Gold Bevels, Red Exit & Green Play) -->
         <ui:VisualElement name="leave-confirm-modal" class="alert-dialog-overlay" style="display: none;">
             <ui:VisualElement name="leave-modal-backdrop" class="alert-dialog-backdrop" />
-            <ui:VisualElement name="leave-modal-card" class="alert-dialog-card">
-                <ui:VisualElement class="alert-dialog-header">
-                    <ui:Label class="alert-dialog-eyebrow" text="• CONFIRMATION •" />
-                    <ui:Label class="alert-dialog-title" text="CANCEL MATCHMAKING?" />
-                    <ui:Label class="alert-dialog-desc" text="Are you sure you want to leave the queue and return to the main menu?" />
+            
+            <ui:VisualElement name="leave-modal-card" class="alert-felt-card">
+                
+                <!-- Close X Button on Top Right -->
+                <ui:Button name="alert-close-x-btn" class="alert-close-x-btn">
+                    <ui:Label class="alert-close-x-icon" text="✕" />
+                </ui:Button>
+
+                <!-- Top Gold-Framed Header Tab -->
+                <ui:VisualElement class="alert-header-tab">
+                    <ui:Label class="alert-header-tab-text" text="Are You Sure?" />
                 </ui:VisualElement>
-                <ui:VisualElement class="alert-dialog-footer">
-                    <ui:Button name="leave-modal-cancel-btn" class="alert-dialog-btn alert-dialog-btn--cancel" text="STAY" />
-                    <ui:Button name="leave-modal-confirm-btn" class="alert-dialog-btn alert-dialog-btn--action" text="LEAVE" />
+
+                <!-- Center 3D Broken Domino Illustration -->
+                <ui:VisualElement class="alert-broken-domino-img" />
+
+                <!-- Confirmation Text -->
+                <ui:Label class="alert-message-text" text="Do you want to exit? You will lose the match." />
+
+                <!-- Two 3D Game Buttons (Red Exit & Green Play) -->
+                <ui:VisualElement class="alert-btn-row">
+                    <ui:Button name="leave-modal-confirm-btn" class="alert-game-btn alert-game-btn--exit" text="Exit" />
+                    <ui:Button name="leave-modal-cancel-btn" class="alert-game-btn alert-game-btn--play" text="Play" />
                 </ui:VisualElement>
+
             </ui:VisualElement>
         </ui:VisualElement>
+
     </ui:VisualElement>
 </ui:UXML>

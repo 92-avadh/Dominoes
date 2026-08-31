@@ -341,14 +341,16 @@ namespace Dominoes
             if (playAgainButton != null) playAgainButton.clicked += OnPlayAgainClicked;
             if (exitHomeButton != null) exitHomeButton.clicked += OnExitHomeClicked;
 
-            // 10. Leave Confirmation Modal
+            // 10. Leave Confirmation Modal (Image 3 Broken Domino Alert Modal)
             leaveConfirmModal = rootElement.Q<VisualElement>("leave-confirm-modal");
             leaveModalCard = rootElement.Q<VisualElement>("leave-modal-card");
             leaveModalCancelBtn = rootElement.Q<Button>("leave-modal-cancel-btn");
             leaveModalConfirmBtn = rootElement.Q<Button>("leave-modal-confirm-btn");
+            var alertCloseXBtn = rootElement.Q<Button>("alert-close-x-btn");
 
             if (leaveModalCancelBtn != null) leaveModalCancelBtn.clicked += HideLeaveConfirmation;
             if (leaveModalConfirmBtn != null) leaveModalConfirmBtn.clicked += OnConfirmLeaveClicked;
+            if (alertCloseXBtn != null) alertCloseXBtn.clicked += HideLeaveConfirmation;
 
             // 11. Bind Tutorial Controller
             tutorialController ??= new DominoTutorialController(this);
@@ -1643,16 +1645,18 @@ namespace Dominoes
 
                     if (resultTitle != null)
                     {
-                        resultTitle.text = isHumanWinner ? "VICTORY!" : "ROUND FINISHED";
+                        resultTitle.text = isHumanWinner ? "YOU WIN! 🏆" : "GOOD GAME!";
                     }
 
                     if (resultWinnerLabel != null)
                     {
-                        resultWinnerLabel.text = completion.Winner != null ? $"{completion.Winner.PlayerName} Wins the Round!" : "Blocked Game!";
+                        resultWinnerLabel.text = isHumanWinner
+                            ? "Excellent Play!"
+                            : (completion.Winner != null ? $"Winner: {completion.Winner.PlayerName} — Better luck next round" : "Blocked Game!");
                     }
 
                     // Score Count-Up Animation
-                    int targetScore = isHumanWinner ? 25 : 10;
+                    int targetScore = isHumanWinner ? 125 : 87;
                     if (animatedScoreLabel != null)
                     {
                         if (scoreCountCoroutine != null) StopCoroutine(scoreCountCoroutine);
@@ -1809,26 +1813,18 @@ namespace Dominoes
             Rect safeArea = Screen.safeArea;
             if (Screen.width <= 0 || Screen.height <= 0) return;
 
-            float topInsetScreen = Screen.height - (safeArea.y + safeArea.height);
-            float bottomInsetScreen = safeArea.y;
-            float leftInsetScreen = safeArea.x;
-            float rightInsetScreen = Screen.width - (safeArea.x + safeArea.width);
+            float screenW = Screen.width;
+            float screenH = Screen.height;
 
-            float panelHeight = rootElement.layout.height;
-            float panelWidth = rootElement.layout.width;
+            float leftPercent = (safeArea.xMin / screenW) * 100f;
+            float rightPercent = ((screenW - safeArea.xMax) / screenW) * 100f;
+            float topPercent = ((screenH - safeArea.yMax) / screenH) * 100f;
+            float bottomPercent = (safeArea.yMin / screenH) * 100f;
 
-            float scaleY = (panelHeight > 0f) ? (panelHeight / Screen.height) : 1f;
-            float scaleX = (panelWidth > 0f) ? (panelWidth / Screen.width) : 1f;
-
-            float padTop = Mathf.Max(10f, topInsetScreen * scaleY);
-            float padBottom = Mathf.Max(10f, bottomInsetScreen * scaleY);
-            float padLeft = Mathf.Max(10f, leftInsetScreen * scaleX);
-            float padRight = Mathf.Max(10f, rightInsetScreen * scaleX);
-
-            safeContent.style.paddingTop = padTop;
-            safeContent.style.paddingBottom = padBottom;
-            safeContent.style.paddingLeft = padLeft;
-            safeContent.style.paddingRight = padRight;
+            safeContent.style.paddingLeft = Length.Percent(Mathf.Max(2.5f, leftPercent));
+            safeContent.style.paddingRight = Length.Percent(Mathf.Max(2.5f, rightPercent));
+            safeContent.style.paddingTop = Length.Percent(Mathf.Max(3f, topPercent));
+            safeContent.style.paddingBottom = Length.Percent(Mathf.Max(2f, bottomPercent));
         }
 
         public void HideGameScreen()

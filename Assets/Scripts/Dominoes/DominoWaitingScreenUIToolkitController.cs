@@ -8,7 +8,7 @@ namespace Dominoes
     /// <summary>
     /// UI Toolkit presentation controller for the Dominoes WaitingScreen (WaitingScreen.uxml).
     /// Bridges the UI Toolkit visual elements to the existing DominoMatchManager and DominoWaitingScreenController.
-    /// Guarantees that HomeScreen and WaitingScreen are never visible simultaneously.
+    /// Features dynamic VS arena layout and Image 3 commercial alert confirmation modal.
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(UIDocument))]
@@ -27,17 +27,19 @@ namespace Dominoes
 
         // Visual Elements
         private VisualElement rootElement;
+        private VisualElement safeContent;
         private Label countdownLabel;
         private Label waitingMessageLabel;
         private Label playerCountLabel;
         private Label waitingTitleLabel;
         private Button leaveButton;
 
-        // Leave Confirmation Modal
+        // Leave Confirmation Modal (Image 3 Alert Modal)
         private VisualElement leaveConfirmModal;
         private VisualElement leaveModalCard;
         private Button leaveModalCancelBtn;
         private Button leaveModalConfirmBtn;
+        private Button alertCloseXBtn;
 
         private readonly VisualElement[] playerSlots = new VisualElement[4];
         private readonly Label[] playerSlotNames = new Label[4];
@@ -147,24 +149,57 @@ namespace Dominoes
 
                 if (playerSlots[i] != null)
                 {
-                    playerSlotAvatars[i] = playerSlots[i].Q<VisualElement>(className: "slot-avatar");
+                    playerSlotAvatars[i] = playerSlots[i].Q<VisualElement>($"slot-avatar-{i}") ?? playerSlots[i].Q<VisualElement>(className: "vs-avatar-img");
                 }
             }
 
-            // Leave Confirmation Modal
+            // Leave Confirmation Modal (Matching Image 3)
             leaveConfirmModal = rootElement.Q<VisualElement>("leave-confirm-modal");
             leaveModalCard = rootElement.Q<VisualElement>("leave-modal-card");
             leaveModalCancelBtn = rootElement.Q<Button>("leave-modal-cancel-btn");
             leaveModalConfirmBtn = rootElement.Q<Button>("leave-modal-confirm-btn");
+            alertCloseXBtn = rootElement.Q<Button>("alert-close-x-btn");
+
+            safeContent = rootElement.Q<VisualElement>("safe-content") ?? rootElement;
+            rootElement.RegisterCallback<GeometryChangedEvent>(OnRootGeometryChanged);
 
             if (leaveModalCancelBtn != null) leaveModalCancelBtn.clicked += HideLeaveConfirmation;
             if (leaveModalConfirmBtn != null) leaveModalConfirmBtn.clicked += OnConfirmLeaveClicked;
+            if (alertCloseXBtn != null) alertCloseXBtn.clicked += HideLeaveConfirmation;
 
             if (leaveButton != null && !isLeaveCallbackRegistered)
             {
                 leaveButton.clicked += OnLeaveButtonClicked;
                 isLeaveCallbackRegistered = true;
             }
+
+            ApplySafeArea();
+        }
+
+        private void OnRootGeometryChanged(GeometryChangedEvent evt)
+        {
+            ApplySafeArea();
+        }
+
+        private void ApplySafeArea()
+        {
+            if (safeContent == null) return;
+
+            Rect safeArea = Screen.safeArea;
+            float screenW = Screen.width;
+            float screenH = Screen.height;
+
+            if (screenW <= 0 || screenH <= 0) return;
+
+            float leftPercent = (safeArea.xMin / screenW) * 100f;
+            float rightPercent = ((screenW - safeArea.xMax) / screenW) * 100f;
+            float topPercent = ((screenH - safeArea.yMax) / screenH) * 100f;
+            float bottomPercent = (safeArea.yMin / screenH) * 100f;
+
+            safeContent.style.paddingLeft = Length.Percent(Mathf.Max(3f, leftPercent));
+            safeContent.style.paddingRight = Length.Percent(Mathf.Max(3f, rightPercent));
+            safeContent.style.paddingTop = Length.Percent(Mathf.Max(3.5f, topPercent));
+            safeContent.style.paddingBottom = Length.Percent(Mathf.Max(2.5f, bottomPercent));
         }
 
         /// <summary>
@@ -180,17 +215,25 @@ namespace Dominoes
 
             if (leaveModalCancelBtn != null) leaveModalCancelBtn.clicked -= HideLeaveConfirmation;
             if (leaveModalConfirmBtn != null) leaveModalConfirmBtn.clicked -= OnConfirmLeaveClicked;
+            if (alertCloseXBtn != null) alertCloseXBtn.clicked -= HideLeaveConfirmation;
 
             leaveConfirmModal = null;
             leaveModalCard = null;
             leaveModalCancelBtn = null;
             leaveModalConfirmBtn = null;
+            alertCloseXBtn = null;
 
             countdownLabel = null;
             waitingMessageLabel = null;
             playerCountLabel = null;
             waitingTitleLabel = null;
             leaveButton = null;
+            if (rootElement != null)
+            {
+                rootElement.UnregisterCallback<GeometryChangedEvent>(OnRootGeometryChanged);
+            }
+
+            safeContent = null;
             rootElement = null;
         }
 
@@ -248,6 +291,7 @@ namespace Dominoes
         private void OnLeaveButtonClicked()
         {
             DominoAudioManager.Instance?.PlayClick();
+            DominoHapticsManager.TriggerLightTap();
             ShowLeaveConfirmation();
         }
 
@@ -256,31 +300,23 @@ namespace Dominoes
             if (leaveConfirmModal != null)
             {
                 leaveConfirmModal.style.display = DisplayStyle.Flex;
-                leaveConfirmModal.schedule.Execute(() =>
-                {
-                    leaveConfirmModal.AddToClassList("alert-dialog-overlay--visible");
-                    leaveModalCard?.AddToClassList("alert-dialog-card--visible");
-                });
             }
         }
 
         public void HideLeaveConfirmation()
         {
             DominoAudioManager.Instance?.PlayClick();
+            DominoHapticsManager.TriggerLightTap();
             if (leaveConfirmModal != null)
             {
-                leaveConfirmModal.RemoveFromClassList("alert-dialog-overlay--visible");
-                leaveModalCard?.RemoveFromClassList("alert-dialog-card--visible");
-                leaveConfirmModal.schedule.Execute(() =>
-                {
-                    leaveConfirmModal.style.display = DisplayStyle.None;
-                }).StartingIn(200);
+                leaveConfirmModal.style.display = DisplayStyle.None;
             }
         }
 
         private void OnConfirmLeaveClicked()
         {
             DominoAudioManager.Instance?.PlayClick();
+            DominoHapticsManager.TriggerLightTap();
             HideLeaveConfirmation();
             ExecuteLeave();
         }
@@ -404,52 +440,40 @@ namespace Dominoes
                 if (i < activeCount && players != null)
                 {
                     var player = players[i];
-                    slotElement.AddToClassList("player-slot--filled");
+                    slotElement.RemoveFromClassList("vs-avatar-slot--searching");
 
                     string displayName = !string.IsNullOrEmpty(player.PlayerName)
                         ? player.PlayerName
-                        : (player.IsHuman ? $"Player {player.Id} (You)" : $"Bot {player.Id}");
+                        : (player.IsHuman ? "Player 1 (You)" : $"Opponent {player.Id}");
 
                     if (nameLabel != null) nameLabel.text = displayName;
                     if (statusLabel != null)
                     {
                         statusLabel.text = "READY";
-                        statusLabel.AddToClassList("slot-status--ready");
+                        statusLabel.AddToClassList("vs-status-pill--ready");
+                        statusLabel.RemoveFromClassList("vs-status-pill--searching");
                     }
 
                     if (avatarElement != null)
                     {
-                        avatarElement.RemoveFromClassList("slot-avatar--you");
-                        avatarElement.RemoveFromClassList("slot-avatar--0");
-                        avatarElement.RemoveFromClassList("slot-avatar--1");
-                        avatarElement.RemoveFromClassList("slot-avatar--2");
-
-                        if (player.IsHuman)
-                        {
-                            avatarElement.AddToClassList("slot-avatar--you");
-                        }
-                        else
-                        {
-                            int opponentIndex = i > 0 ? (i - 1) % 3 : 0;
-                            avatarElement.AddToClassList($"slot-avatar--{opponentIndex}");
-                        }
+                        avatarElement.style.opacity = 1f;
                     }
                 }
                 else
                 {
-                    slotElement.RemoveFromClassList("player-slot--filled");
+                    slotElement.AddToClassList("vs-avatar-slot--searching");
 
-                    if (nameLabel != null) nameLabel.text = "Waiting for player...";
+                    if (nameLabel != null) nameLabel.text = "Searching...";
                     if (statusLabel != null)
                     {
-                        statusLabel.text = "EMPTY";
-                        statusLabel.RemoveFromClassList("slot-status--ready");
+                        statusLabel.text = "SEARCHING";
+                        statusLabel.RemoveFromClassList("vs-status-pill--ready");
+                        statusLabel.AddToClassList("vs-status-pill--searching");
                     }
 
                     if (avatarElement != null)
                     {
-                        avatarElement.RemoveFromClassList("slot-avatar--you");
-                        avatarElement.RemoveFromClassList("slot-avatar--bot");
+                        avatarElement.style.opacity = 0.45f;
                     }
                 }
             }
@@ -513,8 +537,6 @@ namespace Dominoes
 
             if (leaveConfirmModal != null)
             {
-                leaveConfirmModal.RemoveFromClassList("alert-dialog-overlay--visible");
-                leaveModalCard?.RemoveFromClassList("alert-dialog-card--visible");
                 leaveConfirmModal.style.display = DisplayStyle.None;
             }
         }
