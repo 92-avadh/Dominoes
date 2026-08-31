@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unity Dominoes - Mobile UI Sandbox</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="preview.css">
+</head>
+
+<body>
+
+    <!-- PREVIEW CONTROL HEADER -->
+    <header class="preview-header">
+        <div class="header-brand">
+            <span class="header-icon">🀁</span>
+            <div class="header-titles">
+                <h1>Unity Dominoes UI Sandbox</h1>
+                <p>Tropical Resort Theme & Mobile Viewport Controller</p>
+            </div>
+        </div>
+
+        <!-- Viewport Size Switcher -->
+        <div class="control-group">
+            <span class="control-label">VIEWPORT:</span>
+            <div class="btn-toggle-group" id="viewport-switcher">
+                <button class="preset-btn" data-width="320" data-height="568">320 × 568
+                    <small>(Compact)</small></button>
+                <button class="preset-btn active" data-width="360" data-height="800">360 × 800
+                    <small>(Android)</small></button>
+                <button class="preset-btn" data-width="390" data-height="844">390 × 844 <small>(iPhone)</small></button>
+                <button class="preset-btn" data-width="412" data-height="915">412 × 915 <small>(Large)</small></button>
+            </div>
+        </div>
+
+        <!-- Screen Switcher Buttons -->
+        <div class="control-group">
+            <span class="control-label">SCREEN:</span>
+            <div class="btn-toggle-group" id="screen-switcher">
+                <button class="screen-btn active" data-screen="home">HOME</button>
+                <button class="screen-btn" data-screen="waiting">WAITING</button>
+                <button class="screen-btn" data-screen="game">GAME</button>
+                <button class="screen-btn" data-screen="result">RESULT</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- DEVICE FRAME CONTAINER -->
+    <main class="device-viewport-wrapper">
+        <div class="device-frame" id="device-frame" style="width: 360px; height: 800px;">
+            <div class="device-speaker"></div>
+            <div class="device-camera"></div>
+
+            <div class="device-screen">
+
+                <!-- 1. HOME SCREEN (ACTIVE BY DEFAULT) -->
+                <section class="ui-screen screen-home active" id="screen-home">
+                    <div class="home-root">
+                        <div class="safe-content">
+                            <!-- Top Bar -->
+                            <div class="top-bar">
+                                <div class="hud-circle-btn" id="home-hamburger-btn">
+                                    <div class="hamburger-bar"></div>
+                                    <div class="hamburger-bar"></div>
+                                    <div class="hamburger-bar"></div>
+                                </div>
+
+                                <div class="hud-profile-capsule" id="home-profile-btn">
+                                    <div class="hud-avatar-frame">
+                                        <div class="hud-avatar-img"></div>
+                                        <div class="hud-level-star">
+                                            <span class="hud-level-number">1</span>
+                                        </div>
+                                    </div>
+                                    <div class="hud-profile-info">
+                                        <span class="hud-player-name">QuietSurgery</span>
+                                        <div class="hud-xp-track">
+                                            <div class="hud-xp-fill"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="hud-balance-spacer"></div>
+                            </div>
+
+                            <!-- Main Lobby Area -->
+                            <div class="main-lobby-area">
+                                <div class="brand-section">
+                                    <div class="brand-logo-crest">
+                                        <span class="brand-logo-text">DOMINOES</span>
+                                    </div>
+                                    <div class="brand-ribbon">
+                                        <span class="brand-ribbon-text">TROPICAL RESORT</span>
+                                    </div>
+                                </div>
+
+                                <!-- Stacked Mode Buttons -->
+                                <div class="mode-buttons-group">
+                                    <button class="game-mode-btn game-mode-btn--online" id="mode-online-btn">
+                                        <div class="btn-top-specular"></div>
+                                        <div class="mode-icon-badge mode-icon-badge--online">🌐</div>
+                                        <div class="mode-text-column">
+                                            <span class="mode-title-text">Play Online</span>
+                                            <span class="mode-subtitle-text">Multiplayer Matchmaking</span>
+                                        </div>
+                                        <div class="mode-play-pill">
+                                            <span class="mode-play-text">PLAY</span>
+                                        </div>
+                                    </button>
+
+                                    <button class="game-mode-btn game-mode-btn--computer" id="mode-computer-btn">
+                                        <div class="btn-top-specular"></div>
+                                        <div class="mode-icon-badge mode-icon-badge--computer">🤖</div>
+                                        <div class="mode-text-column">
+                                            <span class="mode-title-text">Vs Computer</span>
+                                            <span class="mode-subtitle-text">Practice Solo</span>
+                                        </div>
+                                        <div class="mode-play-pill">
+                                            <span class="mode-play-text">SOLO</span>
+                                        </div>
+                                    </button>
+
+                                    <button class="game-mode-btn game-mode-btn--friends" id="mode-friends-btn">
+                                        <div class="btn-top-specular"></div>
+                                        <div class="mode-icon-badge mode-icon-badge--friends">👥</div>
+                                        <div class="mode-text-column">
+                                            <span class="mode-title-text">Pass & Play</span>
+                                            <span class="mode-subtitle-text">Local Friends</span>
+                                        </div>
+                                        <div class="mode-play-pill">
+                                            <span class="mode-play-text">LOCAL</span>
+                                        </div>
+                                    </button>
+                                </div>
+
+                                <button class="tutorial-ribbon-btn">
+                                    <span class="tutorial-ribbon-icon">📖</span>
+                                    <span class="tutorial-ribbon-text">HOW TO PLAY DOMINOES</span>
+                                    <span class="tutorial-ribbon-arrow">➔</span>
+                                </button>
+
+                                <div class="scenery-spacer"></div>
+                            </div>
+                        </div>
+
+                        <!-- Profile Stats Modal -->
+                        <div class="home-modal hidden" id="profile-stats-modal">
+                            <div class="modal-backdrop"></div>
+                            <div class="modal-card">
+                                <span class="modal-eyebrow">PLAYER CARD</span>
+                                <h3 class="modal-title">Career Statistics</h3>
+
+                                <div class="modal-profile-header">
+                                    <div class="modal-avatar-lg"></div>
+                                    <div class="modal-profile-info">
+                                        <span class="modal-player-name">QuietSurgery</span>
+                                        <span class="modal-rank-tier">Beginner Domino Master</span>
+                                        <span class="modal-level-tag">Level 1 • 68% XP</span>
+                                    </div>
+                                </div>
+
+                                <div class="modal-stats-grid">
+                                    <div class="modal-stat-box">
+                                        <span class="modal-stat-val">24</span>
+                                        <span class="modal-stat-lbl">Played</span>
+                                    </div>
+                                    <div class="modal-stat-box">
+                                        <span class="modal-stat-val">18</span>
+                                        <span class="modal-stat-lbl">Victories</span>
+                                    </div>
+                                    <div class="modal-stat-box">
+                                        <span class="modal-stat-val">75%</span>
+                                        <span class="modal-stat-lbl">Win Rate</span>
+                                    </div>
+                                    <div class="modal-stat-box">
+                                        <span class="modal-stat-val">1,420</span>
+                                        <span class="modal-stat-lbl">Points</span>
+                                    </div>
+                                </div>
+
+                                <button class="modal-btn-primary" id="profile-close-btn">CLOSE PROFILE</button>
+                            </div>
+                        </div>
+
+                        <!-- Settings Modal -->
+                        <div class="home-modal hidden" id="home-settings-modal">
+                            <div class="modal-backdrop"></div>
+                            <div class="modal-card">
+                                <span class="modal-eyebrow">GAME SETTINGS</span>
+                                <h3 class="modal-title">Preferences</h3>
+
+                                <div class="settings-row">
+                                    <span class="settings-row-label">Sound Effects</span>
+                                    <button class="settings-toggle-btn">ON</button>
+                                </div>
+                                <div class="settings-row">
+                                    <span class="settings-row-label">Music</span>
+                                    <button class="settings-toggle-btn">ON</button>
+                                </div>
+                                <div class="settings-row">
+                                    <span class="settings-row-label">Vibration</span>
+                                    <button class="settings-toggle-btn">ON</button>
+                                </div>
+
+                                <button class="modal-btn-primary" id="home-settings-close-btn"
+                                    style="margin-top:12px;">SAVE & EXIT</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. WAITING SCREEN (MATCHMAKING) -->
+                <section class="ui-screen screen-waiting" id="screen-waiting">
+                    <div class="waiting-root">
+                        <div class="safe-content">
+                            <!-- VS Header Ribbon -->
+                            <div class="vs-header-ribbon">
+                                <div class="vs-mode-badge-left">🌐</div>
+                                <div class="vs-crest-wrap">
+                                    <span class="vs-crest-text">VS ARENA</span>
+                                    <span class="vs-mode-title">4-PLAYER MATCHMAKING</span>
+                                </div>
+                                <div class="vs-mode-badge-right">⚔️</div>
+                            </div>
+
+                            <!-- VS Arena Container -->
+                            <div class="vs-arena-container">
+                                <!-- Opponents Sector -->
+                                <div class="vs-opponents-sector">
+                                    <div class="vs-avatar-slot">
+                                        <div class="vs-avatar-ring">
+                                            <div class="vs-avatar-img vs-avatar-img--opp1"></div>
+                                            <div class="vs-star-level"><span class="vs-star-num">4</span></div>
+                                        </div>
+                                        <div class="vs-name-pill"><span class="vs-name-text">Elena</span></div>
+                                        <span class="vs-status-pill vs-status-pill--ready">READY</span>
+                                    </div>
+
+                                    <div class="vs-avatar-slot">
+                                        <div class="vs-avatar-ring">
+                                            <div class="vs-avatar-img vs-avatar-img--opp2"></div>
+                                            <div class="vs-star-level"><span class="vs-star-num">2</span></div>
+                                        </div>
+                                        <div class="vs-name-pill"><span class="vs-name-text">Marcus</span></div>
+                                        <span class="vs-status-pill vs-status-pill--ready">READY</span>
+                                    </div>
+
+                                    <div class="vs-avatar-slot">
+                                        <div class="vs-avatar-ring">
+                                            <div class="vs-avatar-img vs-avatar-img--opp3"></div>
+                                            <div class="vs-star-level"><span class="vs-star-num">5</span></div>
+                                        </div>
+                                        <div class="vs-name-pill"><span class="vs-name-text">Sophia</span></div>
+                                        <span class="vs-status-pill vs-status-pill--ready">READY</span>
+                                    </div>
+                                </div>
+
+                                <!-- Center Status Card -->
+                                <div class="vs-center-status-card">
+                                    <span class="vs-status-eyebrow">MATCHMAKING</span>
+                                    <span class="vs-countdown-hero">SEARCHING ●●</span>
+                                    <span class="vs-players-ready-text">3 / 4 Players Connected</span>
+                                </div>
+
+                                <!-- Human Sector -->
+                                <div class="vs-human-sector">
+                                    <div class="vs-avatar-slot">
+                                        <div class="vs-avatar-ring vs-avatar-ring--blue">
+                                            <div class="vs-avatar-img vs-avatar-img--you"></div>
+                                            <div class="vs-star-level"><span class="vs-star-num">1</span></div>
+                                        </div>
+                                        <div class="vs-name-pill vs-name-pill--blue"><span
+                                                class="vs-name-text">YOU</span></div>
+                                        <span class="vs-status-pill vs-status-pill--ready">READY</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Footer Cancel Button -->
+                            <div class="waiting-footer">
+                                <button class="vs-cancel-btn" id="leave-button">LEAVE MATCHMAKING</button>
+                            </div>
+                        </div>
+
+                        <!-- Leave Confirmation Modal -->
+                        <div class="alert-dialog-overlay hidden" id="leave-confirm-modal">
+                            <div class="alert-dialog-backdrop"></div>
+                            <div class="alert-felt-card">
+                                <button class="alert-close-x-btn" id="alert-close-x-btn">✕</button>
+                                <div class="alert-header-tab">
+                                    <span class="alert-header-tab-text">LEAVE MATCH?</span>
+                                </div>
+
+                                <div class="alert-broken-domino-img">💔</div>
+                                <p class="alert-message-text">Are you sure you want to exit matchmaking and return to
+                                    the main menu?</p>
+
+                                <div class="alert-btn-row">
+                                    <button class="alert-game-btn alert-game-btn--exit"
+                                        id="leave-modal-confirm-btn">YES, LEAVE</button>
+                                    <button class="alert-game-btn alert-game-btn--play"
+                                        id="leave-modal-cancel-btn">STAY</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. GAME SCREEN (TABLETOP) -->
+                <section class="ui-screen screen-game" id="screen-game">
+                    <div class="game-root">
+                        <div class="table-surface">
+                            <div class="safe-content">
+                                <!-- Top Bar -->
+                                <div class="top-bar">
+                                    <button class="top-bar-btn" id="game-menu-btn">☰</button>
+
+                                    <div class="top-bar-center">
+                                        <div class="top-bar-badge">
+                                            <span class="top-bar-title">MATCH IN PROGRESS</span>
+                                            <div class="top-bar-badge-divider"></div>
+                                            <span class="top-bar-subtitle">TARGET: 100 PTS</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="top-bar-right-group">
+                                        <button class="top-bar-btn">💡</button>
+                                    </div>
+                                </div>
+
+                                <!-- Opponents Bar -->
+                                <div class="opponents-bar">
+                                    <div class="opponent-card">
+                                        <div class="opponent-avatar-wrap">
+                                            <div class="opponent-avatar opponent-avatar--0"></div>
+                                        </div>
+                                        <div class="opponent-info">
+                                            <span class="opponent-name">Elena</span>
+                                            <div class="opponent-badge">
+                                                <div class="opponent-badge-icon"></div>
+                                                <span class="opponent-tile-count">5 tiles</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="opponent-card opponent-card--active">
+                                        <div class="opponent-avatar-wrap">
+                                            <div class="opponent-avatar opponent-avatar--1"></div>
+                                        </div>
+                                        <div class="opponent-info">
+                                            <span class="opponent-name">Marcus</span>
+                                            <div class="opponent-badge">
+                                                <div class="opponent-badge-icon"></div>
+                                                <span class="opponent-tile-count">4 tiles</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="opponent-card">
+                                        <div class="opponent-avatar-wrap">
+                                            <div class="opponent-avatar opponent-avatar--2"></div>
+                                        </div>
+                                        <div class="opponent-info">
+                                            <span class="opponent-name">Sophia</span>
+                                            <div class="opponent-badge">
+                                                <div class="opponent-badge-icon"></div>
+                                                <span class="opponent-tile-count">6 tiles</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Table Board Area -->
+                                <div class="board-area">
+                                    <div class="board-felt">
+                                        <!-- Boneyard Stack Button -->
+                                        <div class="boneyard-stack-btn boneyard-stack-btn--glowing">
+                                            <span class="boneyard-stack-icon">🎒</span>
+                                            <div class="boneyard-badge-wrap">
+                                                <span class="boneyard-badge-text">14</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Domino Board Chain -->
+                                        <div class="board-canvas">
+                                            <div class="board-domino-chain">
+                                                <div class="domino-board-tile">6 | 6</div>
+                                                <div class="domino-board-tile">6 | 2</div>
+                                                <div class="domino-board-tile">2 | 4</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Endpoint Dropzones -->
+                                        <div class="board-endpoint-dropzone board-endpoint-dropzone--left">
+                                            <span class="endpoint-dropzone-tag">LEFT</span>
+                                            <span class="endpoint-dropzone-val">6</span>
+                                        </div>
+
+                                        <div class="board-endpoint-dropzone board-endpoint-dropzone--right">
+                                            <span class="endpoint-dropzone-tag">RIGHT</span>
+                                            <span class="endpoint-dropzone-val">4</span>
+                                        </div>
+
+                                        <!-- Turn Guidance Bar -->
+                                        <div class="turn-guidance-bar">
+                                            <div class="turn-status-dot"></div>
+                                            <div class="turn-guidance-content">
+                                                <span class="turn-guidance-title">YOUR TURN</span>
+                                                <span class="turn-guidance-desc">Select a tile to play</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Floating Controls -->
+                                <div class="floating-controls-bar">
+                                    <button class="pass-btn-compact">PASS TURN</button>
+                                    <div class="hint-lamp-btn">
+                                        <span class="hint-lamp-icon">💡</span>
+                                        <span class="hint-lamp-label">HINT</span>
+                                    </div>
+                                </div>
+
+                                <!-- Player Domino Hand Area -->
+                                <div class="player-hand-area">
+                                    <div class="hand-header">
+                                        <span class="hand-header-title">YOUR HAND</span>
+                                        <span class="hand-header-count">7 TILES</span>
+                                    </div>
+                                    <div class="hand-scroll-view">
+                                        <div class="hand-tiles-container">
+                                            <div class="domino-tile-hand domino-tile-hand--playable">
+                                                <div class="domino-half-hand"><span class="pip-text">●●●<br>●●●</span>
+                                                </div>
+                                                <div class="domino-divider-hand"></div>
+                                                <div class="domino-half-hand"><span class="pip-text">●</span></div>
+                                            </div>
+                                            <div
+                                                class="domino-tile-hand domino-tile-hand--playable domino-tile-hand--selected">
+                                                <div class="domino-half-hand"><span class="pip-text">●●●<br>●●●</span>
+                                                </div>
+                                                <div class="domino-divider-hand"></div>
+                                                <div class="domino-half-hand"><span class="pip-text">●●●<br>●●●</span>
+                                                </div>
+                                            </div>
+                                            <div class="domino-tile-hand domino-tile-hand--unplayable">
+                                                <div class="domino-half-hand"><span class="pip-text">●●●</span></div>
+                                                <div class="domino-divider-hand"></div>
+                                                <div class="domino-half-hand"><span class="pip-text">●</span></div>
+                                            </div>
+                                            <div class="domino-tile-hand domino-tile-hand--unplayable">
+                                                <div class="domino-half-hand"><span class="pip-text">●●<br>●●</span>
+                                                </div>
+                                                <div class="domino-divider-hand"></div>
+                                                <div class="domino-half-hand"><span class="pip-text">●</span></div>
+                                            </div>
+                                            <div class="domino-tile-hand domino-tile-hand--unplayable">
+                                                <div class="domino-half-hand"><span class="pip-text">●●<br>●</span>
+                                                </div>
+                                                <div class="domino-divider-hand"></div>
+                                                <div class="domino-half-hand"><span class="pip-text">●</span></div>
+                                            </div>
+                                            <div class="domino-tile-hand domino-tile-hand--unplayable">
+                                                <div class="domino-half-hand"><span class="pip-text">●●<br>●●</span>
+                                                </div>
+                                                <div class="domino-divider-hand"></div>
+                                                <div class="domino-half-hand"><span class="pip-text">●</span></div>
+                                            </div>
+                                            <div class="domino-tile-hand domino-tile-hand--playable">
+                                                <div class="domino-half-hand"><span class="pip-text">●●<br>●</span>
+                                                </div>
+                                                <div class="domino-divider-hand"></div>
+                                                <div class="domino-half-hand"><span class="pip-text">●●<br>●</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. RESULT SCREEN (MODAL DIALOG OVERLAY) -->
+                <section class="ui-screen screen-result" id="screen-result">
+                    <div class="waiting-root">
+                        <div class="home-modal" style="display:flex;">
+                            <div class="modal-backdrop"></div>
+                            <div class="modal-card result-modal-card">
+                                <div class="result-trophy-badge">🏆</div>
+                                <span class="modal-eyebrow">MATCH COMPLETED</span>
+                                <h3 class="result-title">VICTORY!</h3>
+                                <p class="result-winner-text">You won the Dominoes Match</p>
+
+                                <div class="score-banner-box">
+                                    <span class="score-banner-title">TOTAL MATCH POINTS</span>
+                                    <span class="score-banner-number">+ 125 PTS</span>
+                                </div>
+
+                                <div class="result-scores-list">
+                                    <div class="result-score-item">
+                                        <span>1st. QuietSurgery (YOU)</span>
+                                        <span class="score-val">125 pts</span>
+                                    </div>
+                                    <div class="result-score-item">
+                                        <span>2nd. Marcus</span>
+                                        <span class="score-val">42 pts</span>
+                                    </div>
+                                    <div class="result-score-item">
+                                        <span>3rd. Elena</span>
+                                        <span class="score-val">18 pts</span>
+                                    </div>
+                                </div>
+
+                                <div class="result-actions-row">
+                                    <button class="modal-btn-primary result-btn--play-again" id="play-again-button">PLAY
+                                        AGAIN</button>
+                                    <button class="modal-btn-secondary result-btn--home"
+                                        id="exit-home-button">HOME</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="preview.js"></script>
+</body>
+
+</html>
