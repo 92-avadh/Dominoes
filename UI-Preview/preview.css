@@ -350,7 +350,7 @@ body {
     height: 100%;
     background-image:
         linear-gradient(180deg, rgba(15, 23, 42, 0.45) 0%, rgba(6, 78, 59, 0.82) 100%),
-        radial-gradient(circle at center, #065F46 0%, #022C22 100%);
+        url('../Assets/images/bg_1.jpg');
     background-size: cover;
     background-position: center;
     display: flex;
@@ -918,8 +918,8 @@ body {
     width: 100%;
     height: 100%;
     background-image:
-        linear-gradient(180deg, rgba(15, 23, 42, 0.75) 0%, rgba(30, 27, 75, 0.85) 100%),
-        radial-gradient(circle at center, #1E1B4B 0%, #0F172A 100%);
+        linear-gradient(180deg, rgba(15, 23, 42, 0.45) 0%, rgba(30, 27, 75, 0.65) 100%),
+        url('../Assets/images/bg_3.jpg');
     background-size: cover;
     background-position: center;
     display: flex;
@@ -1299,7 +1299,8 @@ body {
     width: 100%;
     height: 100%;
     background-image:
-        radial-gradient(circle at center, rgba(6, 95, 70, 0.85) 0%, rgba(2, 44, 34, 0.96) 100%);
+        radial-gradient(circle at center, rgba(6, 95, 70, 0.4) 0%, rgba(2, 44, 34, 0.85) 100%),
+        url('../Assets/images/bg_4.jpg');
     background-size: cover;
     background-position: center;
     display: flex;
@@ -1696,6 +1697,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
 }
 
 .hand-header {
@@ -1720,7 +1722,7 @@ body {
 .hand-scroll-view {
     width: 100%;
     flex: 1;
-    overflow-x: auto;
+    overflow: hidden;
     display: flex;
     align-items: flex-end;
 }
@@ -1734,7 +1736,9 @@ body {
 
 .domino-tile-hand {
     width: 38px;
+    min-width: 14px;
     height: 72px;
+    flex-shrink: 1;
     border-radius: 7px;
     background-color: #FAF7EE;
     border: 1.5px solid #CBD5E1;
@@ -1747,7 +1751,23 @@ body {
     padding: 3px 1px;
     cursor: pointer;
     box-shadow: 0 5px 12px rgba(0, 0, 0, 0.6);
-    transition: transform 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease;
+    transition: transform 0.22s ease, scale 0.22s ease, width 0.22s ease, border-color 0.14s ease, box-shadow 0.14s ease;
+}
+
+/* Compact mode: 8–10 tiles */
+.domino-tile-hand--compact {
+    width: 28px;
+    height: 62px;
+    scale: 0.82;
+    transform-origin: bottom center;
+}
+
+/* Mini mode: 11+ tiles */
+.domino-tile-hand--mini {
+    width: 20px;
+    height: 54px;
+    scale: 0.65;
+    transform-origin: bottom center;
 }
 
 .domino-tile-hand--playable {
@@ -1889,4 +1909,166 @@ body {
 
 .result-btn--home {
     flex: 1;
+}
+
+/* ==========================================================================
+   5. LOADING SCREEN CSS
+   ========================================================================== */
+.loading-root {
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.5) 0%, rgba(6, 78, 59, 0.85) 100%),
+        url('../Assets/images/bg_2.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.loading-safe-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32px 24px;
+}
+
+.loading-spacer {
+    height: 40px;
+}
+
+.loading-brand-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.loading-logo-box {
+    display: flex;
+    align-items: center;
+    background-color: rgba(15, 23, 42, 0.92);
+    border-radius: 28px;
+    border: 2.5px solid var(--color-gold-primary);
+    border-top-color: var(--color-gold-light);
+    border-bottom-color: var(--color-gold-dark);
+    padding: 14px 24px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+}
+
+.loading-logo-tile {
+    width: 24px;
+    height: 44px;
+    border-radius: 6px;
+    background-color: #FAF7EE;
+    border: 1.5px solid #CBD5E1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 2px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.loading-logo-tile--left {
+    margin-right: 16px;
+    transform: rotate(-12deg);
+}
+
+.loading-logo-tile--right {
+    margin-left: 16px;
+    transform: rotate(12deg);
+}
+
+.loading-mini-pip {
+    width: 5px;
+    height: 5px;
+    border-radius: 2.5px;
+    background-color: #0F172A;
+}
+
+.loading-mini-divider {
+    width: 80%;
+    height: 1.5px;
+    background-color: #94A3B8;
+}
+
+.loading-title-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.loading-brand-title {
+    font-size: 28px;
+    color: var(--color-gold-light);
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+}
+
+.loading-brand-subtitle {
+    font-size: 9px;
+    color: var(--color-gold-primary);
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    margin-top: 2px;
+}
+
+.loading-footer {
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.loading-status-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.loading-status-text {
+    font-size: 12px;
+    color: #FFFFFF;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.loading-percent-text {
+    font-size: 12px;
+    color: var(--color-gold-light);
+    font-weight: 800;
+}
+
+.loading-progress-track {
+    width: 100%;
+    height: 12px;
+    border-radius: 6px;
+    background-color: rgba(15, 23, 42, 0.85);
+    border: 1.5px solid var(--color-gold-primary);
+    border-top-color: var(--color-gold-light);
+    overflow: hidden;
+    padding: 1.5px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.loading-progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    background-color: var(--color-gold-primary);
+    box-shadow: 0 0 10px rgba(253, 224, 71, 0.8);
+}
+
+.loading-version-text {
+    font-size: 9px;
+    color: #CBD5E1;
+    margin-top: 12px;
 }

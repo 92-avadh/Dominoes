@@ -40,6 +40,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 screen.style.display = 'flex';
                 void screen.offsetWidth;
                 screen.classList.add('active');
+                // Apply hand zoom when switching to game screen
+                if (screenId === 'game') {
+                    setTimeout(applyHandZoom, 50);
+                }
             } else {
                 screen.classList.remove('active');
                 setTimeout(() => {
@@ -59,6 +63,68 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // 2.5. Background Image Switcher (BG 1 - BG 9)
+    const bgButtons = document.querySelectorAll('#bg-switcher .bg-btn');
+
+    bgButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            bgButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const bgNum = btn.getAttribute('data-bg');
+            if (bgNum) {
+                const activeScreen = document.querySelector('.ui-screen.active');
+                if (activeScreen) {
+                    const rootElem = activeScreen.querySelector('.home-root, .loading-root, .waiting-root, .table-surface, .game-root');
+                    if (rootElem) {
+                        rootElem.style.backgroundImage = `linear-gradient(180deg, rgba(15, 23, 42, 0.45) 0%, rgba(6, 78, 59, 0.7) 100%), url('../Assets/images/bg_${bgNum}.jpg')`;
+                        rootElem.style.backgroundSize = 'cover';
+                        rootElem.style.backgroundPosition = 'center';
+                    }
+                }
+            }
+        });
+    });
+
+    // 2.6. Hand Tile Responsive Zoom
+    // Dynamically applies --compact (8-10 tiles) or --mini (11+) class for smooth zoom animation
+    function applyHandZoom() {
+        const gameScreen = document.getElementById('screen-game');
+        if (!gameScreen) return;
+
+        const handContainer = gameScreen.querySelector('.hand-tiles-container');
+        if (!handContainer) return;
+
+        const tiles = handContainer.querySelectorAll('.domino-tile-hand');
+        const count = tiles.length;
+
+        tiles.forEach(tile => {
+            tile.classList.remove('domino-tile-hand--compact', 'domino-tile-hand--mini');
+            if (count >= 11) {
+                tile.classList.add('domino-tile-hand--mini');
+            } else if (count >= 8) {
+                tile.classList.add('domino-tile-hand--compact');
+            }
+        });
+
+        // Update tile count label
+        const countLabel = gameScreen.querySelector('.hand-header-count');
+        if (countLabel) {
+            countLabel.textContent = `${count} TILES`;
+        }
+    }
+
+    // Observe hand tile container for dynamic tile count changes
+    const gameScreenEl = document.getElementById('screen-game');
+    if (gameScreenEl) {
+        const handContainer = gameScreenEl.querySelector('.hand-tiles-container');
+        if (handContainer) {
+            const observer = new MutationObserver(() => applyHandZoom());
+            observer.observe(handContainer, { childList: true });
+        }
+        applyHandZoom();
+    }
 
     // 3. Interactive In-App Navigation Triggers
     const modeOnlineBtn = document.getElementById('mode-online-btn');

@@ -13,7 +13,7 @@
     right: 0;
     bottom: 0;
     background-color: #064E3B;
-    background-image: url('../Textures/bg_tropical_resort_luxury.png');
+    background-image: url('../../images/bg_2.jpg');
     -unity-background-scale-mode: scale-and-crop;
     overflow: hidden;
 }

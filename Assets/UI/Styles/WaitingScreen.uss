@@ -6,7 +6,7 @@
 .waiting-root {
     width: 100%;
     height: 100%;
-    background-image: url('../Textures/bg_matchmaking_vs.png');
+    background-image: url('../../images/bg_3.jpg');
     -unity-background-scale-mode: scale-and-crop;
     background-color: #0369A1;
     display: flex;

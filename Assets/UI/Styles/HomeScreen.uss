@@ -6,7 +6,7 @@
 .home-root {
     width: 100%;
     height: 100%;
-    background-image: url('../Textures/bg_tropical_resort_luxury.png');
+    background-image: url('../../images/bg_1.jpg');
     -unity-background-scale-mode: scale-and-crop;
     background-color: #0369A1;
     display: flex;

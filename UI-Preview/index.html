@@ -42,9 +42,26 @@
             <span class="control-label">SCREEN:</span>
             <div class="btn-toggle-group" id="screen-switcher">
                 <button class="screen-btn active" data-screen="home">HOME</button>
+                <button class="screen-btn" data-screen="loading">LOADING</button>
                 <button class="screen-btn" data-screen="waiting">WAITING</button>
                 <button class="screen-btn" data-screen="game">GAME</button>
                 <button class="screen-btn" data-screen="result">RESULT</button>
+            </div>
+        </div>
+
+        <!-- Background Image Switcher -->
+        <div class="control-group">
+            <span class="control-label">BG IMAGE:</span>
+            <div class="btn-toggle-group" id="bg-switcher">
+                <button class="bg-btn active" data-bg="1">BG 1</button>
+                <button class="bg-btn" data-bg="2">BG 2</button>
+                <button class="bg-btn" data-bg="3">BG 3</button>
+                <button class="bg-btn" data-bg="4">BG 4</button>
+                <button class="bg-btn" data-bg="5">BG 5</button>
+                <button class="bg-btn" data-bg="6">BG 6</button>
+                <button class="bg-btn" data-bg="7">BG 7</button>
+                <button class="bg-btn" data-bg="8">BG 8</button>
+                <button class="bg-btn" data-bg="9">BG 9</button>
             </div>
         </div>
     </header>
@@ -208,6 +225,45 @@
 
                                 <button class="modal-btn-primary" id="home-settings-close-btn"
                                     style="margin-top:12px;">SAVE & EXIT</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 1.5. LOADING SCREEN -->
+                <section class="ui-screen screen-loading" id="screen-loading">
+                    <div class="loading-root">
+                        <div class="loading-safe-content">
+                            <div class="loading-spacer"></div>
+
+                            <div class="loading-brand-container">
+                                <div class="loading-logo-box">
+                                    <div class="loading-logo-tile loading-logo-tile--left">
+                                        <div class="loading-mini-pip"></div>
+                                        <div class="loading-mini-divider"></div>
+                                        <div class="loading-mini-pip"></div>
+                                    </div>
+                                    <div class="loading-title-column">
+                                        <h2 class="loading-brand-title">DOMINOES</h2>
+                                        <span class="loading-brand-subtitle">CLASSIC TABLE GAME</span>
+                                    </div>
+                                    <div class="loading-logo-tile loading-logo-tile--right">
+                                        <div class="loading-mini-pip"></div>
+                                        <div class="loading-mini-divider"></div>
+                                        <div class="loading-mini-pip"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="loading-footer">
+                                <div class="loading-status-row">
+                                    <span class="loading-status-text">Preparing your table...</span>
+                                    <span class="loading-percent-text">67%</span>
+                                </div>
+                                <div class="loading-progress-track">
+                                    <div class="loading-progress-fill" style="width: 67%;"></div>
+                                </div>
+                                <span class="loading-version-text">v1.0.0 • Mobile Edition</span>
                             </div>
                         </div>
                     </div>

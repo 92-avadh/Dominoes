@@ -776,9 +776,11 @@ namespace Dominoes
 
             if (human == null || handTilesContainer == null) return;
 
+            int tileCount = human.HandCount;
+
             if (handTileCountLabel != null)
             {
-                handTileCountLabel.text = $"{human.HandCount} TILES";
+                handTileCountLabel.text = $"{tileCount} TILES";
             }
 
             handTilesContainer.Clear();
@@ -788,6 +790,10 @@ namespace Dominoes
             bool isTutorialActive = tutorialController != null && tutorialController.IsActive;
             DominoTile tutorialTarget = tutorialController != null ? tutorialController.TargetPlayableTile : null;
 
+            // Responsive zoom: compact at 8-10 tiles, mini at 11+ tiles
+            bool useCompact = tileCount >= 8 && tileCount < 11;
+            bool useMini    = tileCount >= 11;
+
             foreach (var tile in human.Hand)
             {
                 bool isPlayable = isHumanTurn && DominoMoveValidator.CanPlaceAnywhere(match.Board, tile, out _);
@@ -795,6 +801,13 @@ namespace Dominoes
                 bool isTutorialHighlight = isTutorialActive && (tile == tutorialTarget || (tutorialTarget == null && isPlayable));
 
                 var tileEl = CreateHandTileVisual(tile, isPlayable, isSelected, isTutorialActive, isTutorialHighlight);
+
+                // Apply responsive zoom class for smooth scale animation
+                if (useMini)
+                    tileEl.AddToClassList("domino-tile-stand--mini");
+                else if (useCompact)
+                    tileEl.AddToClassList("domino-tile-stand--compact");
+
                 handTilesContainer.Add(tileEl);
             }
         }
