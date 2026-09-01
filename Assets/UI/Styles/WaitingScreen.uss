@@ -1,339 +1,521 @@
 /* ==========================================================================
-   WaitingScreen.uss - Unity Dominoes UI Toolkit Stylesheet
-   MATCHES SCREENSHOTS 3 & 4 (Lobby Bet & Mode Selector + Matchmaking VS Arena)
+   WaitingScreen.uss - Dynamic VS Matchmaking & Commercial Alert Modal
+   Reference: Diagonal Laser Split • Cyan vs Crimson • 3D Gold VS Crest
+   Alert Modal: Emerald Felt • Broken Domino Art • Glossy Red & Green Buttons
+   Mobile-First Responsive Flexbox Architecture
    ========================================================================== */
 
+/* --------------------------------------------------------------------------
+   Root Container (Full Screen Portrait Layout)
+   -------------------------------------------------------------------------- */
 .waiting-root {
     width: 100%;
     height: 100%;
+    flex-grow: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #0F172A;
     background-image: url('../Textures/bg_matchmaking_vs.png');
     -unity-background-scale-mode: scale-and-crop;
-    background-color: #0369A1;
-    display: flex;
-    flex-direction: column;
     overflow: hidden;
 }
 
 .safe-content {
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 14px 12px 14px;
-}
-
-/* TOP HEADER BAR (Screenshots 3 & 4) */
-.top-nav-bar {
-    width: 100%;
-    height: 48px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.btn-back-square {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    background-color: #78350F;
-    border-width: 2.5px;
-    border-color: #B45309;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #FEF08A;
-    font-size: 20px;
-    -unity-font-style: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-}
-
-.btn-info-circle {
-    width: 42px;
-    height: 42px;
-    border-radius: 21px;
-    background-color: #78350F;
-    border-width: 2.5px;
-    border-color: #B45309;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #FEF08A;
-    font-size: 18px;
-    -unity-font-style: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-}
-
-/* LOBBY / BET & MODE SELECTOR CONTAINER (Screenshot 3) */
-.lobby-container {
-    width: 100%;
     flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
-    margin: 10px 0;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 8px 12px;
 }
 
-.step-card {
+/* --------------------------------------------------------------------------
+   1. TOP HEADER: Metallic Ribbon with Golden 3D "VS" Crest
+   -------------------------------------------------------------------------- */
+.vs-header-ribbon {
     width: 100%;
-    max-width: 380px;
-    background-color: rgba(15, 23, 42, 0.85);
-    border-radius: 20px;
-    border-width: 2px;
-    border-color: #0284C7;
-    padding: 12px 14px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
-}
-
-.step-header-pill {
-    background-color: rgba(30, 41, 59, 0.95);
-    border-radius: 12px;
-    padding: 4px 16px;
-    margin-bottom: 10px;
-    border-width: 1.5px;
-    border-color: #0284C7;
-}
-
-.step-header-text {
-    font-size: 14px;
-    -unity-font-style: bold;
-    color: #FFFFFF;
-}
-
-/* BET SWITCHER */
-.bet-switcher-row {
-    display: flex;
+    max-width: 360px;
+    height: 56px;
     flex-direction: row;
+    justify-content: space-between;
     align-items: center;
-    gap: 12px;
+    background-color: rgba(2, 132, 199, 0.94);
+    border-radius: 18px;
+    border-width: 2.5px;
+    border-color: #F59E0B;
+    border-top-color: #FEF08A;
+    border-bottom-color: #D97706;
+    padding: 4px 10px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.65);
+    flex-shrink: 0;
+    margin-top: 2px;
 }
 
-.bet-arrow-btn {
+.vs-mode-badge-left, .vs-mode-badge-right {
     width: 36px;
     height: 36px;
-    border-radius: 10px;
-    background-color: #78350F;
+    border-radius: 18px;
+    background-color: rgba(3, 105, 161, 0.95);
     border-width: 2px;
-    border-color: #B45309;
+    border-color: #FEF08A;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.vs-mode-badge-text {
+    font-size: 18px;
     color: #FEF08A;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 16px;
     -unity-font-style: bold;
-    cursor: pointer;
+    padding: 0;
+    margin-top: -1px;
 }
 
-.bet-amount-box {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    background-color: #0F172A;
-    border-radius: 16px;
-    border-width: 2px;
-    border-color: #0284C7;
-    padding: 6px 18px;
-    gap: 8px;
-}
-
-.bet-val-text {
-    font-size: 20px;
-    -unity-font-style: bold;
-    color: #FFFFFF;
-}
-
-/* MODE CHECKBOXES */
-.mode-checkbox-group {
-    width: 100%;
-    display: flex;
+.vs-crest-wrap {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
     flex-direction: column;
-    gap: 10px;
-}
-
-.mode-checkbox-item {
-    display: flex;
-    flex-direction: row;
     align-items: center;
-    cursor: pointer;
+    justify-content: center;
 }
 
-.mode-checkbox-square {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background-color: #D9F99D;
+.vs-crest-text {
+    font-size: 26px;
+    color: #FEF08A;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.9);
+    padding: 0;
+    margin-top: -2px;
+    margin-bottom: -2px;
+    line-height: 28px;
+}
+
+.vs-mode-title {
+    font-size: 10px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    letter-spacing: 0.8px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    padding: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --------------------------------------------------------------------------
+   2. DYNAMIC VS BATTLE ARENA
+   -------------------------------------------------------------------------- */
+.vs-arena-container {
+    width: 100%;
+    max-width: 360px;
+    flex-grow: 1;
+    justify-content: space-between;
+    position: relative;
+    padding: 8px 0;
+}
+
+/* TOP-RIGHT: Opponents Sector (Crimson Zone) */
+.vs-opponents-sector {
+    width: 100%;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding-right: 4px;
+    padding-top: 6px;
+}
+
+/* BOTTOM-LEFT: Human Player Sector (Cyan Zone) */
+.vs-human-sector {
+    width: 100%;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-end;
+    padding-left: 4px;
+    padding-bottom: 6px;
+}
+
+/* Generic Dynamic Avatar Slot */
+.vs-avatar-slot {
+    flex-direction: column;
+    align-items: center;
+    margin: 0 4px;
+    transition-property: scale, opacity;
+    transition-duration: 0.2s;
+}
+
+.vs-avatar-slot--human {
+    scale: 1.05;
+}
+
+.vs-avatar-ring {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    border-radius: 26px;
     border-width: 2.5px;
-    border-color: #365314;
-    display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+    flex-shrink: 0;
 }
 
-.mode-checkbox-square--checked {
-    background-color: #D9F99D;
-    border-color: #365314;
+.vs-avatar-ring--blue {
+    border-color: #38BDF8;
+    border-top-color: #7DD3FC;
+    background-color: #0369A1;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.7);
 }
 
-.check-mark-icon {
-    font-size: 26px;
-    -unity-font-style: bold;
-    color: #16A34A;
+.vs-avatar-ring--red {
+    border-color: #FB7185;
+    border-top-color: #FDA4AF;
+    background-color: #9F1239;
+    box-shadow: 0 0 12px rgba(251, 113, 133, 0.6);
 }
 
-.mode-checkbox-label {
-    font-size: 22px;
-    -unity-font-style: bold;
-    color: #FFFFFF;
+.vs-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 24px;
+    -unity-background-scale-mode: scale-and-crop;
 }
 
-.points-subpill {
-    display: flex;
-    flex-direction: row;
+.vs-avatar-img--you { background-image: url('../Textures/avatar_you.jpg'); }
+.vs-avatar-img--opp1 { background-image: url('../Textures/avatar_sophia.jpg'); }
+.vs-avatar-img--opp2 { background-image: url('../Textures/avatar_marcus.jpg'); }
+.vs-avatar-img--opp3 { background-image: url('../Textures/avatar_elena.jpg'); }
+
+.vs-radar-spinner {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 24px;
+    border-width: 2px;
+    border-color: rgba(254, 240, 138, 0.8);
+    border-top-color: transparent;
+    display: none;
+}
+
+.vs-star-level {
+    position: absolute;
+    bottom: -2px;
+    left: -2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    background-color: #F59E0B;
+    border-width: 1.5px;
+    border-color: #FFFFFF;
+    justify-content: center;
     align-items: center;
-    background-color: #0F172A;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.vs-star-num {
+    font-size: 9px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    padding: 0;
+    margin-top: -1px;
+}
+
+.vs-name-pill {
+    padding: 2px 8px;
     border-radius: 10px;
     border-width: 1.5px;
-    border-color: #0284C7;
-    padding: 2px 8px;
-    margin-left: 10px;
+    margin-top: 3px;
+    max-width: 84px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
 }
 
-.points-subpill-text {
-    font-size: 10px;
+.vs-name-pill--blue {
+    background-color: rgba(15, 23, 42, 0.92);
+    border-color: #38BDF8;
+    max-width: 110px;
+}
+
+.vs-name-pill--red {
+    background-color: rgba(15, 23, 42, 0.92);
+    border-color: #FB7185;
+}
+
+.vs-name-text {
+    font-size: 9.5px;
+    color: #FFFFFF;
     -unity-font-style: bold;
-    color: #F59E0B;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    padding: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* START GAME BUTTON (Screenshot 3) */
-.btn-start-game {
-    width: 100%;
-    max-width: 380px;
-    height: 64px;
-    border-radius: 22px;
-    background-color: #D9F99D;
-    border-width: 3.5px;
-    border-color: #365314;
-    border-top-color: #F7FEE7;
-    border-bottom-color: #1A2E05;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #1A2E05;
-    font-size: 24px;
+.vs-status-pill {
+    font-size: 8px;
     -unity-font-style: bold;
-    cursor: pointer;
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
-    transition-duration: 0.12s;
-    transition-property: transform;
+    padding: 1px 6px;
+    border-radius: 5px;
+    margin-top: 2px;
+    white-space: nowrap;
 }
 
-.btn-start-game:active {
-    transform: scale(0.95);
+.vs-status-pill--ready {
+    background-color: #22C55E;
+    color: #0F172A;
 }
 
-/* MATCHMAKING VS ARENA CARDS (Screenshot 4) */
-.vs-match-area {
-    width: 100%;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: relative;
+.vs-status-pill--searching {
+    background-color: rgba(225, 29, 72, 0.75);
+    color: #FFFFFF;
 }
 
-.player-vs-card {
-    width: 90%;
-    max-width: 340px;
-    height: 76px;
-    border-radius: 18px;
-    padding: 6px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
-}
-
-.player-vs-card--blue {
-    background-color: #0369A1;
-    border-width: 3px;
-    border-color: #0284C7;
-}
-
-.player-vs-card--red {
-    background-color: #9F1239;
-    border-width: 3px;
-    border-color: #DC2626;
-    margin-top: 14px;
-}
-
-.vs-avatar-square {
-    position: relative;
-    width: 60px;
-    height: 60px;
-    border-radius: 14px;
-    background-color: #38BDF8;
-    border-width: 2px;
-    border-color: #FFFFFF;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 12px;
-}
-
-.vs-diamond-badge {
+/* CENTER FLOATING MATCH STATUS & COUNTDOWN */
+.vs-center-status-card {
     position: absolute;
-    width: 44px;
-    height: 44px;
-    background-color: #F59E0B;
-    border-width: 2.5px;
-    border-color: #FEF08A;
-    transform: rotate(45deg);
-    display: flex;
+    align-self: center;
+    top: 40%;
+    background-color: rgba(15, 23, 42, 0.94);
+    border-radius: 18px;
+    border-width: 2px;
+    border-color: #F59E0B;
+    border-top-color: #FDE047;
+    padding: 8px 18px;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+    z-index: 20;
+}
+
+.vs-status-eyebrow {
+    font-size: 9.5px;
+    color: #F59E0B;
+    -unity-font-style: bold;
+    letter-spacing: 1.2px;
+    padding: 0;
+    margin-bottom: 2px;
+}
+
+.vs-countdown-hero {
+    font-size: 20px;
+    color: #FEF08A;
+    -unity-font-style: bold;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+    padding: 0;
+    margin-bottom: 1px;
+}
+
+.vs-players-ready-text {
+    font-size: 10px;
+    color: #E2E8F0;
+    padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   3. FOOTER: Cancel Match Button
+   -------------------------------------------------------------------------- */
+.waiting-footer {
+    width: 100%;
+    max-width: 360px;
+    align-items: center;
+    flex-shrink: 0;
+    margin-bottom: 4px;
+}
+
+.vs-cancel-btn {
+    width: 100%;
+    height: 46px;
+    border-radius: 23px;
+    background-color: #DC2626;
+    border-width: 2px;
+    border-color: #FBBF24;
+    border-top-color: #FEF08A;
+    border-bottom-color: #B91C1C;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    font-size: 13px;
+    letter-spacing: 0.8px;
     justify-content: center;
     align-items: center;
-    z-index: 10;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+    transition-property: scale, background-color;
+    transition-duration: 0.1s;
 }
 
-.vs-diamond-text {
-    transform: rotate(-45deg);
-    font-size: 16px;
-    -unity-font-style: bold;
-    color: #1A2E05;
+.vs-cancel-btn:active {
+    scale: 0.95;
+    background-color: #991B1B;
 }
 
-.prize-pill-bottom {
-    display: flex;
-    flex-direction: row;
+/* --------------------------------------------------------------------------
+   4. ALERT CONFIRMATION MODAL (Matching Image 3: Broken Domino, Green Felt, Gold Bevels)
+   -------------------------------------------------------------------------- */
+.alert-dialog-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
     align-items: center;
-    background-color: #D9F99D;
-    border-radius: 18px;
+    z-index: 900;
+}
+
+.alert-dialog-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(2, 6, 23, 0.88);
+}
+
+.alert-felt-card {
+    position: relative;
+    width: 88%;
+    max-width: 340px;
+    background-color: #065F46;
+    background-image: url('../Textures/bg_emerald_felt_luxury.png');
+    -unity-background-scale-mode: scale-and-crop;
+    border-radius: 20px;
     border-width: 2.5px;
-    border-color: #365314;
-    padding: 6px 20px;
-    gap: 12px;
-    margin-top: 16px;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+    border-color: #F59E0B;
+    border-top-color: #FEF08A;
+    border-bottom-color: #D97706;
+    padding: 22px 18px 18px 18px;
+    align-items: center;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), inset 0 0 14px rgba(0, 0, 0, 0.5);
 }
 
-.prize-title-text {
-    font-size: 16px;
-    -unity-font-style: bold;
-    color: #1A2E05;
+/* Close X Button on Top-Right */
+.alert-close-x-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    background-color: #DC2626;
+    border-width: 2px;
+    border-color: #F59E0B;
+    border-top-color: #FEF08A;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.6);
+    transition-property: scale;
+    transition-duration: 0.1s;
 }
 
-.prize-val-text {
-    font-size: 20px;
+.alert-close-x-btn:active {
+    scale: 0.9;
+}
+
+.alert-close-x-icon {
+    font-size: 14px;
+    color: #FFFFFF;
     -unity-font-style: bold;
-    color: #1A2E05;
+    padding: 0;
+}
+
+/* Top Gold-Framed Header Tab */
+.alert-header-tab {
+    position: absolute;
+    top: -16px;
+    align-self: center;
+    background-color: #064E3B;
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: #F59E0B;
+    border-top-color: #FEF08A;
+    border-bottom-color: #D97706;
+    padding: 3px 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.65);
+}
+
+.alert-header-tab-text {
+    font-size: 13px;
+    color: #FEF08A;
+    -unity-font-style: bold;
+    letter-spacing: 0.5px;
+    padding: 0;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Center Broken Domino Illustration */
+.alert-broken-domino-img {
+    width: 110px;
+    height: 110px;
+    background-image: url('../Textures/icon_broken_domino_luxury.png');
+    -unity-background-scale-mode: scale-to-fit;
+    margin-top: 6px;
+    margin-bottom: 10px;
+}
+
+/* Confirmation Message Text */
+.alert-message-text {
+    font-size: 13px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    text-align: center;
+    line-height: 19px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    margin-bottom: 16px;
+    padding: 0 6px;
+    white-space: normal;
+}
+
+/* Two 3D Game Buttons (Red Exit & Green Play) */
+.alert-btn-row {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.alert-game-btn {
+    width: 47%;
+    height: 40px;
+    border-radius: 20px;
+    border-width: 2px;
+    border-color: #FBBF24;
+    border-top-color: #FEF08A;
+    border-bottom-color: #D97706;
+    justify-content: center;
+    align-items: center;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    font-size: 13.5px;
+    letter-spacing: 0.8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.55);
+    transition-property: scale;
+    transition-duration: 0.1s;
+}
+
+.alert-game-btn:active {
+    scale: 0.94;
+}
+
+.alert-game-btn--exit {
+    background-color: #DC2626;
+}
+
+.alert-game-btn--play {
+    background-color: #16A34A;
 }
