@@ -95,9 +95,6 @@ namespace Dominoes
         {
             RegisterUIElements();
             SubscribeMatchEvents();
-
-            // Default to hidden when initialized
-            HideWaitingScreen();
         }
 
         private void OnDisable()
@@ -114,8 +111,6 @@ namespace Dominoes
 
         private void Start()
         {
-            // Re-enforce hidden state at Start
-            HideWaitingScreen();
         }
 
         /// <summary>

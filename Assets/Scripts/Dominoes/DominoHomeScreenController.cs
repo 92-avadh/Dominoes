@@ -284,6 +284,15 @@ namespace Dominoes
 
             HideHomeScreen();
 
+            if (waitingScreenUIToolkitController == null)
+            {
+#if UNITY_2023_1_OR_NEWER
+                waitingScreenUIToolkitController = FindAnyObjectByType<DominoWaitingScreenUIToolkitController>(FindObjectsInactive.Include);
+#else
+                waitingScreenUIToolkitController = FindObjectOfType<DominoWaitingScreenUIToolkitController>(true);
+#endif
+            }
+
             if (waitingScreenUIToolkitController != null)
             {
                 waitingScreenUIToolkitController.ShowWaitingScreen();

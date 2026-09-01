@@ -195,7 +195,6 @@ namespace Dominoes
         {
             RegisterUIElements();
             SubscribeMatchEvents();
-            HideGameScreen();
         }
 
         private void OnDisable()
@@ -214,7 +213,6 @@ namespace Dominoes
 
         private void Start()
         {
-            HideGameScreen();
         }
 
         private void StopAllGameCoroutines()
