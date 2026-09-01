@@ -91,27 +91,27 @@ namespace Dominoes
             if (waitingScreenController == null)
             {
 #if UNITY_2023_1_OR_NEWER
-                waitingScreenController = FindAnyObjectByType<DominoWaitingScreenController>();
+                waitingScreenController = FindAnyObjectByType<DominoWaitingScreenController>(FindObjectsInactive.Include);
 #else
-                waitingScreenController = FindObjectOfType<DominoWaitingScreenController>();
+                waitingScreenController = FindObjectOfType<DominoWaitingScreenController>(true);
 #endif
             }
 
             if (waitingScreenUIToolkitController == null)
             {
 #if UNITY_2023_1_OR_NEWER
-                waitingScreenUIToolkitController = FindAnyObjectByType<DominoWaitingScreenUIToolkitController>();
+                waitingScreenUIToolkitController = FindAnyObjectByType<DominoWaitingScreenUIToolkitController>(FindObjectsInactive.Include);
 #else
-                waitingScreenUIToolkitController = FindObjectOfType<DominoWaitingScreenUIToolkitController>();
+                waitingScreenUIToolkitController = FindObjectOfType<DominoWaitingScreenUIToolkitController>(true);
 #endif
             }
 
             if (gameScreenUIToolkitController == null)
             {
 #if UNITY_2023_1_OR_NEWER
-                gameScreenUIToolkitController = FindAnyObjectByType<DominoGameScreenUIToolkitController>();
+                gameScreenUIToolkitController = FindAnyObjectByType<DominoGameScreenUIToolkitController>(FindObjectsInactive.Include);
 #else
-                gameScreenUIToolkitController = FindObjectOfType<DominoGameScreenUIToolkitController>();
+                gameScreenUIToolkitController = FindObjectOfType<DominoGameScreenUIToolkitController>(true);
 #endif
             }
 
@@ -403,6 +403,8 @@ namespace Dominoes
 
         public void ShowHomeScreen()
         {
+            if (!gameObject.activeSelf) gameObject.SetActive(true);
+
             if (rootElement == null && uiDocument != null && uiDocument.rootVisualElement != null)
             {
                 rootElement = uiDocument.rootVisualElement.Q<VisualElement>("home-root") ?? uiDocument.rootVisualElement;

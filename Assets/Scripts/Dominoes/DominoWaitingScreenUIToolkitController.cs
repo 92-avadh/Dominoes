@@ -72,18 +72,18 @@ namespace Dominoes
             if (waitingScreenController == null)
             {
 #if UNITY_2023_1_OR_NEWER
-                waitingScreenController = FindAnyObjectByType<DominoWaitingScreenController>();
+                waitingScreenController = FindAnyObjectByType<DominoWaitingScreenController>(FindObjectsInactive.Include);
 #else
-                waitingScreenController = FindObjectOfType<DominoWaitingScreenController>();
+                waitingScreenController = FindObjectOfType<DominoWaitingScreenController>(true);
 #endif
             }
 
             if (homeScreenController == null)
             {
 #if UNITY_2023_1_OR_NEWER
-                homeScreenController = FindAnyObjectByType<DominoHomeScreenController>();
+                homeScreenController = FindAnyObjectByType<DominoHomeScreenController>(FindObjectsInactive.Include);
 #else
-                homeScreenController = FindObjectOfType<DominoHomeScreenController>();
+                homeScreenController = FindObjectOfType<DominoHomeScreenController>(true);
 #endif
             }
 
@@ -501,6 +501,8 @@ namespace Dominoes
         /// </summary>
         public void ShowWaitingScreen()
         {
+            if (!gameObject.activeSelf) gameObject.SetActive(true);
+
             if (rootElement == null && uiDocument != null && uiDocument.rootVisualElement != null)
             {
                 rootElement = uiDocument.rootVisualElement.Q<VisualElement>("waiting-root") ?? uiDocument.rootVisualElement;
