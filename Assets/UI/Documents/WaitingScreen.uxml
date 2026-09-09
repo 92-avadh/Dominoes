@@ -5,100 +5,105 @@
     xmlns:uie="UnityEditor.UIElements"
     xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
     editor-extension-mode="False">
+    <ui:Style src="../Styles/ResponsiveFoundation.uss" />
     <ui:Style src="../Styles/WaitingScreen.uss" />
 
     <!-- Pure Flexbox Waiting Root (Dynamic VS Matchmaking Arena) -->
     <ui:VisualElement name="waiting-root" class="waiting-root" style="display: none;">
-        <ui:VisualElement name="safe-content" class="safe-content">
+        <ui:VisualElement name="safe-content" class="safe-content flex flex-col justify-between items-center flex-1 overflow-hidden">
             
             <!-- 1. TOP HEADER: Metallic Ribbon with Golden 3D "VS" Crest -->
-            <ui:VisualElement class="vs-header-ribbon">
-                <ui:VisualElement class="vs-mode-badge-left">
-                    <ui:Label class="vs-mode-badge-text" text="🁡" />
+            <ui:VisualElement class="vs-header-ribbon flex flex-row justify-between items-center">
+                <ui:VisualElement class="vs-mode-badge-left flex justify-center items-center">
+                    <ui:VisualElement class="vs-badge-icon" />
                 </ui:VisualElement>
 
-                <ui:VisualElement class="vs-crest-wrap">
-                    <ui:Label class="vs-crest-text" text="VS" />
-                    <ui:Label name="waiting-subtitle" class="vs-mode-title" text="CLASSIC DOMINOES" />
+                <ui:VisualElement class="vs-crest-wrap flex flex-grow flex-shrink min-w-0 flex-col items-center justify-center">
+                    <ui:Label class="vs-crest-text font-kenney-future font-bold" text="VS" />
+                    <ui:Label name="waiting-subtitle" class="vs-mode-title font-kenney-future-narrow font-bold" text="CLASSIC DOMINOES" />
                 </ui:VisualElement>
 
-                <ui:VisualElement class="vs-mode-badge-right">
-                    <ui:Label class="vs-mode-badge-text" text="🁡" />
+                <ui:VisualElement class="vs-mode-badge-right flex justify-center items-center">
+                    <ui:VisualElement class="vs-badge-icon" />
                 </ui:VisualElement>
             </ui:VisualElement>
 
             <!-- 2. DYNAMIC VS BATTLE ARENA (Bottom-Left Cyan [YOU] vs Top-Right Crimson [OPPONENTS]) -->
-            <ui:VisualElement class="vs-arena-container">
+            <ui:VisualElement class="vs-arena-container flex-1 flex flex-col justify-between items-center relative w-full p-xs">
                 
                 <!-- TOP-RIGHT: OPPONENTS SECTOR (Crimson Energy Zone) -->
-                <ui:VisualElement class="vs-opponents-sector">
+                <ui:VisualElement class="vs-opponents-sector flex flex-row justify-around items-start w-full p-xs flex-shrink-0">
                     
                     <!-- Opponent Slot 1 -->
-                    <ui:VisualElement name="slot-1" class="vs-avatar-slot vs-avatar-slot--searching">
-                        <ui:VisualElement class="vs-avatar-ring vs-avatar-ring--red">
+                    <ui:VisualElement name="slot-1" class="vs-avatar-slot vs-avatar-slot--searching flex flex-col items-center flex-shrink min-w-0">
+                        <ui:VisualElement class="vs-avatar-ring vs-avatar-ring--red relative flex justify-center items-center overflow-hidden flex-shrink-0">
                             <ui:VisualElement name="slot-avatar-1" class="vs-avatar-img vs-avatar-img--opp1" />
-                            <ui:VisualElement name="slot-radar-1" class="vs-radar-spinner" />
+                            <ui:VisualElement name="slot-radar-1" class="vs-radar-spinner absolute w-full h-full" />
                         </ui:VisualElement>
-                        <ui:VisualElement class="vs-name-pill vs-name-pill--red">
-                            <ui:Label name="slot-name-1" class="vs-name-text" text="Searching..." />
+                        <ui:VisualElement class="vs-name-pill vs-name-pill--red flex justify-center items-center flex-shrink overflow-hidden">
+                            <ui:Label name="slot-name-1" class="vs-name-text font-kenney-future font-bold" text="Searching..." />
                         </ui:VisualElement>
-                        <ui:Label name="slot-status-1" class="vs-status-pill vs-status-pill--searching" text="SEARCHING" />
+                        <ui:Label name="slot-status-1" class="vs-status-pill vs-status-pill--searching font-kenney-future-narrow font-bold" text="SEARCHING" />
                     </ui:VisualElement>
 
                     <!-- Opponent Slot 2 -->
-                    <ui:VisualElement name="slot-2" class="vs-avatar-slot vs-avatar-slot--searching">
-                        <ui:VisualElement class="vs-avatar-ring vs-avatar-ring--red">
+                    <ui:VisualElement name="slot-2" class="vs-avatar-slot vs-avatar-slot--searching flex flex-col items-center flex-shrink min-w-0">
+                        <ui:VisualElement class="vs-avatar-ring vs-avatar-ring--red relative flex justify-center items-center overflow-hidden flex-shrink-0">
                             <ui:VisualElement name="slot-avatar-2" class="vs-avatar-img vs-avatar-img--opp2" />
-                            <ui:VisualElement name="slot-radar-2" class="vs-radar-spinner" />
+                            <ui:VisualElement name="slot-radar-2" class="vs-radar-spinner absolute w-full h-full" />
                         </ui:VisualElement>
-                        <ui:VisualElement class="vs-name-pill vs-name-pill--red">
-                            <ui:Label name="slot-name-2" class="vs-name-text" text="Searching..." />
+                        <ui:VisualElement class="vs-name-pill vs-name-pill--red flex justify-center items-center flex-shrink overflow-hidden">
+                            <ui:Label name="slot-name-2" class="vs-name-text font-kenney-future font-bold" text="Searching..." />
                         </ui:VisualElement>
-                        <ui:Label name="slot-status-2" class="vs-status-pill vs-status-pill--searching" text="SEARCHING" />
+                        <ui:Label name="slot-status-2" class="vs-status-pill vs-status-pill--searching font-kenney-future-narrow font-bold" text="SEARCHING" />
                     </ui:VisualElement>
 
                     <!-- Opponent Slot 3 -->
-                    <ui:VisualElement name="slot-3" class="vs-avatar-slot vs-avatar-slot--searching">
-                        <ui:VisualElement class="vs-avatar-ring vs-avatar-ring--red">
+                    <ui:VisualElement name="slot-3" class="vs-avatar-slot vs-avatar-slot--searching flex flex-col items-center flex-shrink min-w-0">
+                        <ui:VisualElement class="vs-avatar-ring vs-avatar-ring--red relative flex justify-center items-center overflow-hidden flex-shrink-0">
                             <ui:VisualElement name="slot-avatar-3" class="vs-avatar-img vs-avatar-img--opp3" />
-                            <ui:VisualElement name="slot-radar-3" class="vs-radar-spinner" />
+                            <ui:VisualElement name="slot-radar-3" class="vs-radar-spinner absolute w-full h-full" />
                         </ui:VisualElement>
-                        <ui:VisualElement class="vs-name-pill vs-name-pill--red">
-                            <ui:Label name="slot-name-3" class="vs-name-text" text="Searching..." />
+                        <ui:VisualElement class="vs-name-pill vs-name-pill--red flex justify-center items-center flex-shrink overflow-hidden">
+                            <ui:Label name="slot-name-3" class="vs-name-text font-kenney-future font-bold" text="Searching..." />
                         </ui:VisualElement>
-                        <ui:Label name="slot-status-3" class="vs-status-pill vs-status-pill--searching" text="SEARCHING" />
+                        <ui:Label name="slot-status-3" class="vs-status-pill vs-status-pill--searching font-kenney-future-narrow font-bold" text="SEARCHING" />
                     </ui:VisualElement>
 
                 </ui:VisualElement>
 
                 <!-- CENTER FLOATING MATCH STATUS & COUNTDOWN -->
-                <ui:VisualElement class="vs-center-status-card">
-                    <ui:Label name="waiting-title" class="vs-status-eyebrow" text="FINDING PLAYERS" />
-                    <ui:Label name="countdown-label" class="vs-countdown-hero" text="Starting in 15" />
-                    <ui:Label name="player-count-label" class="vs-players-ready-text" text="Players Ready: 1 / 4" />
+                <ui:VisualElement class="vs-center-status-card flex flex-col items-center justify-center relative z-20 flex-shrink-0 my-sm">
+                    <!-- Neon Electric Lightning Streak Polish -->
+                    <ui:VisualElement class="vs-lightning-streak absolute" />
+                    <ui:VisualElement class="vs-sparkle-fx vs-sparkle-fx--left absolute" />
+                    <ui:VisualElement class="vs-sparkle-fx vs-sparkle-fx--right absolute" />
+                    <ui:Label name="waiting-title" class="vs-status-eyebrow font-kenney-future-narrow font-bold" text="FINDING PLAYERS" />
+                    <ui:Label name="countdown-label" class="vs-countdown-hero font-kenney-future font-bold" text="Starting in 15" />
+                    <ui:Label name="player-count-label" class="vs-players-ready-text font-kenney-future" text="Players Ready: 1 / 4" />
                 </ui:VisualElement>
 
                 <!-- BOTTOM-LEFT: HUMAN PLAYER SECTOR (Cyan/Blue Energy Zone) -->
-                <ui:VisualElement class="vs-human-sector">
-                    <ui:VisualElement name="slot-0" class="vs-avatar-slot vs-avatar-slot--human">
-                        <ui:VisualElement class="vs-avatar-ring vs-avatar-ring--blue">
+                <ui:VisualElement class="vs-human-sector flex flex-row justify-center items-end w-full p-xs flex-shrink-0">
+                    <ui:VisualElement name="slot-0" class="vs-avatar-slot vs-avatar-slot--human flex flex-col items-center flex-shrink min-w-0" style="scale: 1.05;">
+                        <ui:VisualElement class="vs-avatar-ring vs-avatar-ring--blue relative flex justify-center items-center overflow-hidden flex-shrink-0">
                             <ui:VisualElement class="vs-avatar-img vs-avatar-img--you" />
-                            <ui:VisualElement class="vs-star-level">
-                                <ui:Label class="vs-star-num" text="1" />
+                            <ui:VisualElement class="vs-star-level absolute flex justify-center items-center">
+                                <ui:Label class="vs-star-num font-kenney-future-narrow font-bold" text="1" />
                             </ui:VisualElement>
                         </ui:VisualElement>
-                        <ui:VisualElement class="vs-name-pill vs-name-pill--blue">
-                            <ui:Label name="slot-name-0" class="vs-name-text" text="Player 1 (You)" />
+                        <ui:VisualElement class="vs-name-pill vs-name-pill--blue flex justify-center items-center flex-shrink overflow-hidden">
+                            <ui:Label name="slot-name-0" class="vs-name-text font-kenney-future font-bold" text="Player 1 (You)" />
                         </ui:VisualElement>
-                        <ui:Label name="slot-status-0" class="vs-status-pill vs-status-pill--ready" text="READY" />
+                        <ui:Label name="slot-status-0" class="vs-status-pill vs-status-pill--ready font-kenney-future-narrow font-bold" text="READY" />
                     </ui:VisualElement>
                 </ui:VisualElement>
 
             </ui:VisualElement>
 
             <!-- 3. FOOTER: Cancel Match Button -->
-            <ui:VisualElement class="waiting-footer">
-                <ui:Button name="leave-button" class="vs-cancel-btn" text="Cancel Match" />
+            <ui:VisualElement class="waiting-footer flex items-center flex-shrink-0 w-full">
+                <ui:Button name="leave-button" class="vs-cancel-btn w-full touch-target" text="Cancel Match" />
             </ui:VisualElement>
 
         </ui:VisualElement>
@@ -107,28 +112,28 @@
         <ui:VisualElement name="leave-confirm-modal" class="alert-dialog-overlay" style="display: none;">
             <ui:VisualElement name="leave-modal-backdrop" class="alert-dialog-backdrop" />
             
-            <ui:VisualElement name="leave-modal-card" class="alert-felt-card">
+            <ui:VisualElement name="leave-modal-card" class="alert-felt-card flex flex-col items-center relative">
                 
                 <!-- Close X Button on Top Right -->
-                <ui:Button name="alert-close-x-btn" class="alert-close-x-btn">
-                    <ui:Label class="alert-close-x-icon" text="✕" />
+                <ui:Button name="alert-close-x-btn" class="alert-close-x-btn touch-target absolute top-[-12px] right-[-12px]">
+                    <ui:Label class="alert-close-x-icon font-kenney-future font-bold" text="✕" />
                 </ui:Button>
 
                 <!-- Top Gold-Framed Header Tab -->
-                <ui:VisualElement class="alert-header-tab">
-                    <ui:Label class="alert-header-tab-text" text="Are You Sure?" />
+                <ui:VisualElement class="alert-header-tab absolute top-[-18px] flex justify-center items-center">
+                    <ui:Label class="alert-header-tab-text font-kenney-future font-bold" text="Are You Sure?" />
                 </ui:VisualElement>
 
                 <!-- Center 3D Broken Domino Illustration -->
-                <ui:VisualElement class="alert-broken-domino-img" />
+                <ui:VisualElement class="alert-broken-domino-img my-sm" />
 
                 <!-- Confirmation Text -->
-                <ui:Label class="alert-message-text" text="Do you want to exit? You will lose the match." />
+                <ui:Label class="alert-message-text font-kenney-future font-bold text-center px-md" text="Do you want to exit? You will lose the match." />
 
                 <!-- Two 3D Game Buttons (Red Exit & Green Play) -->
-                <ui:VisualElement class="alert-btn-row">
-                    <ui:Button name="leave-modal-confirm-btn" class="alert-game-btn alert-game-btn--exit" text="Exit" />
-                    <ui:Button name="leave-modal-cancel-btn" class="alert-game-btn alert-game-btn--play" text="Play" />
+                <ui:VisualElement class="alert-btn-row flex flex-row justify-between items-center gap-md w-full">
+                    <ui:Button name="leave-modal-confirm-btn" class="alert-game-btn alert-game-btn--exit w-[48%] touch-target" text="Exit" />
+                    <ui:Button name="leave-modal-cancel-btn" class="alert-game-btn alert-game-btn--play w-[48%] touch-target" text="Play" />
                 </ui:VisualElement>
 
             </ui:VisualElement>

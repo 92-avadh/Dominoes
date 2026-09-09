@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unity Dominoes - Mobile UI Sandbox</title>
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Fredoka (Chunky Casual) & Baloo 2 & Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Fredoka:wght@500;600;700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="preview.css">
 </head>
 
@@ -63,11 +63,11 @@
                         <div class="safe-content">
                             <!-- Top Bar -->
                             <div class="top-bar">
-                                <div class="hud-circle-btn" id="home-hamburger-btn">
+                                <button class="hud-circle-btn" id="home-hamburger-btn">
                                     <div class="hamburger-bar"></div>
                                     <div class="hamburger-bar"></div>
                                     <div class="hamburger-bar"></div>
-                                </div>
+                                </button>
 
                                 <div class="hud-profile-capsule" id="home-profile-btn">
                                     <div class="hud-avatar-frame">
@@ -77,73 +77,184 @@
                                         </div>
                                     </div>
                                     <div class="hud-profile-info">
-                                        <span class="hud-player-name">QuietSurgery</span>
+                                        <span class="hud-player-name">NewPlayer</span>
                                         <div class="hud-xp-track">
                                             <div class="hud-xp-fill"></div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="hud-balance-spacer"></div>
+                                <div class="hud-coin-badge">
+                                    <div class="hud-coin-icon">👑</div>
+                                    <span class="hud-coin-text">100</span>
+                                    <span class="hud-coin-plus">+</span>
+                                </div>
                             </div>
 
-                            <!-- Main Lobby Area -->
-                            <div class="main-lobby-area">
-                                <div class="brand-section">
-                                    <div class="brand-logo-crest">
-                                        <span class="brand-logo-text">DOMINOES</span>
+                            <!-- 3 Main Game Mode Buttons (Online, VS Computer, Friend) -->
+                            <div class="mode-buttons-group">
+                                <!-- Option 1: Online -->
+                                <button class="mode-btn mode-btn--online" id="mode-online-btn">
+                                    <div class="mode-badge-circle mode-badge-circle--online">
+                                        <span class="mode-badge-glyph">🌐</span>
                                     </div>
-                                    <div class="brand-ribbon">
-                                        <span class="brand-ribbon-text">TROPICAL RESORT</span>
-                                    </div>
-                                </div>
-
-                                <!-- Stacked Mode Buttons -->
-                                <div class="mode-buttons-group">
-                                    <button class="game-mode-btn game-mode-btn--online" id="mode-online-btn">
-                                        <div class="btn-top-specular"></div>
-                                        <div class="mode-icon-badge mode-icon-badge--online">🌐</div>
-                                        <div class="mode-text-column">
-                                            <span class="mode-title-text">Play Online</span>
-                                            <span class="mode-subtitle-text">Multiplayer Matchmaking</span>
-                                        </div>
-                                        <div class="mode-play-pill">
-                                            <span class="mode-play-text">PLAY</span>
-                                        </div>
-                                    </button>
-
-                                    <button class="game-mode-btn game-mode-btn--computer" id="mode-computer-btn">
-                                        <div class="btn-top-specular"></div>
-                                        <div class="mode-icon-badge mode-icon-badge--computer">🤖</div>
-                                        <div class="mode-text-column">
-                                            <span class="mode-title-text">Vs Computer</span>
-                                            <span class="mode-subtitle-text">Practice Solo</span>
-                                        </div>
-                                        <div class="mode-play-pill">
-                                            <span class="mode-play-text">SOLO</span>
-                                        </div>
-                                    </button>
-
-                                    <button class="game-mode-btn game-mode-btn--friends" id="mode-friends-btn">
-                                        <div class="btn-top-specular"></div>
-                                        <div class="mode-icon-badge mode-icon-badge--friends">👥</div>
-                                        <div class="mode-text-column">
-                                            <span class="mode-title-text">Pass & Play</span>
-                                            <span class="mode-subtitle-text">Local Friends</span>
-                                        </div>
-                                        <div class="mode-play-pill">
-                                            <span class="mode-play-text">LOCAL</span>
-                                        </div>
-                                    </button>
-                                </div>
-
-                                <button class="tutorial-ribbon-btn">
-                                    <span class="tutorial-ribbon-icon">📖</span>
-                                    <span class="tutorial-ribbon-text">HOW TO PLAY DOMINOES</span>
-                                    <span class="tutorial-ribbon-arrow">➔</span>
+                                    <span class="mode-label-text">Online</span>
                                 </button>
 
-                                <div class="scenery-spacer"></div>
+                                <!-- Option 2: VS Computer -->
+                                <button class="mode-btn mode-btn--computer" id="mode-computer-btn">
+                                    <div class="mode-badge-circle mode-badge-circle--computer">
+                                        <span class="mode-badge-glyph">🤖</span>
+                                    </div>
+                                    <span class="mode-label-text">VS Computer</span>
+                                </button>
+
+                                <!-- Option 3: Friend -->
+                                <button class="mode-btn mode-btn--friends" id="mode-friends-btn">
+                                    <div class="mode-badge-circle mode-badge-circle--friends">
+                                        <span class="mode-badge-glyph">👥</span>
+                                    </div>
+                                    <span class="mode-label-text">Friend</span>
+                                </button>
+                            </div>
+
+                            <!-- Center Floating 3D Domino & Reward Features -->
+                            <div class="center-feature-area">
+                                <!-- 3D Tilted Domino Tile [4|5] -->
+                                <div class="tilted-hero-domino">
+                                    <div class="domino-half domino-half--top">
+                                        <span class="domino-pip pip-tl"></span>
+                                        <span class="domino-pip pip-tr"></span>
+                                        <span class="domino-pip pip-bl"></span>
+                                        <span class="domino-pip pip-br"></span>
+                                    </div>
+                                    <div class="domino-divider-line"></div>
+                                    <div class="domino-half domino-half--bottom">
+                                        <span class="domino-pip pip-tl"></span>
+                                        <span class="domino-pip pip-tr"></span>
+                                        <span class="domino-pip pip-center"></span>
+                                        <span class="domino-pip pip-bl"></span>
+                                        <span class="domino-pip pip-br"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Reward Wheel Ad (+100) -->
+                                <div class="reward-wheel-chip">
+                                    <div class="wheel-video-badge">▶</div>
+                                    <span class="reward-plus-text">+100</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 1. VS COMPUTER DIFFICULTY MODAL -->
+                        <div class="home-modal hidden" id="computer-difficulty-modal">
+                            <div class="modal-backdrop"></div>
+                            <div class="modal-card modal-card--options">
+                                <div class="modal-header-row">
+                                    <span class="modal-eyebrow">VS COMPUTER</span>
+                                    <h3 class="modal-title">Choose Difficulty</h3>
+                                </div>
+
+                                <div class="modal-options-list">
+                                    <button class="option-card option-card--easy" id="diff-easy-btn">
+                                        <div class="option-icon-box option-icon-box--easy">★</div>
+                                        <div class="option-info-col">
+                                            <span class="option-title">Easy</span>
+                                            <span class="option-desc">Casual AI with relaxed, beginner-friendly plays</span>
+                                        </div>
+                                    </button>
+                                    <button class="option-card option-card--medium" id="diff-medium-btn">
+                                        <div class="option-icon-box option-icon-box--medium">★★</div>
+                                        <div class="option-info-col">
+                                            <span class="option-title">Medium</span>
+                                            <span class="option-desc">Balanced tactical AI with standard strategy</span>
+                                        </div>
+                                    </button>
+                                    <button class="option-card option-card--hard" id="diff-hard-btn">
+                                        <div class="option-icon-box option-icon-box--hard">★★★</div>
+                                        <div class="option-info-col">
+                                            <span class="option-title">Hard</span>
+                                            <span class="option-desc">Master AI that actively blocks and maximizes points</span>
+                                        </div>
+                                    </button>
+                                </div>
+
+                                <button class="modal-btn-secondary" id="computer-modal-close-btn">CANCEL</button>
+                            </div>
+                        </div>
+
+                        <!-- 2. ONLINE RULE SET MODAL -->
+                        <div class="home-modal hidden" id="online-rules-modal">
+                            <div class="modal-backdrop"></div>
+                            <div class="modal-card modal-card--options">
+                                <div class="modal-header-row">
+                                    <span class="modal-eyebrow">PLAY ONLINE</span>
+                                    <h3 class="modal-title">Select Rule Set</h3>
+                                </div>
+
+                                <div class="rules-grid">
+                                    <button class="rule-card rule-card--active" data-rule="Classic" id="preview-rule-classic">
+                                        <div class="rule-badge rule-badge--classic">🀁</div>
+                                        <span class="rule-title">Classic</span>
+                                        <span class="rule-desc">Standard point matching rules</span>
+                                    </button>
+                                    <button class="rule-card" data-rule="All Fives" id="preview-rule-fives">
+                                        <div class="rule-badge rule-badge--fives">5</div>
+                                        <span class="rule-title">All Fives</span>
+                                        <span class="rule-desc">Score whenever open ends sum to 5</span>
+                                    </button>
+                                    <button class="rule-card" data-rule="Block" id="preview-rule-block">
+                                        <div class="rule-badge rule-badge--block">✋</div>
+                                        <span class="rule-title">Block</span>
+                                        <span class="rule-desc">No drawing; lowest pips win locked game</span>
+                                    </button>
+                                    <button class="rule-card" data-rule="Draw" id="preview-rule-draw">
+                                        <div class="rule-badge rule-badge--draw">🀁+</div>
+                                        <span class="rule-title">Draw</span>
+                                        <span class="rule-desc">Draw from boneyard until a move is possible</span>
+                                    </button>
+                                </div>
+
+                                <button class="modal-btn-primary" id="online-find-match-btn">FIND MATCH</button>
+                                <button class="modal-btn-secondary" id="online-modal-close-btn">CANCEL</button>
+                            </div>
+                        </div>
+
+                        <!-- 3. FRIEND ROOM MODAL (CREATE / JOIN) -->
+                        <div class="home-modal hidden" id="friend-room-modal">
+                            <div class="modal-backdrop"></div>
+                            <div class="modal-card modal-card--friend">
+                                <div class="modal-header-row">
+                                    <span class="modal-eyebrow">PLAY WITH FRIENDS</span>
+                                    <h3 class="modal-title">Private Match</h3>
+                                </div>
+
+                                <div class="friend-tab-bar">
+                                    <button class="friend-tab-btn friend-tab-btn--active" id="preview-tab-create">Create Room</button>
+                                    <button class="friend-tab-btn" id="preview-tab-join">Join Room</button>
+                                </div>
+
+                                <!-- Panel 1: Create Room -->
+                                <div class="friend-tab-panel" id="preview-create-panel">
+                                    <span class="friend-panel-hint">Share this room code with your friend to play together:</span>
+                                    <div class="room-code-display-box">
+                                        <span class="room-code-text" id="preview-generated-code">DOM-5829</span>
+                                    </div>
+                                    <button class="copy-code-btn" id="preview-copy-code-btn">📋 COPY ROOM CODE</button>
+                                    <button class="modal-btn-primary" id="preview-start-host-btn">START MATCH</button>
+                                </div>
+
+                                <!-- Panel 2: Join Room -->
+                                <div class="friend-tab-panel hidden" id="preview-join-panel">
+                                    <span class="friend-panel-hint">Enter your friend's 6-digit room code:</span>
+                                    <div class="room-code-input-box">
+                                        <input type="text" class="room-code-input" id="preview-room-input" placeholder="e.g. DOM-5829" maxlength="12" />
+                                    </div>
+                                    <span class="friend-join-status-txt" id="preview-join-status"></span>
+                                    <button class="modal-btn-primary" id="preview-join-room-btn">JOIN ROOM</button>
+                                </div>
+
+                                <button class="modal-btn-secondary" id="friend-modal-close-btn">CLOSE</button>
                             </div>
                         </div>
 
@@ -157,7 +268,7 @@
                                 <div class="modal-profile-header">
                                     <div class="modal-avatar-lg"></div>
                                     <div class="modal-profile-info">
-                                        <span class="modal-player-name">QuietSurgery</span>
+                                        <span class="modal-player-name">NewPlayer</span>
                                         <span class="modal-rank-tier">Beginner Domino Master</span>
                                         <span class="modal-level-tag">Level 1 • 68% XP</span>
                                     </div>
@@ -259,8 +370,11 @@
                                     </div>
                                 </div>
 
-                                <!-- Center Status Card -->
+                                <!-- Center Status Card with Neon Lightning Polish -->
                                 <div class="vs-center-status-card">
+                                    <div class="vs-lightning-streak"></div>
+                                    <div class="vs-sparkle-fx vs-sparkle-fx--left"></div>
+                                    <div class="vs-sparkle-fx vs-sparkle-fx--right"></div>
                                     <span class="vs-status-eyebrow">MATCHMAKING</span>
                                     <span class="vs-countdown-hero">SEARCHING ●●</span>
                                     <span class="vs-players-ready-text">3 / 4 Players Connected</span>

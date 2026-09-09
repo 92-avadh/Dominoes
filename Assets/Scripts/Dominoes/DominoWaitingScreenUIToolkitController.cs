@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -25,6 +26,9 @@ namespace Dominoes
         [Tooltip("Reference to the UI Toolkit DominoHomeScreenController. If left empty, will be auto-located in the active scene.")]
         [SerializeField] private DominoHomeScreenController homeScreenController;
 
+        [Tooltip("Reference to the UI Toolkit DominoGameScreenUIToolkitController. If left empty, will be auto-located in the active scene.")]
+        [SerializeField] private DominoGameScreenUIToolkitController gameScreenUIToolkitController;
+
         // Visual Elements
         private VisualElement rootElement;
         private VisualElement safeContent;
@@ -32,6 +36,7 @@ namespace Dominoes
         private Label waitingMessageLabel;
         private Label playerCountLabel;
         private Label waitingTitleLabel;
+        private Label waitingSubtitleLabel;
         private Button leaveButton;
 
         // Leave Confirmation Modal (Image 3 Alert Modal)
@@ -76,6 +81,11 @@ namespace Dominoes
 #else
                 waitingScreenController = FindObjectOfType<DominoWaitingScreenController>(true);
 #endif
+                if (waitingScreenController == null)
+                {
+                    var matchGO = new GameObject("DominoMatchController");
+                    waitingScreenController = matchGO.AddComponent<DominoWaitingScreenController>();
+                }
             }
 
             if (homeScreenController == null)
@@ -84,6 +94,15 @@ namespace Dominoes
                 homeScreenController = FindAnyObjectByType<DominoHomeScreenController>(FindObjectsInactive.Include);
 #else
                 homeScreenController = FindObjectOfType<DominoHomeScreenController>(true);
+#endif
+            }
+
+            if (gameScreenUIToolkitController == null)
+            {
+#if UNITY_2023_1_OR_NEWER
+                gameScreenUIToolkitController = FindAnyObjectByType<DominoGameScreenUIToolkitController>(FindObjectsInactive.Include);
+#else
+                gameScreenUIToolkitController = FindObjectOfType<DominoGameScreenUIToolkitController>(true);
 #endif
             }
 
@@ -133,6 +152,7 @@ namespace Dominoes
             waitingMessageLabel = rootElement.Q<Label>("waiting-message-label");
             playerCountLabel = rootElement.Q<Label>("player-count-label");
             waitingTitleLabel = rootElement.Q<Label>("waiting-title");
+            waitingSubtitleLabel = rootElement.Q<Label>("waiting-subtitle");
             leaveButton = rootElement.Q<Button>("leave-button");
 
             // Cache player slot rows
@@ -158,43 +178,44 @@ namespace Dominoes
             safeContent = rootElement.Q<VisualElement>("safe-content") ?? rootElement;
             rootElement.RegisterCallback<GeometryChangedEvent>(OnRootGeometryChanged);
 
-            if (leaveModalCancelBtn != null) leaveModalCancelBtn.clicked += HideLeaveConfirmation;
-            if (leaveModalConfirmBtn != null) leaveModalConfirmBtn.clicked += OnConfirmLeaveClicked;
-            if (alertCloseXBtn != null) alertCloseXBtn.clicked += HideLeaveConfirmation;
-
-            if (leaveButton != null && !isLeaveCallbackRegistered)
-            {
-                leaveButton.clicked += OnLeaveButtonClicked;
-                isLeaveCallbackRegistered = true;
-            }
+            SetupButton(leaveModalCancelBtn, HideLeaveConfirmation);
+            SetupButton(leaveModalConfirmBtn, OnConfirmLeaveClicked);
+            SetupButton(alertCloseXBtn, HideLeaveConfirmation);
+            SetupButton(leaveButton, OnLeaveButtonClicked);
 
             ApplySafeArea();
         }
+
+        private void SetupButton(Button btn, System.Action onClick)
+        {
+            if (btn == null || onClick == null) return;
+            btn.clicked -= onClick;
+            btn.clicked += () =>
+            {
+                DominoAudioManager.Instance?.PlayClick();
+                onClick();
+            };
+        }
+
+        // (SetPickingModeRecursive removed — it was the root cause of unresponsive buttons)
 
         private void OnRootGeometryChanged(GeometryChangedEvent evt)
         {
             ApplySafeArea();
         }
 
+        private System.Collections.IEnumerator DeferredApplySafeArea()
+        {
+            yield return null;
+            ApplySafeArea();
+            yield return new WaitForSeconds(0.1f);
+            ApplySafeArea();
+        }
+
         private void ApplySafeArea()
         {
             if (safeContent == null) return;
-
-            Rect safeArea = Screen.safeArea;
-            float screenW = Screen.width;
-            float screenH = Screen.height;
-
-            if (screenW <= 0 || screenH <= 0) return;
-
-            float leftPercent = (safeArea.xMin / screenW) * 100f;
-            float rightPercent = ((screenW - safeArea.xMax) / screenW) * 100f;
-            float topPercent = ((screenH - safeArea.yMax) / screenH) * 100f;
-            float bottomPercent = (safeArea.yMin / screenH) * 100f;
-
-            safeContent.style.paddingLeft = Length.Percent(Mathf.Max(3f, leftPercent));
-            safeContent.style.paddingRight = Length.Percent(Mathf.Max(3f, rightPercent));
-            safeContent.style.paddingTop = Length.Percent(Mathf.Max(3.5f, topPercent));
-            safeContent.style.paddingBottom = Length.Percent(Mathf.Max(2.5f, bottomPercent));
+            DominoSafeAreaHandler.ApplySafeArea(safeContent, baseLeft: 10f, baseRight: 10f, baseTop: 6f, baseBottom: 6f);
         }
 
         /// <summary>
@@ -222,6 +243,7 @@ namespace Dominoes
             waitingMessageLabel = null;
             playerCountLabel = null;
             waitingTitleLabel = null;
+            waitingSubtitleLabel = null;
             leaveButton = null;
             if (rootElement != null)
             {
@@ -363,8 +385,23 @@ namespace Dominoes
 
         private void HandleMatchStarted()
         {
-            Debug.Log("<color=green>[DominoWaitingScreenUIToolkitController] Match successfully started! Hiding WaitingScreen.</color>");
+            Debug.Log("<color=green>[DominoWaitingScreenUIToolkitController] Match successfully started! Hiding WaitingScreen and showing GameScreen.</color>");
+            DominoAudioManager.Instance?.PlayTurnChime();
             HideWaitingScreen();
+
+            if (gameScreenUIToolkitController == null)
+            {
+#if UNITY_2023_1_OR_NEWER
+                gameScreenUIToolkitController = FindAnyObjectByType<DominoGameScreenUIToolkitController>(FindObjectsInactive.Include);
+#else
+                gameScreenUIToolkitController = FindObjectOfType<DominoGameScreenUIToolkitController>(true);
+#endif
+            }
+
+            if (gameScreenUIToolkitController != null)
+            {
+                gameScreenUIToolkitController.ShowGameScreen();
+            }
         }
 
         private void HandleMatchStateChanged(MatchState newState)
@@ -381,11 +418,28 @@ namespace Dominoes
         }
 
         /// <summary>
-        /// Updates the 'Players Ready: X / 4' label.
+        /// Updates the lobby title and subtitle to reflect the active game mode.
+        /// </summary>
+        public void RefreshLobbyHeader()
+        {
+            if (waitingTitleLabel != null)
+            {
+                waitingTitleLabel.text = DominoGameModeContext.GetLobbyTitle();
+            }
+
+            if (waitingSubtitleLabel != null)
+            {
+                waitingSubtitleLabel.text = DominoGameModeContext.GetLobbySubtitle();
+            }
+        }
+
+        /// <summary>
+        /// Updates the 'Players Ready: X / N' label.
         /// </summary>
         public void UpdatePlayerCountUI(int count)
         {
-            SetLabelText(playerCountLabel, $"Players Ready: {count} / {DominoWaitingManager.MaxPlayers}");
+            int max = (DominoGameModeContext.CurrentMode == GameModeType.FriendRoom) ? 2 : DominoWaitingManager.MaxPlayers;
+            SetLabelText(playerCountLabel, $"Players Ready: {count} / {max}");
         }
 
         /// <summary>
@@ -398,19 +452,30 @@ namespace Dominoes
         }
 
         /// <summary>
-        /// Updates the waiting status message.
+        /// Updates the waiting status message according to game mode.
         /// </summary>
         public void UpdateWaitingMessageUI(int playerCount)
         {
-            string message = (playerCount < DominoWaitingManager.MinPlayersToStart)
-                ? "Waiting for more players..."
-                : "Players found! Ready to start.";
+            string message;
+            if (DominoGameModeContext.CurrentMode == GameModeType.FriendRoom)
+            {
+                message = (playerCount < 2)
+                    ? $"Waiting for friend to connect using code {DominoGameModeContext.RoomCode}..."
+                    : "Friend connected! Starting private match...";
+            }
+            else
+            {
+                message = (playerCount < DominoWaitingManager.MinPlayersToStart)
+                    ? "Searching for players worldwide..."
+                    : "Players found! Ready to start.";
+            }
 
             SetLabelText(waitingMessageLabel, message);
         }
 
         /// <summary>
-        /// Synchronizes the 4 player slots with active players in the match manager.
+        /// Synchronizes the player slots with active players in the match manager.
+        /// In Friend mode, slots 2 and 3 are hidden to present a clean 1v1 lounge.
         /// </summary>
         public void RefreshPlayerSlots()
         {
@@ -422,6 +487,7 @@ namespace Dominoes
                 : match.GameState.Players;
 
             int activeCount = players != null ? players.Count : 0;
+            bool isFriendMode = (DominoGameModeContext.CurrentMode == GameModeType.FriendRoom);
 
             for (int i = 0; i < 4; i++)
             {
@@ -431,6 +497,17 @@ namespace Dominoes
                 var avatarElement = playerSlotAvatars[i];
 
                 if (slotElement == null) continue;
+
+                // In Friend Mode, slots 2 and 3 are hidden for 1v1 match
+                if (isFriendMode && (i == 2 || i == 3))
+                {
+                    slotElement.style.display = DisplayStyle.None;
+                    continue;
+                }
+                else
+                {
+                    slotElement.style.display = DisplayStyle.Flex;
+                }
 
                 if (i < activeCount && players != null)
                 {
@@ -458,7 +535,8 @@ namespace Dominoes
                 {
                     slotElement.AddToClassList("vs-avatar-slot--searching");
 
-                    if (nameLabel != null) nameLabel.text = "Searching...";
+                    string searchingText = (isFriendMode && i == 1) ? "Waiting for friend..." : "Searching...";
+                    if (nameLabel != null) nameLabel.text = searchingText;
                     if (statusLabel != null)
                     {
                         statusLabel.text = "SEARCHING";
@@ -475,43 +553,71 @@ namespace Dominoes
         }
 
         /// <summary>
-        /// Resets the UI elements to default waiting state.
+        /// Resets the UI elements to mode-specific waiting state.
         /// </summary>
         public void ResetWaitingUI()
         {
-            float duration = waitingScreenController != null ? waitingScreenController.WaitingCountdownDuration : 15f;
+            RefreshLobbyHeader();
+
+            float duration = waitingScreenController != null ? waitingScreenController.WaitingCountdownDuration : 5f;
             int count = (waitingScreenController != null && waitingScreenController.MatchManager != null && waitingScreenController.MatchManager.WaitingManager != null)
                 ? waitingScreenController.MatchManager.WaitingManager.PlayerCount
                 : 1;
 
-            SetLabelText(playerCountLabel, $"Players Ready: {count} / {DominoWaitingManager.MaxPlayers}");
+            int max = (DominoGameModeContext.CurrentMode == GameModeType.FriendRoom) ? 2 : DominoWaitingManager.MaxPlayers;
+            SetLabelText(playerCountLabel, $"Players Ready: {count} / {max}");
             SetLabelText(countdownLabel, $"Starting in {Mathf.CeilToInt(duration)}");
             UpdateWaitingMessageUI(count);
 
             RefreshPlayerSlots();
         }
 
+        private Coroutine screenFadeCoroutine;
+
         /// <summary>
         /// Displays the UI Toolkit WaitingScreen and ensures HomeScreen is hidden.
         /// </summary>
-        public void ShowWaitingScreen()
+        public void ShowWaitingScreen(bool animate = true)
         {
             if (!gameObject.activeSelf) gameObject.SetActive(true);
 
+            if (uiDocument == null) uiDocument = GetComponent<UIDocument>();
+            if (uiDocument != null)
+            {
+                uiDocument.sortingOrder = 10;
+                if (uiDocument.rootVisualElement != null)
+                {
+                    uiDocument.rootVisualElement.pickingMode = PickingMode.Position;
+                }
+            }
+
             if (rootElement == null && uiDocument != null && uiDocument.rootVisualElement != null)
             {
-                rootElement = uiDocument.rootVisualElement.Q<VisualElement>("waiting-root") ?? uiDocument.rootVisualElement;
+                RegisterUIElements();
             }
 
             if (rootElement != null)
             {
                 rootElement.style.display = DisplayStyle.Flex;
+                rootElement.pickingMode = PickingMode.Position;
+                ApplySafeArea();
+                StartCoroutine(DeferredApplySafeArea());
+
+                if (animate)
+                {
+                    if (screenFadeCoroutine != null) StopCoroutine(screenFadeCoroutine);
+                    screenFadeCoroutine = StartCoroutine(FadeInScreen(rootElement));
+                }
+                else
+                {
+                    rootElement.style.opacity = 1f;
+                }
             }
 
             // Ensure HomeScreen is hidden when WaitingScreen appears
             if (homeScreenController != null)
             {
-                homeScreenController.HideHomeScreen();
+                homeScreenController.HideHomeScreen(animate);
             }
 
             RefreshPlayerSlots();
@@ -520,22 +626,90 @@ namespace Dominoes
         /// <summary>
         /// Hides the UI Toolkit WaitingScreen.
         /// </summary>
-        public void HideWaitingScreen()
+        public void HideWaitingScreen(bool animate = true, System.Action onComplete = null)
         {
+            if (uiDocument == null) uiDocument = GetComponent<UIDocument>();
+            if (uiDocument != null)
+            {
+                uiDocument.sortingOrder = 0;
+                if (uiDocument.rootVisualElement != null)
+                {
+                    uiDocument.rootVisualElement.pickingMode = PickingMode.Ignore;
+                }
+            }
+
             if (rootElement == null && uiDocument != null && uiDocument.rootVisualElement != null)
             {
                 rootElement = uiDocument.rootVisualElement.Q<VisualElement>("waiting-root") ?? uiDocument.rootVisualElement;
-            }
-
-            if (rootElement != null)
-            {
-                rootElement.style.display = DisplayStyle.None;
             }
 
             if (leaveConfirmModal != null)
             {
                 leaveConfirmModal.style.display = DisplayStyle.None;
             }
+
+            if (rootElement != null)
+            {
+                if (animate)
+                {
+                    if (screenFadeCoroutine != null) StopCoroutine(screenFadeCoroutine);
+                    screenFadeCoroutine = StartCoroutine(FadeOutScreen(rootElement, onComplete));
+                }
+                else
+                {
+                    rootElement.style.opacity = 0f;
+                    rootElement.style.display = DisplayStyle.None;
+                    rootElement.pickingMode = PickingMode.Ignore;
+                    onComplete?.Invoke();
+                }
+            }
+            else
+            {
+                onComplete?.Invoke();
+            }
+        }
+
+        private IEnumerator FadeInScreen(VisualElement element, float duration = 0.35f)
+        {
+            if (element == null) yield break;
+            element.style.display = DisplayStyle.Flex;
+            element.style.opacity = 0f;
+            element.pickingMode = PickingMode.Position;
+
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                element.style.opacity = Mathf.SmoothStep(0f, 1f, t);
+                yield return null;
+            }
+            element.style.opacity = 1f;
+            screenFadeCoroutine = null;
+        }
+
+        private IEnumerator FadeOutScreen(VisualElement element, System.Action onComplete = null, float duration = 0.35f)
+        {
+            if (element == null)
+            {
+                onComplete?.Invoke();
+                yield break;
+            }
+
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                element.style.opacity = Mathf.SmoothStep(1f, 0f, t);
+                yield return null;
+            }
+
+            element.style.opacity = 0f;
+            element.style.display = DisplayStyle.None;
+            element.pickingMode = PickingMode.Ignore;
+            screenFadeCoroutine = null;
+            onComplete?.Invoke();
         }
 
         private void SetLabelText(Label label, string text)

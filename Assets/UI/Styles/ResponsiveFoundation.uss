@@ -1,0 +1,435 @@
+/* ==========================================================================
+   ResponsiveFoundation.uss - Mobile-First Responsive UI System
+   Kenney Asset Integration • Relative Units • Safe Areas • Breakpoints
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. ROOT VARIABLES & SCALING SYSTEM
+   -------------------------------------------------------------------------- */
+/* Base font size = 16px equivalent. All 'rem' values multiply this.
+   Unity UI Toolkit doesn't support CSS rem, so we use a scaling factor approach.
+   Root font-size acts as the scaling baseline for the entire UI. */
+:root {
+    --base-font-size: 16;
+    --scale-factor: 1;
+    --safe-top: 0;
+    --safe-bottom: 0;
+    --safe-left: 0;
+    --safe-right: 0;
+    --viewport-width: 360;
+    --viewport-height: 640;
+    --is-landscape: false;
+    --is-tablet: false;
+}
+
+/* Screen size breakpoints (applied via C# at runtime) */
+/* Compact: 320-359px width */
+.root--compact {
+    --scale-factor: 0.875;    /* 14px base */
+    --viewport-width: 320;
+}
+
+/* Standard Android: 360-389px width */
+.root--standard {
+    --scale-factor: 1.0;      /* 16px base */
+    --viewport-width: 360;
+}
+
+/* Large Android / iPhone: 390-429px width */
+.root--large {
+    --scale-factor: 1.125;    /* 18px base */
+    --viewport-width: 390;
+}
+
+/* XL / Tablet: 430px+ width */
+.root--xlarge {
+    --scale-factor: 1.25;     /* 20px base */
+    --viewport-width: 430;
+    --is-tablet: true;
+}
+
+/* Landscape overrides */
+.root--landscape {
+    --is-landscape: true;
+    --scale-factor: 0.85;     /* Reduce scale in landscape */
+}
+
+/* --------------------------------------------------------------------------
+   2. GLOBAL TYPOGRAPHY (Playful & Premium Modern Game Fonts)
+   -------------------------------------------------------------------------- */
+:root, Label, Button, TextField {
+    -unity-font: url('../Fonts/Fredoka-VariableFont.ttf');
+    -unity-font-definition: url('../Fonts/Fredoka-VariableFont.ttf');
+}
+
+/* Primary playful/premium display font for titles, headers, badges, buttons */
+.font-kenney-future, .font-heading, .font-playful, .font-display {
+    -unity-font: url('../Fonts/Fredoka-VariableFont.ttf');
+    -unity-font-definition: url('../Fonts/Fredoka-VariableFont.ttf');
+}
+
+/* Secondary elegant/premium font for sub-labels, counters, stats, and dialogs */
+.font-kenney-future-narrow, .font-body, .font-premium, .font-subtext {
+    -unity-font: url('../Fonts/Baloo2-VariableFont.ttf');
+    -unity-font-definition: url('../Fonts/Baloo2-VariableFont.ttf');
+}
+
+/* Font weight utilities */
+.font-bold { -unity-font-style: bold; }
+.font-normal { -unity-font-style: normal; }
+
+/* --------------------------------------------------------------------------
+   3. RESPONSIVE SIZING UTILITIES (Scale-based)
+   -------------------------------------------------------------------------- */
+/* Base unit = 4px * scale-factor. All spacing/sizing derives from this. */
+.space-0 { padding: 0; margin: 0; }
+.space-1 { padding: 4px; margin: 4px; }
+.space-2 { padding: 8px; margin: 8px; }
+.space-3 { padding: 12px; margin: 12px; }
+.space-4 { padding: 16px; margin: 16px; }
+.space-5 { padding: 20px; margin: 20px; }
+.space-6 { padding: 24px; margin: 24px; }
+.space-8 { padding: 32px; margin: 32px; }
+.space-10 { padding: 40px; margin: 40px; }
+
+/* Responsive padding/margin helpers (C# will compute actual values) */
+.pad-xs { padding: 4px; }
+.pad-sm { padding: 8px; }
+.pad-md { padding: 12px; }
+.pad-lg { padding: 16px; }
+.pad-xl { padding: 24px; }
+
+.mar-xs { margin: 4px; }
+.mar-sm { margin: 8px; }
+.mar-md { margin: 12px; }
+.mar-lg { margin: 16px; }
+.mar-xl { margin: 24px; }
+
+/* Responsive gap for flex containers */
+
+/* --------------------------------------------------------------------------
+   3.1 FLEXBOX & LAYOUT UTILITIES
+   -------------------------------------------------------------------------- */
+.flex             { display: flex; }
+.flex-col         { flex-direction: column; }
+.flex-row         { flex-direction: row; }
+.flex-wrap        { flex-wrap: wrap; }
+.flex-nowrap      { flex-wrap: nowrap; }
+.flex-1           { flex-grow: 1; flex-shrink: 1; }
+.flex-grow        { flex-grow: 1; }
+.flex-shrink      { flex-shrink: 1; }
+.flex-shrink-0    { flex-shrink: 0; }
+
+.justify-start    { justify-content: flex-start; }
+.justify-center   { justify-content: center; }
+.justify-end      { justify-content: flex-end; }
+.justify-between  { justify-content: space-between; }
+.justify-around   { justify-content: space-around; }
+
+.items-start      { align-items: flex-start; }
+.items-center     { align-items: center; }
+.items-end        { align-items: flex-end; }
+.items-stretch    { align-items: stretch; }
+
+.w-full           { width: 100%; }
+.h-full           { height: 100%; }
+.relative         { position: relative; }
+.absolute         { position: absolute; }
+.overflow-hidden  { overflow: hidden; }
+.overflow-visible { overflow: visible; }
+.min-w-0          { min-width: 0; }
+.min-h-0          { min-height: 0; }
+
+/* --------------------------------------------------------------------------
+   4. RESPONSIVE TYPOGRAPHY SCALE
+   -------------------------------------------------------------------------- */
+/* All font sizes use scale-factor. Base sizes at 1x scale: */
+.text-xs      { font-size: 10px; }  /* 0.625rem */
+.text-sm      { font-size: 12px; }  /* 0.75rem */
+.text-base    { font-size: 14px; }  /* 0.875rem */
+.text-md      { font-size: 16px; }  /* 1rem */
+.text-lg      { font-size: 18px; }  /* 1.125rem */
+.text-xl      { font-size: 20px; }  /* 1.25rem */
+.text-2xl     { font-size: 24px; }  /* 1.5rem */
+.text-3xl     { font-size: 30px; }  /* 1.875rem */
+.text-4xl     { font-size: 36px; }  /* 2.25rem */
+.text-5xl     { font-size: 48px; }  /* 3rem */
+
+/* Compact overrides (applied via .root--compact parent) */
+.root--compact .text-xs      { font-size: 9px; }
+.root--compact .text-sm      { font-size: 11px; }
+.root--compact .text-base    { font-size: 12px; }
+.root--compact .text-md      { font-size: 14px; }
+.root--compact .text-lg      { font-size: 16px; }
+.root--compact .text-xl      { font-size: 18px; }
+.root--compact .text-2xl     { font-size: 21px; }
+.root--compact .text-3xl     { font-size: 26px; }
+.root--compact .text-4xl     { font-size: 32px; }
+.root--compact .text-5xl     { font-size: 42px; }
+
+/* Large overrides */
+.root--large .text-xs        { font-size: 11px; }
+.root--large .text-sm        { font-size: 13px; }
+.root--large .text-base      { font-size: 16px; }
+.root--large .text-md        { font-size: 18px; }
+.root--large .text-lg        { font-size: 20px; }
+.root--large .text-xl        { font-size: 22px; }
+.root--large .text-2xl       { font-size: 27px; }
+.root--large .text-3xl       { font-size: 34px; }
+.root--large .text-4xl       { font-size: 40px; }
+.root--large .text-5xl       { font-size: 54px; }
+
+/* Tablet overrides */
+.root--xlarge .text-xs       { font-size: 12px; }
+.root--xlarge .text-sm       { font-size: 14px; }
+.root--xlarge .text-base     { font-size: 17px; }
+.root--xlarge .text-md       { font-size: 20px; }
+.root--xlarge .text-lg       { font-size: 22px; }
+.root--xlarge .text-xl       { font-size: 24px; }
+.root--xlarge .text-2xl      { font-size: 30px; }
+.root--xlarge .text-3xl      { font-size: 37px; }
+.root--xlarge .text-4xl      { font-size: 45px; }
+.root--xlarge .text-5xl      { font-size: 60px; }
+
+/* --------------------------------------------------------------------------
+   5. RESPONSIVE BUTTON SIZING
+   -------------------------------------------------------------------------- */
+.btn-height-xs { height: 28px; min-height: 28px; }
+.btn-height-sm { height: 36px; min-height: 36px; }
+.btn-height-md { height: 44px; min-height: 44px; }
+.btn-height-lg { height: 52px; min-height: 52px; }
+.btn-height-xl { height: 60px; min-height: 60px; }
+
+.root--compact .btn-height-xs { height: 24px; min-height: 24px; }
+.root--compact .btn-height-sm { height: 32px; min-height: 32px; }
+.root--compact .btn-height-md { height: 40px; min-height: 40px; }
+.root--compact .btn-height-lg { height: 48px; min-height: 48px; }
+.root--compact .btn-height-xl { height: 54px; min-height: 54px; }
+
+.root--large .btn-height-xs { height: 32px; min-height: 32px; }
+.root--large .btn-height-sm { height: 40px; min-height: 40px; }
+.root--large .btn-height-md { height: 48px; min-height: 48px; }
+.root--large .btn-height-lg { height: 56px; min-height: 56px; }
+.root--large .btn-height-xl { height: 64px; min-height: 64px; }
+
+/* Touch target utility - non-destructive so it respects custom button dimensions */
+.touch-target {
+}
+
+.root--compact .touch-target {
+}
+
+.gap-xs { margin-bottom: 4px; }
+.gap-sm { margin-bottom: 8px; }
+.gap-md { margin-bottom: 12px; }
+.gap-lg { margin-bottom: 16px; }
+.gap-xl { margin-bottom: 24px; }
+
+/* --------------------------------------------------------------------------
+   6. RESPONSIVE BORDER RADIUS SCALE
+   -------------------------------------------------------------------------- */
+.radius-none   { border-radius: 0; }
+.radius-xs     { border-radius: 4px; }
+.radius-sm     { border-radius: 8px; }
+.radius-md     { border-radius: 12px; }
+.radius-lg     { border-radius: 16px; }
+.radius-xl     { border-radius: 24px; }
+.radius-2xl    { border-radius: 32px; }
+.radius-full   { border-radius: 9999px; }
+
+/* --------------------------------------------------------------------------
+   8. SAFE AREA HANDLING
+   -------------------------------------------------------------------------- */
+/* Applied to root container to handle notches, home indicators, etc. */
+.safe-area-inset {
+    padding-top: env(safe-area-inset-top, 0);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    padding-left: env(safe-area-inset-left, 0);
+    padding-right: env(safe-area-inset-right, 0);
+}
+
+/* For Unity UI Toolkit, we use C# to set these via style variables */
+.safe-area-top    { padding-top: 0; }
+.safe-area-bottom { padding-bottom: 0; }
+.safe-area-left   { padding-left: 0; }
+.safe-area-right  { padding-right: 0; }
+
+/* --------------------------------------------------------------------------
+   9. FLEXBOX RESPONSIVE UTILITIES
+   -------------------------------------------------------------------------- */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-row { flex-direction: row; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-nowrap { flex-wrap: nowrap; }
+.flex-1 { flex: 1 1 0%; }
+.flex-auto { flex: 1 1 auto; }
+.flex-initial { flex: 0 1 auto; }
+.flex-none { flex: none; }
+.flex-grow { flex-grow: 1; }
+.flex-shrink-0 { flex-shrink: 0; }
+.flex-shrink { flex-shrink: 1; }
+
+.items-start { align-items: flex-start; }
+.items-center { align-items: center; }
+.items-end { align-items: flex-end; }
+.items-stretch { align-items: stretch; }
+
+.justify-start { justify-content: flex-start; }
+.justify-center { justify-content: center; }
+.justify-end { justify-content: flex-end; }
+.justify-between { justify-content: space-between; }
+.justify-around { justify-content: space-around; }
+.justify-evenly { justify-content: space-evenly; }
+
+/* Responsive direction changes */
+.root--compact .flex-col-mobile { flex-direction: column; }
+.root--compact .flex-row-mobile { flex-direction: row; }
+.root--xlarge .flex-col-tablet { flex-direction: column; }
+.root--xlarge .flex-row-tablet { flex-direction: row; }
+
+/* --------------------------------------------------------------------------
+   10. RESPONSIVE WIDTH/HEIGHT UTILITIES
+   -------------------------------------------------------------------------- */
+.w-full { width: 100%; }
+.w-auto { width: auto; }
+.w-screen { width: 100%; }
+.max-w-xs { max-width: 320px; }
+.max-w-sm { max-width: 360px; }
+.max-w-md { max-width: 400px; }
+.max-w-lg { max-width: 480px; }
+.max-w-xl { max-width: 560px; }
+.max-w-full { max-width: 100%; }
+
+.h-full { height: 100%; }
+.h-auto { height: auto; }
+.h-screen { height: 100%; }
+.min-h-screen { min-height: 100%; }
+
+/* --------------------------------------------------------------------------
+   11. OVERFLOW & SCROLLING
+   -------------------------------------------------------------------------- */
+.overflow-hidden { overflow: hidden; }
+.overflow-auto { overflow: visible; }
+.overflow-x-auto { overflow: visible; }
+.overflow-y-auto { overflow: visible; }
+
+/* Hide scrollbars for clean mobile look */
+.hide-scrollbar {
+    -unity-overflow-clip-box: content-box;
+}
+
+/* --------------------------------------------------------------------------
+   12. KENNEY DOMINO TILE ASSET CLASSES
+   -------------------------------------------------------------------------- */
+/* Tile sheet references for programmatic use */
+.kenney-domino-sheet-stars    { background-image: url('../Resources/Textures/Kenney/Dominoes/stars.png'); }
+.kenney-domino-sheet-light    { background-image: url('../Resources/Textures/Kenney/Dominoes/light.png'); }
+.kenney-domino-sheet-dark     { background-image: url('../Resources/Textures/Kenney/Dominoes/dark.png'); }
+.kenney-domino-sheet-hearts   { background-image: url('../Resources/Textures/Kenney/Dominoes/hearts.png'); }
+.kenney-domino-sheet-gingerbread { background-image: url('../Resources/Textures/Kenney/Dominoes/gingerbread.png'); }
+
+/* Individual tile classes (Stars theme - clean white with colored pips) */
+.domino-tile-kenney {
+    width: 44px;
+    height: 88px;
+    -unity-background-scale-mode: scale-to-fit;
+    background-color: transparent;
+    border-width: 0;
+}
+
+/* Horizontal variant */
+.domino-tile-kenney-horizontal {
+    width: 88px;
+    height: 44px;
+    -unity-background-scale-mode: scale-to-fit;
+    background-color: transparent;
+    border-width: 0;
+}
+
+/* Tile state modifiers */
+.domino-tile-kenney--playable {
+    scale: 1.05;
+}
+.domino-tile-kenney--selected {
+    scale: 1.1;
+}
+.domino-tile-kenney--unplayable {
+    opacity: 0.6;
+}
+
+/* --------------------------------------------------------------------------
+   13. KENNEY UI BUTTON STYLES (9-slice ready)
+   -------------------------------------------------------------------------- */
+.btn-kenney-primary {
+    background-image: url('../Resources/Textures/Kenney/UI/btn_green.png');
+    -unity-slice-left: 16;
+    -unity-slice-top: 16;
+    -unity-slice-right: 16;
+    -unity-slice-bottom: 16;
+    -unity-slice-scale: 1;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    transition-property: scale;
+    transition-duration: 0.1s;
+}
+.btn-kenney-primary:active { scale: 0.95; }
+
+.btn-kenney-secondary {
+    background-image: url('../Resources/Textures/Kenney/UI/btn_blue.png');
+    -unity-slice-left: 16;
+    -unity-slice-top: 16;
+    -unity-slice-right: 16;
+    -unity-slice-bottom: 16;
+    -unity-slice-scale: 1;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    transition-property: scale;
+    transition-duration: 0.1s;
+}
+.btn-kenney-secondary:active { scale: 0.95; }
+
+.btn-kenney-danger {
+    background-image: url('../Resources/Textures/Kenney/UI/btn_red.png');
+    -unity-slice-left: 16;
+    -unity-slice-top: 16;
+    -unity-slice-right: 16;
+    -unity-slice-bottom: 16;
+    -unity-slice-scale: 1;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    transition-property: scale;
+    transition-duration: 0.1s;
+}
+.btn-kenney-danger:active { scale: 0.95; }
+
+/* Panel backgrounds */
+.panel-kenney {
+    background-image: url('../Resources/Textures/Kenney/UI/panel_grey.png');
+    -unity-slice-left: 12;
+    -unity-slice-top: 12;
+    -unity-slice-right: 12;
+    -unity-slice-bottom: 12;
+    -unity-slice-scale: 1;
+}
+
+.panel-kenney-dark {
+    background-image: url('../Resources/Textures/Kenney/UI/panel_dark.png');
+    -unity-slice-left: 12;
+    -unity-slice-top: 12;
+    -unity-slice-right: 12;
+    -unity-slice-bottom: 12;
+    -unity-slice-scale: 1;
+}
+
+/* --------------------------------------------------------------------------
+   14. ANIMATION & TRANSITION UTILITIES
+   -------------------------------------------------------------------------- */
+.transition-fast { transition-duration: 0.1s; }
+.transition-normal { transition-duration: 0.2s; }
+.transition-slow { transition-duration: 0.3s; }
+
+.transition-scale { transition-property: scale; }
+.transition-opacity { transition-property: opacity; }
+.transition-transform { transition-property: scale, translate; }
+.transition-all { transition-property: scale, opacity, background-color, border-color; }

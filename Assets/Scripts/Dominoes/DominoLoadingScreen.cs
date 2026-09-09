@@ -7,15 +7,16 @@ namespace Dominoes
     /// <summary>
     /// Controls the initial Dominoes loading screen with smooth progress animation,
     /// contextual status messages, and transitions to the HomeScreen.
+    /// Works with UI Toolkit UIDocuments.
     /// </summary>
     public class DominoLoadingScreen : MonoBehaviour
     {
-        [Header("UI References")]
-        [Tooltip("The LoadingScreen GameObject to display initially.")]
-        [SerializeField] private GameObject loadingScreen;
+        [Header("UI Document References")]
+        [Tooltip("The UIDocument component hosting LoadingScreen.uxml.")]
+        [SerializeField] private UIDocument loadingScreenDocument;
 
-        [Tooltip("The HomeScreen GameObject to display after loading completes.")]
-        [SerializeField] private GameObject homeScreen;
+        [Tooltip("The UIDocument component hosting HomeScreen.uxml.")]
+        [SerializeField] private UIDocument homeScreenDocument;
 
         [Header("Settings")]
         [Tooltip("Duration in seconds to display the loading screen before transitioning to the HomeScreen.")]
@@ -24,6 +25,7 @@ namespace Dominoes
         private VisualElement progressBar;
         private Label statusLabel;
         private Label percentLabel;
+        private VisualElement loadingRootElement;
 
         private readonly string[] statusMessages = new string[]
         {
@@ -33,32 +35,55 @@ namespace Dominoes
             "Ready to play!"
         };
 
+        private void Awake()
+        {
+            // Auto-find documents if not assigned
+            if (loadingScreenDocument == null)
+            {
+                var loadingGO = GameObject.Find("UI_LoadingScreen_UIToolkit");
+                if (loadingGO != null) loadingScreenDocument = loadingGO.GetComponent<UIDocument>();
+            }
+            
+            if (homeScreenDocument == null)
+            {
+                var homeGO = GameObject.Find("UI_HomeScreen_UIToolkit");
+                if (homeGO != null) homeScreenDocument = homeGO.GetComponent<UIDocument>();
+            }
+        }
+
         private void Start()
         {
-            if (loadingScreen != null)
+            if (loadingScreenDocument == null)
             {
-                var uiDoc = loadingScreen.GetComponent<UIDocument>();
-                if (uiDoc != null && uiDoc.rootVisualElement != null)
-                {
-                    progressBar = uiDoc.rootVisualElement.Q<VisualElement>("loading-progress-bar");
-                    statusLabel = uiDoc.rootVisualElement.Q<Label>("loading-status-text");
-                    percentLabel = uiDoc.rootVisualElement.Q<Label>("loading-percent-text");
-                }
+                Debug.LogError("[DominoLoadingScreen] LoadingScreen UIDocument reference is missing!", this);
+                // Try to continue anyway
+                return;
             }
 
-            if (loadingScreen == null || homeScreen == null)
+            if (loadingScreenDocument.rootVisualElement != null)
             {
-                if (loadingScreen == null)
-                {
-                    Debug.LogError("[DominoLoadingScreen] LoadingScreen reference is missing!", this);
-                }
+                loadingRootElement = loadingScreenDocument.rootVisualElement.Q<VisualElement>("loading-root") 
+                                    ?? loadingScreenDocument.rootVisualElement;
+                
+                var safeContent = loadingRootElement.Q<VisualElement>("loading-safe-content") ?? loadingRootElement;
+                DominoSafeAreaHandler.ApplySafeArea(safeContent, baseLeft: 24f, baseRight: 24f, baseTop: 32f, baseBottom: 32f);
 
-                if (homeScreen == null)
+                loadingRootElement.RegisterCallback<GeometryChangedEvent>(evt =>
                 {
-                    Debug.LogError("[DominoLoadingScreen] HomeScreen reference is missing!", this);
-                }
+                    DominoSafeAreaHandler.ApplySafeArea(safeContent, baseLeft: 24f, baseRight: 24f, baseTop: 32f, baseBottom: 32f);
+                });
 
-                return;
+                progressBar = loadingRootElement.Q<VisualElement>("loading-progress-bar");
+                statusLabel = loadingRootElement.Q<Label>("loading-status-text");
+                percentLabel = loadingRootElement.Q<Label>("loading-percent-text");
+            }
+
+            // Hide HomeScreen initially
+            if (homeScreenDocument != null && homeScreenDocument.rootVisualElement != null)
+            {
+                var homeRoot = homeScreenDocument.rootVisualElement.Q<VisualElement>("home-root") 
+                              ?? homeScreenDocument.rootVisualElement;
+                homeRoot.style.display = DisplayStyle.None;
             }
 
             StartCoroutine(LoadingSequence());
@@ -66,8 +91,11 @@ namespace Dominoes
 
         private IEnumerator LoadingSequence()
         {
-            loadingScreen.SetActive(true);
-            homeScreen.SetActive(false);
+            // Show loading screen
+            if (loadingRootElement != null)
+            {
+                loadingRootElement.style.display = DisplayStyle.Flex;
+            }
 
             float elapsed = 0f;
             while (elapsed < loadingDuration)
@@ -100,8 +128,32 @@ namespace Dominoes
 
             yield return new WaitForSeconds(0.25f);
 
-            loadingScreen.SetActive(false);
-            homeScreen.SetActive(true);
+            // Transition to HomeScreen
+            if (loadingRootElement != null)
+            {
+                loadingRootElement.style.display = DisplayStyle.None;
+            }
+
+            if (homeScreenDocument != null && homeScreenDocument.rootVisualElement != null)
+            {
+                var homeRoot = homeScreenDocument.rootVisualElement.Q<VisualElement>("home-root") 
+                              ?? homeScreenDocument.rootVisualElement;
+                homeRoot.style.display = DisplayStyle.Flex;
+                
+                // Initialize ResponsiveUIManager if present
+                var responsiveManager = FindFirstObjectByType<ResponsiveUIManager>();
+                if (responsiveManager != null)
+                {
+                    responsiveManager.Initialize(homeScreenDocument.rootVisualElement);
+                }
+            }
+            
+            // Notify HomeScreenController to show
+            var homeController = FindFirstObjectByType<DominoHomeScreenController>();
+            if (homeController != null)
+            {
+                homeController.ShowHomeScreen();
+            }
         }
     }
 }

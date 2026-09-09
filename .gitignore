@@ -55,3 +55,16 @@ ehthumbs.db
 /.utmp/
 /graphify-out/
 
+# Local raw asset packs & scripts
+/audio/
+/background music/
+/images/
+/kenney_domino-pack/
+/kenney_ui-pack/
+*.py
+Assets/_Recovery/
+Assets/_Recovery.meta
+Assets/extra.unity*
+
+
+

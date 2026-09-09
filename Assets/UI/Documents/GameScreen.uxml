@@ -5,7 +5,8 @@
     xmlns:uie="UnityEditor.UIElements"
     xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
     editor-extension-mode="False">
-    <ui:Style src="../Styles/GameScreen.uss" />
+    <ui:Style src="../Styles/ResponsiveFoundation.uss" />
+    <ui:Style src="../Styles/GameScreen_textured.uss" />
 
     <!-- Pure Flexbox Game Root (Safe-Area Aware, Responsive for Modern Android Devices) -->
     <ui:VisualElement name="game-root" class="game-root" style="display: none;">
@@ -14,115 +15,129 @@
         <ui:VisualElement name="table-surface" class="table-surface">
             
             <!-- Safe Area Inner Content Container -->
-            <ui:VisualElement name="safe-content" class="safe-content">
+            <ui:VisualElement name="safe-content" class="safe-content flex flex-col justify-between items-center flex-1 overflow-hidden">
 
                 <!-- 1. TOP BAR (HUD Header) -->
-                <ui:VisualElement name="top-bar" class="top-bar">
+                <ui:VisualElement name="top-bar" class="top-bar flex flex-row justify-between items-center flex-shrink-0">
                     <ui:Button name="game-menu-button" class="top-bar-btn top-bar-btn--exit" tooltip="Exit to Menu">
-                        <ui:Label class="top-bar-btn-icon" text="←" />
+                        <ui:Label class="top-bar-btn-icon font-bold" text="◀" />
                     </ui:Button>
 
-                    <ui:VisualElement class="top-bar-center">
-                        <ui:VisualElement class="top-bar-badge">
-                            <ui:Label class="top-bar-title" text="DOMINOES" />
-                            <ui:VisualElement class="top-bar-badge-divider" />
-                            <ui:Label name="round-info-label" class="top-bar-subtitle" text="ROUND 1" />
+                    <ui:VisualElement class="top-bar-center flex flex-grow flex-shrink min-w-0 items-center justify-center">
+                        <ui:VisualElement class="top-bar-badge flex flex-row items-center justify-center">
+                            <ui:Label name="round-info-label" class="top-bar-subtitle font-kenney-future font-bold" text="ROUND 1" />
                         </ui:VisualElement>
                     </ui:VisualElement>
 
-                    <ui:VisualElement class="top-bar-right-group">
+                    <ui:VisualElement class="top-bar-right-group flex flex-row items-center flex-shrink-0">
                         <ui:Button name="settings-button" class="top-bar-btn top-bar-btn--settings" tooltip="Settings">
-                            <ui:Label class="top-bar-btn-icon" text="⚙" />
+                            <ui:Label class="top-bar-btn-icon font-bold" text="⚙" />
                         </ui:Button>
                         <ui:Button name="help-button" class="top-bar-btn top-bar-btn--help" tooltip="Game Rules">
-                            <ui:Label class="top-bar-btn-icon" text="?" />
+                            <ui:Label class="top-bar-btn-icon font-bold" text="?" />
                         </ui:Button>
                     </ui:VisualElement>
                 </ui:VisualElement>
 
                 <!-- 2. OPPONENTS HUD BAR (Compact Header Row with Highlight) -->
-                <ui:VisualElement name="opponents-bar" class="opponents-bar">
+                <ui:VisualElement name="opponents-bar" class="opponents-bar flex flex-row justify-between items-center">
                     <!-- Opponent 1 -->
-                    <ui:VisualElement name="opponent-slot-0" class="opponent-card">
-                        <ui:VisualElement class="opponent-avatar-wrap">
+                    <ui:VisualElement name="opponent-slot-0" class="opponent-card flex flex-row items-center justify-center flex-shrink flex-grow min-w-0 overflow-hidden">
+                        <ui:VisualElement class="opponent-avatar-wrap relative flex justify-center items-center flex-shrink-0">
                             <ui:VisualElement class="opponent-avatar opponent-avatar--0" />
                             <ui:VisualElement name="opponent-active-indicator-0" class="opponent-turn-indicator" />
                         </ui:VisualElement>
-                        <ui:VisualElement class="opponent-info">
-                            <ui:Label name="opponent-name-0" class="opponent-name" text="Sophia" />
-                            <ui:VisualElement class="opponent-badge">
+                        <ui:VisualElement class="opponent-info flex flex-col justify-center min-w-0 flex-shrink overflow-hidden">
+                            <ui:Label name="opponent-name-0" class="opponent-name font-kenney-future font-bold" text="Sophia" />
+                            <ui:VisualElement class="opponent-badge flex flex-row items-center">
                                 <ui:VisualElement class="opponent-badge-icon" />
-                                <ui:Label name="opponent-tile-count-0" class="opponent-tile-count" text="6 tiles" />
+                                <ui:Label name="opponent-tile-count-0" class="opponent-tile-count font-kenney-future font-bold" text="6 tiles" />
                             </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:VisualElement>
 
                     <!-- Opponent 2 -->
-                    <ui:VisualElement name="opponent-slot-1" class="opponent-card">
-                        <ui:VisualElement class="opponent-avatar-wrap">
+                    <ui:VisualElement name="opponent-slot-1" class="opponent-card flex flex-row items-center justify-center flex-shrink flex-grow min-w-0 overflow-hidden">
+                        <ui:VisualElement class="opponent-avatar-wrap relative flex justify-center items-center flex-shrink-0">
                             <ui:VisualElement class="opponent-avatar opponent-avatar--1" />
                             <ui:VisualElement name="opponent-active-indicator-1" class="opponent-turn-indicator" />
                         </ui:VisualElement>
-                        <ui:VisualElement class="opponent-info">
-                            <ui:Label name="opponent-name-1" class="opponent-name" text="Marcus" />
-                            <ui:VisualElement class="opponent-badge">
+                        <ui:VisualElement class="opponent-info flex flex-col justify-center min-w-0 flex-shrink overflow-hidden">
+                            <ui:Label name="opponent-name-1" class="opponent-name font-kenney-future font-bold" text="Marcus" />
+                            <ui:VisualElement class="opponent-badge flex flex-row items-center">
                                 <ui:VisualElement class="opponent-badge-icon" />
-                                <ui:Label name="opponent-tile-count-1" class="opponent-tile-count" text="6 tiles" />
+                                <ui:Label name="opponent-tile-count-1" class="opponent-tile-count font-kenney-future font-bold" text="6 tiles" />
                             </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:VisualElement>
 
                     <!-- Opponent 3 -->
-                    <ui:VisualElement name="opponent-slot-2" class="opponent-card">
-                        <ui:VisualElement class="opponent-avatar-wrap">
+                    <ui:VisualElement name="opponent-slot-2" class="opponent-card flex flex-row items-center justify-center flex-shrink flex-grow min-w-0 overflow-hidden">
+                        <ui:VisualElement class="opponent-avatar-wrap relative flex justify-center items-center flex-shrink-0">
                             <ui:VisualElement class="opponent-avatar opponent-avatar--2" />
                             <ui:VisualElement name="opponent-active-indicator-2" class="opponent-turn-indicator" />
                         </ui:VisualElement>
-                        <ui:VisualElement class="opponent-info">
-                            <ui:Label name="opponent-name-2" class="opponent-name" text="Elena" />
-                            <ui:VisualElement class="opponent-badge">
+                        <ui:VisualElement class="opponent-info flex flex-col justify-center min-w-0 flex-shrink overflow-hidden">
+                            <ui:Label name="opponent-name-2" class="opponent-name font-kenney-future font-bold" text="Elena" />
+                            <ui:VisualElement class="opponent-badge flex flex-row items-center">
                                 <ui:VisualElement class="opponent-badge-icon" />
-                                <ui:Label name="opponent-tile-count-2" class="opponent-tile-count" text="6 tiles" />
+                                <ui:Label name="opponent-tile-count-2" class="opponent-tile-count font-kenney-future font-bold" text="6 tiles" />
                             </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
 
                 <!-- 3. BOARD TABLETOP AREA (Realistic Emerald Felt Canvas) -->
-                <ui:VisualElement name="board-area" class="board-area">
-                    <ui:VisualElement name="board-felt" class="board-felt">
+                <ui:VisualElement name="board-area" class="board-area flex-1 flex justify-center items-center relative">
+                    <ui:VisualElement name="board-felt" class="board-felt flex-1 flex justify-center items-center overflow-hidden relative">
                         
-                        <!-- Floating Interactive Boneyard Stack (Top-Left of Felt Table) -->
+                        <!-- 2D Absolute Coordinate Board Canvas populated by DominoBoardLayoutEngine -->
+                        <ui:VisualElement name="board-tiles-container" class="board-canvas w-full h-full absolute top-0 left-0 right-0 bottom-0 overflow-hidden" picking-mode="Ignore">
+                            <ui:Label name="empty-board-message" class="empty-board-message font-kenney-future font-bold" text="TABLE IS OPEN • Drag or tap a tile from your hand" />
+                        </ui:VisualElement>
+
+                        <!-- Floating Luxury Boneyard Stack (Top-Left of Felt Table) -->
                         <ui:Button name="boneyard-pile-btn" class="boneyard-stack-btn" tooltip="Draw from Boneyard">
-                            <ui:VisualElement class="boneyard-stack-icon" />
-                            <ui:VisualElement class="boneyard-badge-wrap">
-                                <ui:Label name="boneyard-count-label" class="boneyard-badge-text" text="14" />
+                            <ui:Label class="boneyard-btn-header font-kenney-future font-bold" text="BONEYARD" />
+                            <ui:VisualElement class="boneyard-domino-stack">
+                                <ui:VisualElement class="boneyard-stack-layer boneyard-stack-layer--back" />
+                                <ui:VisualElement class="boneyard-stack-layer boneyard-stack-layer--front flex flex-row items-center justify-center">
+                                    <ui:Label name="boneyard-count-label" class="boneyard-badge-text font-kenney-future font-bold" text="14" />
+                                </ui:VisualElement>
                             </ui:VisualElement>
-                            <ui:Label name="boneyard-action-hint" class="boneyard-action-hint" text="DRAW" style="display: none;" />
+                            <ui:Label name="boneyard-action-hint" class="boneyard-action-hint font-kenney-future font-bold" text="DRAW" style="display: none;" />
                         </ui:Button>
 
-                        <!-- 2D Absolute Coordinate Board Canvas populated by DominoBoardLayoutEngine -->
-                        <ui:VisualElement name="board-tiles-container" class="board-canvas">
-                            <ui:Label name="empty-board-message" class="empty-board-message" text="TABLE IS OPEN • Drag or tap a tile from your hand" />
-                        </ui:VisualElement>
-
                         <!-- Interactive Drop Zone Indicators Anchored on Board Ends -->
-                        <ui:VisualElement name="left-end-target" class="board-endpoint-dropzone board-endpoint-dropzone--left" style="display: none;">
-                            <ui:Label name="left-target-tag" class="endpoint-dropzone-tag" text="← PLAY LEFT" />
-                            <ui:Label name="left-target-num" class="endpoint-dropzone-val" text="6" />
+                        <ui:VisualElement name="left-end-target" class="board-endpoint-dropzone board-endpoint-dropzone--left flex flex-col items-center justify-center" style="display: none;">
+                            <ui:Label name="left-target-tag" class="endpoint-dropzone-tag font-kenney-future font-bold" text="← PLAY LEFT" />
+                            <ui:Label name="left-target-num" class="endpoint-dropzone-val font-kenney-future font-bold" text="6" />
                         </ui:VisualElement>
 
-                        <ui:VisualElement name="right-end-target" class="board-endpoint-dropzone board-endpoint-dropzone--right" style="display: none;">
-                            <ui:Label name="right-target-tag" class="endpoint-dropzone-tag" text="PLAY RIGHT →" />
-                            <ui:Label name="right-target-num" class="endpoint-dropzone-val" text="3" />
+                        <ui:VisualElement name="right-end-target" class="board-endpoint-dropzone board-endpoint-dropzone--right flex flex-col items-center justify-center" style="display: none;">
+                            <ui:Label name="right-target-tag" class="endpoint-dropzone-tag font-kenney-future font-bold" text="PLAY RIGHT →" />
+                            <ui:Label name="right-target-num" class="endpoint-dropzone-val font-kenney-future font-bold" text="3" />
+                        </ui:VisualElement>
+
+                        <!-- Explicit Side Selection Banner when domino matches BOTH ends -->
+                        <ui:VisualElement name="side-choice-panel" class="side-choice-panel flex flex-col items-center" style="display: none;">
+                            <ui:Label name="side-choice-title" class="side-choice-title font-kenney-future font-bold" text="CHOOSE END TO PLAY [3|5]" />
+                            <ui:VisualElement class="side-choice-btn-row flex flex-row justify-center items-center">
+                                <ui:Button name="play-left-btn" class="side-choice-btn side-choice-btn--left">
+                                    <ui:Label name="play-left-btn-label" class="side-choice-btn-text font-kenney-future font-bold" text="◀ PLAY LEFT (3)" />
+                                </ui:Button>
+                                <ui:Button name="play-right-btn" class="side-choice-btn side-choice-btn--right">
+                                    <ui:Label name="play-right-btn-label" class="side-choice-btn-text font-kenney-future font-bold" text="PLAY RIGHT (5) ▶" />
+                                </ui:Button>
+                            </ui:VisualElement>
                         </ui:VisualElement>
 
                         <!-- Compact Turn Guidance Banner Inside Board Bottom -->
-                        <ui:VisualElement name="turn-guidance-bar" class="turn-guidance-bar">
+                        <ui:VisualElement name="turn-guidance-bar" class="turn-guidance-bar flex flex-row items-center justify-center">
                             <ui:VisualElement name="turn-status-dot" class="turn-status-dot" />
-                            <ui:VisualElement class="turn-guidance-content">
-                                <ui:Label name="turn-title-label" class="turn-guidance-title" text="YOUR TURN" />
-                                <ui:Label name="turn-subtitle-label" class="turn-guidance-desc" text="Choose a highlighted domino" />
+                            <ui:VisualElement class="turn-guidance-content flex flex-col items-center justify-center">
+                                <ui:Label name="turn-title-label" class="turn-guidance-title font-kenney-future font-bold" text="YOUR TURN" />
+                                <ui:Label name="turn-subtitle-label" class="turn-guidance-desc font-kenney-future" text="Choose a highlighted domino" />
                             </ui:VisualElement>
                         </ui:VisualElement>
 
@@ -130,29 +145,28 @@
                 </ui:VisualElement>
 
                 <!-- 4. FLOATING ACTION CONTROLS (Pass Button & Circular Lamp Hint Button) -->
-                <ui:VisualElement class="floating-controls-bar">
+                <ui:VisualElement class="floating-controls-bar flex flex-row justify-between items-center flex-shrink-0">
                     <!-- Pass Turn Button (Enabled when player must pass) -->
-                    <ui:Button name="pass-button" class="pass-btn-compact" style="visibility: hidden;">
-                        <ui:Label name="pass-btn-title" class="pass-btn-title" text="PASS TURN" />
+                    <ui:Button name="pass-button" class="pass-btn-compact" style="display: none;">
+                        <ui:Label name="pass-btn-title" class="pass-btn-title font-kenney-future font-bold" text="PASS TURN" />
                     </ui:Button>
 
-                    <!-- Circular Lamp Hint Button -->
+                    <!-- Pill Hint Button -->
                     <ui:Button name="hint-button" class="hint-lamp-btn" tooltip="Hint">
-                        <ui:Label class="hint-lamp-icon" text="💡" />
-                        <ui:Label class="hint-lamp-label" text="HINT" />
+                        <ui:Label class="hint-lamp-label font-kenney-future font-bold" text="★ HINT" />
                     </ui:Button>
                 </ui:VisualElement>
 
                 <!-- 5. PLAYER HAND AREA (Ivory Domino Rack on Wooden Tray) -->
-                <ui:VisualElement name="player-hand-area" class="player-hand-area">
-                    <ui:VisualElement class="hand-header">
-                        <ui:Label class="hand-header-title" text="YOUR HAND" />
-                        <ui:Label name="hand-tile-count-label" class="hand-header-count" text="7 TILES" />
+                <ui:VisualElement name="player-hand-area" class="player-hand-area flex flex-col justify-between flex-shrink-0">
+                    <ui:VisualElement class="hand-header flex flex-row justify-between items-center flex-shrink-0">
+                        <ui:Label class="hand-header-title font-kenney-future font-bold" text="YOUR HAND" />
+                        <ui:Label name="hand-tile-count-label" class="hand-header-count font-kenney-future font-bold" text="7 TILES" />
                     </ui:VisualElement>
 
                     <!-- Horizontally Scrollable Standing Ivory Dominoes in Rack -->
-                    <ui:ScrollView name="hand-scroll-view" class="hand-scroll-view" mode="Horizontal">
-                        <ui:VisualElement name="hand-tiles-container" class="hand-tiles-container">
+                    <ui:ScrollView name="hand-scroll-view" class="hand-scroll-view w-full flex-grow" mode="Horizontal">
+                        <ui:VisualElement name="hand-tiles-container" class="hand-tiles-container flex flex-row items-end justify-center min-w-full">
                             <!-- Dynamic Ivory Domino Tiles injected by C# controller -->
                         </ui:VisualElement>
                     </ui:ScrollView>
@@ -162,39 +176,39 @@
         </ui:VisualElement>
 
         <!-- 6. DRAG GHOST ELEMENT (Follows Pointer during Drag-and-Drop) -->
-        <ui:VisualElement name="drag-ghost-tile" class="drag-ghost-tile" style="display: none; position: absolute;" />
+        <ui:VisualElement name="drag-ghost-tile" class="drag-ghost-tile" picking-mode="Ignore" style="display: none; position: absolute;" />
 
         <!-- 7. SETTINGS MODAL (Audio, Haptics & Tutorial Replay) -->
         <ui:VisualElement name="settings-modal" class="overlay-modal" style="display: none;">
             <ui:VisualElement class="modal-backdrop" />
             <ui:VisualElement class="modal-card settings-card">
-                <ui:VisualElement class="modal-gear-badge">
-                    <ui:Label class="modal-gear-icon" text="⚙" />
+                <ui:VisualElement class="modal-gear-badge flex justify-center items-center">
+                    <ui:Label class="modal-gear-icon font-kenney-future font-bold" text="⚙" />
                 </ui:VisualElement>
-                <ui:Label class="modal-eyebrow" text="• PREFERENCES •" />
-                <ui:Label class="modal-title" text="GAME SETTINGS" />
+                <ui:Label class="modal-eyebrow font-kenney-future-narrow font-bold" text="• PREFERENCES •" />
+                <ui:Label class="modal-title font-kenney-future font-bold" text="GAME SETTINGS" />
 
                 <!-- Music Setting Row -->
-                <ui:VisualElement class="settings-row">
-                    <ui:Label class="settings-row-label" text="Background Music" />
+                <ui:VisualElement class="settings-row flex flex-row justify-between items-center">
+                    <ui:Label class="settings-row-label font-kenney-future font-bold" text="Background Music" />
                     <ui:Button name="settings-music-toggle-btn" class="settings-toggle-btn settings-toggle-btn--on">
-                        <ui:Label name="settings-music-toggle-text" class="settings-toggle-text" text="ON" />
+                        <ui:Label name="settings-music-toggle-text" class="settings-toggle-text font-kenney-future font-bold" text="ON" />
                     </ui:Button>
                 </ui:VisualElement>
 
                 <!-- SFX Setting Row -->
-                <ui:VisualElement class="settings-row">
-                    <ui:Label class="settings-row-label" text="Sound Effects" />
+                <ui:VisualElement class="settings-row flex flex-row justify-between items-center">
+                    <ui:Label class="settings-row-label font-kenney-future font-bold" text="Sound Effects" />
                     <ui:Button name="settings-sfx-toggle-btn" class="settings-toggle-btn settings-toggle-btn--on">
-                        <ui:Label name="settings-sfx-toggle-text" class="settings-toggle-text" text="ON" />
+                        <ui:Label name="settings-sfx-toggle-text" class="settings-toggle-text font-kenney-future font-bold" text="ON" />
                     </ui:Button>
                 </ui:VisualElement>
 
                 <!-- Haptics Setting Row -->
-                <ui:VisualElement class="settings-row">
-                    <ui:Label class="settings-row-label" text="Vibration / Haptics" />
+                <ui:VisualElement class="settings-row flex flex-row justify-between items-center">
+                    <ui:Label class="settings-row-label font-kenney-future font-bold" text="Vibration / Haptics" />
                     <ui:Button name="settings-haptics-toggle-btn" class="settings-toggle-btn settings-toggle-btn--on">
-                        <ui:Label name="settings-haptics-toggle-text" class="settings-toggle-text" text="ON" />
+                        <ui:Label name="settings-haptics-toggle-text" class="settings-toggle-text font-kenney-future font-bold" text="ON" />
                     </ui:Button>
                 </ui:VisualElement>
 
@@ -208,33 +222,33 @@
             <ui:VisualElement name="tutorial-backdrop" class="tutorial-backdrop" />
             
             <ui:VisualElement name="tutorial-card" class="tutorial-card">
-                <ui:Label name="tutorial-eyebrow" class="tutorial-eyebrow" text="• INTERACTIVE GUIDE •" />
-                <ui:Label name="tutorial-title" class="tutorial-title" text="HOW TO PLAY DOMINOES" />
-                <ui:Label name="tutorial-desc" class="tutorial-desc" text="Match the number on one side of your tile with an open end on the board. Drag your tile onto the board to place it!" />
+                <ui:Label name="tutorial-eyebrow" class="tutorial-eyebrow font-kenney-future-narrow font-bold" text="• INTERACTIVE GUIDE •" />
+                <ui:Label name="tutorial-title" class="tutorial-title font-kenney-future font-bold" text="HOW TO PLAY DOMINOES" />
+                <ui:Label name="tutorial-desc" class="tutorial-desc font-kenney-future" text="Match the number on one side of your tile with an open end on the board. Drag your tile onto the board to place it!" />
 
-                <ui:Button name="tutorial-primary-btn" class="tutorial-primary-btn" text="LET'S PLAY" />
-                <ui:Button name="tutorial-skip-btn" class="tutorial-skip-btn" text="Skip Tutorial" />
+                <ui:Button name="tutorial-primary-btn" class="tutorial-primary-btn touch-target" text="LET'S PLAY" />
+                <ui:Button name="tutorial-skip-btn" class="tutorial-skip-btn font-kenney-future" text="Skip Tutorial" />
             </ui:VisualElement>
 
             <!-- Animated Pointer for Interactive Steps -->
             <ui:VisualElement name="tutorial-pointer" class="tutorial-pointer" style="display: none;">
-                <ui:Label class="tutorial-pointer-icon" text="👆" />
-                <ui:Label class="tutorial-pointer-label" text="Drag here!" />
+                <ui:Label class="tutorial-pointer-icon font-kenney-future" text="👆" />
+                <ui:Label class="tutorial-pointer-label font-kenney-future font-bold" text="Drag here!" />
             </ui:VisualElement>
 
             <!-- Non-blocking Guidance Toast Hint -->
             <ui:VisualElement name="tutorial-hint-toast" class="tutorial-hint-toast" style="display: none;">
-                <ui:Label name="tutorial-hint-text" class="tutorial-hint-text" text="Drag the highlighted tile to the board." />
+                <ui:Label name="tutorial-hint-text" class="tutorial-hint-text font-kenney-future font-bold" text="Drag the highlighted tile to the board." />
             </ui:VisualElement>
 
             <!-- Skip Tutorial Confirmation Modal -->
             <ui:VisualElement name="tutorial-skip-modal" class="tutorial-skip-modal" style="display: none;">
                 <ui:VisualElement class="tutorial-skip-card">
-                    <ui:Label class="tutorial-skip-title" text="SKIP TUTORIAL?" />
-                    <ui:Label class="tutorial-skip-desc" text="You can learn while playing normally. Are you sure you want to skip?" />
-                    <ui:VisualElement class="tutorial-skip-btn-row">
-                        <ui:Button name="skip-continue-btn" class="tutorial-modal-btn tutorial-modal-btn--cancel" text="CONTINUE" />
-                        <ui:Button name="skip-confirm-btn" class="tutorial-modal-btn tutorial-modal-btn--confirm" text="SKIP" />
+                    <ui:Label class="tutorial-skip-title font-kenney-future font-bold" text="SKIP TUTORIAL?" />
+                    <ui:Label class="tutorial-skip-desc font-kenney-future" text="You can learn while playing normally. Are you sure you want to skip?" />
+                    <ui:VisualElement class="tutorial-skip-btn-row flex flex-row justify-between">
+                        <ui:Button name="skip-continue-btn" class="tutorial-modal-btn tutorial-modal-btn--cancel touch-target" text="CONTINUE" />
+                        <ui:Button name="skip-confirm-btn" class="tutorial-modal-btn tutorial-modal-btn--confirm touch-target" text="SKIP" />
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
@@ -244,18 +258,18 @@
         <ui:VisualElement name="help-rules-modal" class="overlay-modal" style="display: none;">
             <ui:VisualElement class="modal-backdrop" />
             <ui:VisualElement class="modal-card help-rules-card">
-                <ui:Label class="modal-eyebrow" text="• HOW TO PLAY •" />
-                <ui:Label class="modal-title" text="DOMINOES RULES" />
+                <ui:Label class="modal-eyebrow font-kenney-future-narrow font-bold" text="• HOW TO PLAY •" />
+                <ui:Label class="modal-title font-kenney-future font-bold" text="DOMINOES RULES" />
                 <ui:ScrollView class="help-rules-scroll">
-                    <ui:Label class="help-rule-item" text="1. Match Numbers: Connect your tile's pip number to a matching open end on the board." />
-                    <ui:Label class="help-rule-item" text="2. Drag &amp; Drop: Drag a tile from your hand and drop it onto the matching board end." />
-                    <ui:Label class="help-rule-item" text="3. Doubles: Double tiles (e.g. 6|6, 5|5) are placed perpendicular to the chain." />
-                    <ui:Label class="help-rule-item" text="4. Draw from Boneyard: Tap the Boneyard stack on the top-left if you have no moves." />
-                    <ui:Label class="help-rule-item" text="5. Passing: If the boneyard is empty and you cannot move, tap PASS TURN." />
-                    <ui:Label class="help-rule-item" text="6. Winning: The first player to play all their dominoes wins the round!" />
+                    <ui:Label class="help-rule-item font-kenney-future" text="1. Match Numbers: Connect your tile's pip number to a matching open end on the board." />
+                    <ui:Label class="help-rule-item font-kenney-future" text="2. Drag &amp; Drop: Drag a tile from your hand and drop it onto the matching board end." />
+                    <ui:Label class="help-rule-item font-kenney-future" text="3. Doubles: Double tiles (e.g. 6|6, 5|5) are placed perpendicular to the chain." />
+                    <ui:Label class="help-rule-item font-kenney-future" text="4. Draw from Boneyard: Tap the Boneyard stack on the top-left if you have no moves." />
+                    <ui:Label class="help-rule-item font-kenney-future" text="5. Passing: If the boneyard is empty and you cannot move, tap PASS TURN." />
+                    <ui:Label class="help-rule-item font-kenney-future" text="6. Winning: The first player to play all their dominoes wins the round!" />
                 </ui:ScrollView>
-                <ui:Button name="replay-tutorial-btn" class="modal-btn-secondary" text="Play Interactive Tutorial" />
-                <ui:Button name="help-rules-close-btn" class="modal-btn-primary" text="GOT IT" />
+                <ui:Button name="replay-tutorial-btn" class="modal-btn-secondary touch-target" text="Play Interactive Tutorial" />
+                <ui:Button name="help-rules-close-btn" class="modal-btn-primary touch-target" text="GOT IT" />
             </ui:VisualElement>
         </ui:VisualElement>
 
@@ -264,56 +278,88 @@
             <ui:VisualElement class="modal-backdrop" />
             <ui:VisualElement class="modal-card result-modal-card">
                 <!-- Result Trophy / Badge Crest -->
-                <ui:VisualElement class="result-trophy-badge">
-                    <ui:Label name="result-trophy-icon" class="result-trophy-icon" text="🏆" />
+                <ui:VisualElement class="result-trophy-badge flex justify-center items-center">
+                    <ui:Label name="result-trophy-icon" class="result-trophy-icon font-kenney-future" text="🏆" />
                 </ui:VisualElement>
 
-                <ui:Label class="modal-eyebrow" text="• MATCH RESULT •" />
-                <ui:Label name="result-title" class="result-title" text="YOU WIN!" />
-                <ui:Label name="result-winner-label" class="result-winner-text" text="Excellent Play!" />
+                <ui:Label class="modal-eyebrow font-kenney-future-narrow font-bold" text="• MATCH RESULT •" />
+                <ui:Label name="result-title" class="result-title font-kenney-future font-bold" text="YOU WIN!" />
+                <ui:Label name="result-winner-label" class="result-winner-text font-kenney-future" text="Excellent Play!" />
 
                 <!-- Animated Score Banner -->
-                <ui:VisualElement class="score-banner-box">
-                    <ui:Label class="score-banner-title" text="YOUR SCORE" />
-                    <ui:Label name="animated-score-label" class="score-banner-number" text="+125" />
+                <ui:VisualElement class="score-banner-box flex flex-col items-center">
+                    <ui:Label class="score-banner-title font-kenney-future-narrow font-bold" text="YOUR SCORE" />
+                    <ui:Label name="animated-score-label" class="score-banner-number font-kenney-future font-bold" text="+125" />
                 </ui:VisualElement>
 
                 <ui:VisualElement name="result-scores-list" class="result-scores-list" />
 
                 <!-- Action Buttons: [ PLAY AGAIN ] and [ HOME ] -->
-                <ui:VisualElement class="result-actions-row">
-                    <ui:Button name="play-again-button" class="modal-btn-primary result-btn--play-again" text="PLAY AGAIN" />
-                    <ui:Button name="exit-home-button" class="modal-btn-secondary result-btn--home" text="HOME" />
+                <ui:VisualElement class="result-actions-row flex flex-row justify-between">
+                    <ui:Button name="play-again-button" class="modal-btn-primary result-btn--play-again touch-target" text="PLAY AGAIN" />
+                    <ui:Button name="exit-home-button" class="modal-btn-secondary result-btn--home touch-target" text="HOME" />
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
 
-        <!-- 11. LEAVE MATCH CONFIRMATION ALERT DIALOG (Matching Image 3: Broken Domino, Green Felt, Gold Bevels, Red Exit & Green Play) -->
+        <!-- 11. SKEUOMORPHIC BONEYARD TILE TRAY POPUP -->
+        <ui:VisualElement name="draw-modal" class="boneyard-modal-overlay" style="display: none;">
+            <ui:VisualElement name="boneyard-modal-backdrop" class="modal-backdrop" />
+            
+            <ui:VisualElement name="boneyard-tray-wrapper" class="boneyard-tray-wrapper">
+                
+                <!-- Top Carved Wood Ribbon Header: [🎲] DRAW FROM BONEYARD [✕] -->
+                <ui:VisualElement class="boneyard-tray-header-tab flex flex-row items-center justify-between">
+                    <ui:VisualElement class="boneyard-header-left flex flex-row items-center">
+                        <ui:Label class="boneyard-header-icon font-kenney-future" text="🎲" />
+                        <ui:Label class="boneyard-header-tab-title font-kenney-future font-bold" text="DRAW FROM BONEYARD" />
+                    </ui:VisualElement>
+                    <ui:Button name="boneyard-modal-x-btn" class="boneyard-tray-close-x touch-target" tooltip="Close">
+                        <ui:Label class="boneyard-tray-close-x-text font-kenney-future font-bold" text="✕" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <!-- Rich Carved Mahogany Wooden Tray Container -->
+                <ui:VisualElement name="boneyard-tray-card" class="boneyard-tray-card">
+                    <!-- 2-Row Grid of Face-Down Domino Tiles -->
+                    <ui:VisualElement name="boneyard-tiles-grid" class="boneyard-tiles-grid flex flex-row flex-wrap justify-center align-center" />
+                </ui:VisualElement>
+
+                <!-- Subtitle guidance label below tray -->
+                <ui:VisualElement class="boneyard-tray-footer-row flex flex-col items-center">
+                    <ui:Label name="boneyard-tray-hint-label" class="boneyard-tray-hint-label font-kenney-future font-bold" text="Tap any face-down domino to draw (1 of 2)" />
+                    <ui:Button name="draw-modal-close-btn" class="boneyard-tray-skip-btn touch-target" text="Skip / Pass" style="display: none;" />
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- 12. LEAVE MATCH CONFIRMATION ALERT DIALOG (Matching Image 3: Broken Domino, Green Felt, Gold Bevels, Red Exit & Green Play) -->
         <ui:VisualElement name="leave-confirm-modal" class="alert-dialog-overlay" style="display: none;">
             <ui:VisualElement name="leave-modal-backdrop" class="alert-dialog-backdrop" />
             
-            <ui:VisualElement name="leave-modal-card" class="alert-felt-card">
+            <ui:VisualElement name="leave-modal-card" class="alert-felt-card flex flex-col items-center">
                 
                 <!-- Close X Button on Top Right -->
-                <ui:Button name="alert-close-x-btn" class="alert-close-x-btn">
-                    <ui:Label class="alert-close-x-icon" text="✕" />
+                <ui:Button name="alert-close-x-btn" class="alert-close-x-btn touch-target">
+                    <ui:Label class="alert-close-x-icon font-kenney-future font-bold" text="✕" />
                 </ui:Button>
 
                 <!-- Top Gold-Framed Header Tab -->
-                <ui:VisualElement class="alert-header-tab">
-                    <ui:Label class="alert-header-tab-text" text="Are You Sure?" />
+                <ui:VisualElement class="alert-header-tab flex justify-center items-center">
+                    <ui:Label class="alert-header-tab-text font-kenney-future font-bold" text="Are You Sure?" />
                 </ui:VisualElement>
 
                 <!-- Center 3D Broken Domino Illustration -->
                 <ui:VisualElement class="alert-broken-domino-img" />
 
                 <!-- Confirmation Text -->
-                <ui:Label class="alert-message-text" text="Do you want to exit? You will lose the match." />
+                <ui:Label class="alert-message-text font-kenney-future font-bold" text="Do you want to exit? You will lose the match." />
 
                 <!-- Two 3D Game Buttons (Red Exit & Green Play) -->
-                <ui:VisualElement class="alert-btn-row">
-                    <ui:Button name="leave-modal-confirm-btn" class="alert-game-btn alert-game-btn--exit" text="Exit" />
-                    <ui:Button name="leave-modal-cancel-btn" class="alert-game-btn alert-game-btn--play" text="Play" />
+                <ui:VisualElement class="alert-btn-row flex flex-row justify-between items-center gap-md">
+                    <ui:Button name="leave-modal-confirm-btn" class="alert-game-btn alert-game-btn--exit touch-target" text="Exit" />
+                    <ui:Button name="leave-modal-cancel-btn" class="alert-game-btn alert-game-btn--play touch-target" text="Play" />
                 </ui:VisualElement>
 
             </ui:VisualElement>

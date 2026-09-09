@@ -1025,20 +1025,20 @@ namespace Dominoes
             }
 
             // Dynamic compact tile sizing for responsive mobile racks (up to 21 tiles drawn)
-            float tileWidth = 38f;
-            float tileHeight = 76f;
+            float tileWidth = 28f;
+            float tileHeight = 56f;
             float marginH = 2f;
 
             if (human.HandCount >= 12)
             {
-                tileWidth = 32f;
-                tileHeight = 64f;
+                tileWidth = 24f;
+                tileHeight = 48f;
                 marginH = 1f;
             }
             else if (human.HandCount >= 8)
             {
-                tileWidth = 35f;
-                tileHeight = 70f;
+                tileWidth = 26f;
+                tileHeight = 52f;
                 marginH = 1.5f;
             }
 

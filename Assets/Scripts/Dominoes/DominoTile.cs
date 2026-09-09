@@ -4,10 +4,11 @@ using UnityEngine;
 namespace Dominoes
 {
     /// <summary>
-    /// Pure C# data model representing a single double-six Domino tile (values 0 to 6 on each end).
+    /// Pure C# immutable data model representing a single double-six Domino tile (values 0 to 6 on each end).
+    /// Implements IEquatable and canonical value equality for deterministic state synchronization.
     /// </summary>
     [Serializable]
-    public class DominoTile
+    public class DominoTile : IEquatable<DominoTile>
     {
         public const int MinValue = 0;
         public const int MaxValue = 6;
@@ -29,6 +30,11 @@ namespace Dominoes
         /// Returns true if both ends of the domino have the same value (e.g., 6|6, 0|0).
         /// </summary>
         public bool IsDouble => left == right;
+
+        /// <summary>
+        /// Gets the sum of both ends of the domino tile (0 to 12).
+        /// </summary>
+        public int TotalPips => left + right;
 
         /// <summary>
         /// Safe constructor that validates tile values are within the valid 0-6 range.
@@ -89,6 +95,45 @@ namespace Dominoes
             }
 
             throw new ArgumentException($"Tile [{left}|{right}] cannot connect to value {connectingValue}.", nameof(connectingValue));
+        }
+
+        public bool Equals(DominoTile other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            int thisMin = Math.Min(left, right);
+            int thisMax = Math.Max(left, right);
+            int otherMin = Math.Min(other.left, other.right);
+            int otherMax = Math.Max(other.left, other.right);
+
+            return thisMin == otherMin && thisMax == otherMax;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((DominoTile)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            int min = Math.Min(left, right);
+            int max = Math.Max(left, right);
+            return HashCode.Combine(min, max);
+        }
+
+        public static bool operator ==(DominoTile left, DominoTile right)
+        {
+            if (ReferenceEquals(left, null)) return ReferenceEquals(right, null);
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(DominoTile left, DominoTile right)
+        {
+            return !(left == right);
         }
 
         /// <summary>

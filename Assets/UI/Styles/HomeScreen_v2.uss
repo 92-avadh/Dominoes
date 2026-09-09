@@ -1,0 +1,1291 @@
+/* ==========================================================================
+   HomeScreen.uss - Responsive Commercial Dominoes Casual UI Stylesheet
+   Kenney Asset Integration • Mobile-First • Safe Area Aware
+   ========================================================================== */
+
+/* -------------------------------------------------------------------------- */
+/*   Root Fullscreen Container with Realistic Wood Background                 */
+/* -------------------------------------------------------------------------- */
+.home-root {
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #2d1a0f;
+    background-image: url('../Textures/Wood/wood_table_surface.png');
+    -unity-background-scale-mode: scale-and-crop;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    opacity: 1;
+    transition-property: opacity;
+    transition-duration: 0.35s;
+}
+
+.safe-content {
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 8px 8px 0 8px;
+}
+
+/* --------------------------------------------------------------------------
+   1. TOP HUD (Header) - Responsive
+   -------------------------------------------------------------------------- */
+.top-bar {
+    width: 100%;
+    max-width: 420px;
+    align-self: center;
+    height: 40px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    margin-bottom: 4px;
+}
+
+/* Circular Menu Button */
+.hud-circle-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background-color: rgba(15, 23, 42, 0.94);
+    border-width: 2px;
+    border-color: #F59E0B;
+    border-top-color: #FDE047;
+    border-bottom-color: #D97706;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    flex-shrink: 0;
+    transition-property: scale;
+    transition-duration: 0.1s;
+}
+
+.hud-circle-btn:active {
+    scale: 0.92;
+}
+
+.hamburger-bar {
+    width: 14px;
+    height: 2px;
+    border-radius: 1px;
+    background-color: #FEF3C7;
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+/* Player Profile HUD Capsule */
+.hud-profile-capsule {
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(15, 23, 42, 0.94);
+    border-radius: 20px;
+    border-width: 2px;
+    border-color: #F59E0B;
+    border-top-color: #FDE047;
+    border-bottom-color: #D97706;
+    padding: 3px 10px 3px 3px;
+    flex-shrink: 1;
+    min-width: 0;
+    height: 30px;
+    overflow: hidden;
+}
+
+.hud-profile-capsule:active {
+    scale: 0.95;
+}
+
+.hud-avatar-frame {
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    border-width: 1px;
+    border-color: #FDE047;
+    background-color: #334155;
+    position: relative;
+    margin-right: 3px;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+}
+
+.hud-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    background-image: url('../Textures/avatar_you.jpg');
+    -unity-background-scale-mode: scale-and-crop;
+    background-color: #1e293b;
+}
+
+.hud-level-star {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 11px;
+    height: 11px;
+    border-radius: 2px;
+    background-color: #F59E0B;
+    border-width: 1px;
+    border-color: #FFFFFF;
+    justify-content: center;
+    align-items: center;
+}
+
+.hud-level-number {
+    font-size: 8px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    padding: 0;
+    margin-top: -1px;
+}
+
+.hud-profile-info {
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    flex-shrink: 1;
+    overflow: hidden;
+}
+
+.hud-player-name {
+    font-size: 10px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    padding: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hud-xp-track {
+    width: 100%;
+    max-width: 40px;
+    height: 2px;
+    border-radius: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin-top: 1px;
+    overflow: hidden;
+    flex-shrink: 1;
+}
+
+.hud-xp-fill {
+    width: 65%;
+    height: 100%;
+    background-color: #FBBF24;
+}
+
+/* Crown Coin Badge (+ 100) */
+.hud-coin-badge {
+    height: 30px;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(15, 23, 42, 0.95);
+    border-radius: 10px;
+    border-width: 2px;
+    border-color: #F59E0B;
+    border-top-color: #FDE047;
+    border-bottom-color: #D97706;
+    padding: 3px 10px 3px 3px;
+    flex-shrink: 0;
+}
+
+.hud-coin-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    background-color: #F59E0B;
+    border-width: 1px;
+    border-color: #FEF08A;
+    margin-right: 3px;
+    background-image: url('../Textures/icon_coin.png');
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.hud-coin-text {
+    font-size: 12px;
+    color: #FEF08A;
+    -unity-font-style: bold;
+    padding: 0;
+    margin-right: 3px;
+}
+
+.hud-coin-plus {
+    font-size: 12px;
+    color: #22C55E;
+    -unity-font-style: bold;
+    padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   2. TOP EVENT CARDS ROW (Leagues, Tournament, Epic Race) - Responsive
+   -------------------------------------------------------------------------- */
+.event-cards-row {
+    width: 100%;
+    max-width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+    min-height: 100px;
+}
+
+.event-card {
+    width: 100%;
+    flex: 1;
+    height: 100%;
+    min-height: 100px;
+    background-color: #94A3B8;
+    border-radius: 16px;
+    border-width: 2px;
+    border-color: #CBD5E1;
+    border-top-color: #FFFFFF;
+    border-bottom-color: #64748B;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 4px 8px 4px;
+    flex-shrink: 0;
+    display: flex;
+}
+
+.event-card--active {
+    border-color: #F59E0B;
+    border-top-color: #FEF08A;
+}
+
+.event-card-header {
+    width: 100%;
+    height: 20px;
+    background-color: #64748B;
+    border-radius: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.event-card-title {
+    font-size: 10px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    padding: 0;
+}
+
+.event-card-sub {
+    font-size: 10px;
+    color: #334155;
+    -unity-font-style: bold;
+    padding: 0;
+    margin-top: 1px;
+}
+
+.event-timer-pill {
+    background-color: #0284C7;
+    border-radius: 4px;
+    padding: 1px 4px;
+    margin-top: 1px;
+}
+
+.event-timer-text {
+    font-size: 10px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    padding: 0;
+}
+
+.event-card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    -unity-background-scale-mode: scale-to-fit;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    flex-shrink: 0;
+}
+
+.event-card-icon--shield { background-color: #64748B; }
+.event-card-icon--trophy { background-color: #64748B; }
+.event-card-icon--flag { background-color: #64748B; }
+
+.event-card-btn {
+    width: 90%;
+    height: 28px;
+    border-radius: 8px;
+    justify-content: center;
+    align-items: center;
+    border-width: 1px;
+    flex-shrink: 0;
+}
+
+.event-card-btn--locked {
+    background-color: #64748B;
+    border-color: #475569;
+}
+
+.event-card-btn--play {
+    background-color: #F59E0B;
+    border-color: #FEF08A;
+    border-bottom-color: #B45309;
+}
+
+.event-btn-text {
+    font-size: 10px;
+    color: #CBD5E1;
+    -unity-font-style: bold;
+}
+
+.event-btn-text--play {
+    color: #FFFFFF;
+    font-size: 12px;
+}
+
+/* 3. MAIN 3 GAME MODE BUTTONS (Online, VS Computer, Friend) - Responsive */
+.mode-buttons-group {
+    width: 92%;
+    max-width: 360px;
+    align-self: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.mode-btn {
+    width: 100%;
+    height: 54px;
+    min-height: 54px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    border-width: 3px;
+    border-color: #F59E0B;
+    border-top-color: #FEF08A;
+    border-bottom-color: #D97706;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 14px;
+    margin-bottom: 10px;
+    transition-property: scale;
+    transition-duration: 0.1s;
+}
+
+.mode-btn:active {
+    scale: 0.96;
+}
+
+/* Option 1: Online (Royal Blue Glossy Pill with 3D Gold Rim) */
+.mode-btn--online {
+    background-color: #0284C7;
+    border-color: #F59E0B;
+    border-top-color: #FEF08A;
+    border-bottom-color: #D97706;
+}
+
+/* Option 2: VS Computer (Emerald Green Glossy Pill with 3D Gold Rim) */
+.mode-btn--computer {
+    background-color: #16A34A;
+    border-color: #F59E0B;
+    border-top-color: #FEF08A;
+    border-bottom-color: #D97706;
+}
+
+/* Option 3: Friend (Purple/Violet Glossy Pill with 3D Gold Rim) */
+.mode-btn--friends {
+    background-color: #9333EA;
+    border-color: #F59E0B;
+    border-top-color: #FEF08A;
+    border-bottom-color: #D97706;
+}
+
+/* Left Circular Real Graphical Mode Badges */
+.mode-badge-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    margin-right: 10px;
+    flex-shrink: 0;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.mode-badge-img--online {
+    background-image: url('../Textures/icon_mode_online.png');
+}
+
+.mode-badge-img--computer {
+    background-image: url('../Textures/icon_mode_computer.png');
+}
+
+.mode-badge-img--friends {
+    background-image: url('../Textures/icon_mode_friends.png');
+}
+
+.mode-label-text {
+    font-size: 16px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    letter-spacing: 0.3px;
+    padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   4. CENTER FLOATING FEATURES (3D Domino Tile & Reward Wheel) - Responsive
+   -------------------------------------------------------------------------- */
+.center-feature-area {
+    width: 100%;
+    flex-grow: 1;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    min-height: 120px;
+}
+
+/* Center 3D Tilted Ivory Domino Tile [4|5] */
+.tilted-hero-domino {
+    width: 60px;
+    height: 120px;
+    background-color: #FAF8F2;
+    border-radius: 12px;
+    border-width: 2px;
+    border-color: #CBD5E1;
+    border-top-color: #FFFFFF;
+    border-bottom-color: #94A3B8;
+    rotate: -14deg;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 4px;
+    flex-shrink: 0;
+}
+
+.domino-half {
+    width: 100%;
+    height: 50%;
+    position: relative;
+}
+
+.domino-divider-line {
+    width: 85%;
+    height: 2px;
+    background-color: #64748B;
+    border-radius: 1px;
+}
+
+.domino-pip {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background-color: #0F172A;
+}
+
+.pip-tl { top: 4px; left: 6px; }
+.pip-tr { top: 4px; right: 6px; }
+.pip-bl { bottom: 4px; left: 6px; }
+.pip-br { bottom: 4px; right: 6px; }
+.pip-center { top: 50%; left: 50%; translate: -50% -50%; }
+
+/* Bottom-Right: Reward Wheel Ad Chip (+100) */
+.reward-wheel-chip {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    background-color: #15803D;
+    border-width: 2.5px;
+    border-color: #F59E0B;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.wheel-icon-inner {
+    display: none;
+}
+
+.wheel-video-badge {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    background-color: #0284C7;
+    border-width: 1px;
+    border-color: #FFFFFF;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.video-camera-glyph {
+    font-size: 10px;
+    color: #FFFFFF;
+    padding: 0;
+    -unity-text-align: middle-center;
+}
+
+.reward-plus-text {
+    font-size: 12px;
+    color: #FEF08A;
+    -unity-font-style: bold;
+    padding: 0;
+    -unity-text-align: middle-center;
+}
+
+/* -------------------------------------------------------------------------- */
+/*   5. BOTTOM NAVIGATION DOCK (Home Page Tab) - Responsive                   */
+/* -------------------------------------------------------------------------- */
+.bottom-nav-dock {
+    width: 100%;
+    height: 50px;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+    background-color: rgba(180, 83, 9, 0.95);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-top-width: 2px;
+    border-top-color: #FDE047;
+    padding: 0 12px 2px 12px;
+    flex-shrink: 0;
+}
+
+.nav-tab-btn {
+    min-width: 80px;
+    height: 44px;
+    background-color: transparent;
+    border-width: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+}
+
+.nav-tab-btn--active {
+    height: 50px;
+    background-color: rgba(217, 119, 6, 0.95);
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-width: 2px;
+    border-color: #FEF08A;
+    border-bottom-width: 0;
+    margin-top: -6px;
+}
+
+.nav-tab-icon {
+    width: 20px;
+    height: 20px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.nav-tab-icon--home { background-image: url('../Textures/icon_clubhouse.png'); }
+
+.nav-tab-label {
+    font-size: 9px;
+    color: #FEF3C7;
+    -unity-font-style: bold;
+    padding: 0;
+    margin-top: 1px;
+}
+
+.nav-tab-label--active {
+    color: #FFFFFF;
+    font-size: 11px;
+}
+
+/* ==========================================================================
+   MODALS (Dark Glassmorphism with 3D Gold Borders) - Responsive
+   ========================================================================== */
+.home-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    justify-content: center;
+    align-items: center;
+    /* Account for safe areas */
+    padding: 0 0 0 0;
+}
+
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(10, 15, 30, 0.88);
+}
+
+.modal-card {
+    width: 86%;
+    max-width: 320px;
+    min-width: 250px;
+    max-height: 85%;
+    background-color: rgba(15, 23, 42, 0.96);
+    border-radius: 20px;
+    border-width: 2px;
+    border-color: #F59E0B;
+    border-top-color: #FEF08A;
+    border-bottom-color: #D97706;
+    padding: 16px 14px;
+    align-items: center;
+    flex-shrink: 1;
+    overflow: hidden;
+}
+
+.modal-card--options {
+    width: 86%;
+    max-width: 320px;
+}
+
+.modal-card--friend {
+    width: 86%;
+    max-width: 320px;
+}
+
+.modal-header-row {
+    align-items: center;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+    width: 100%;
+    justify-content: center;
+}
+
+.modal-eyebrow {
+    font-size: 10px;
+    color: #F59E0B;
+    -unity-font-style: bold;
+    letter-spacing: 1.2px;
+}
+
+.modal-title {
+    font-size: 16px;
+    color: #FEF08A;
+    -unity-font-style: bold;
+    margin-top: 2px;
+    white-space: normal;
+    -unity-text-align: middle-center;
+}
+
+/* --------------------------------------------------------------------------
+   VS Computer Difficulty Modal Styles
+   -------------------------------------------------------------------------- */
+.modal-options-list {
+    width: 100%;
+    flex-direction: column;
+    margin-bottom: 8px;
+    flex-shrink: 1;
+}
+
+.option-card {
+    width: 100%;
+    min-height: 48px;
+    height: 52px;
+    border-radius: 12px;
+    background-color: rgba(30, 41, 59, 0.95);
+    border-width: 1.5px;
+    border-color: #475569;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 10px;
+    margin: 0;
+    margin-bottom: 6px;
+    flex-shrink: 0;
+    transition-property: scale, border-color;
+    transition-duration: 0.1s;
+}
+
+.option-card:active {
+    scale: 0.97;
+}
+
+.option-card--easy {
+    border-color: #22C55E;
+}
+
+.option-card--medium {
+    border-color: #F59E0B;
+}
+
+.option-card--hard {
+    border-color: #EF4444;
+}
+
+.option-icon-box {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 8px;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.option-icon-box--easy { background-color: #15803D; }
+.option-icon-box--medium { background-color: #B45309; }
+.option-icon-box--hard { background-color: #B91C1C; }
+
+.option-icon-text {
+    font-size: 13px;
+    color: #FEF08A;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+
+.option-card--medium .option-icon-text {
+    font-size: 11px;
+    letter-spacing: -0.5px;
+}
+
+.option-card--hard .option-icon-text {
+    font-size: 9.5px;
+    letter-spacing: -1px;
+}
+
+.option-info-col {
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.option-title {
+    font-size: 13px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+}
+
+.option-desc {
+    font-size: 9px;
+    color: #94A3B8;
+    margin-top: 1px;
+    white-space: normal;
+}
+
+/* --------------------------------------------------------------------------
+   Online Rules Modal Grid
+   -------------------------------------------------------------------------- */
+.rules-grid {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.rule-card {
+    width: 48.5%;
+    height: 66px;
+    min-height: 66px;
+    max-height: 66px;
+    border-radius: 12px;
+    background-color: rgba(30, 41, 59, 0.95);
+    border-width: 1.5px;
+    border-color: #475569;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 4px;
+    margin: 0;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+    transition-property: scale, border-color;
+    transition-duration: 0.1s;
+}
+
+.rule-card:active {
+    scale: 0.96;
+}
+
+.rule-card--active {
+    border-color: #F59E0B;
+    border-top-color: #FEF08A;
+    background-color: rgba(15, 23, 42, 0.98);
+}
+
+.rule-badge {
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2px;
+    flex-shrink: 0;
+}
+
+.rule-badge--classic { background-color: #0284C7; }
+.rule-badge--fives { background-color: #2563EB; }
+.rule-badge--block { background-color: #9333EA; }
+.rule-badge--draw { background-color: #16A34A; }
+
+.rule-badge-icon {
+    width: 14px;
+    height: 14px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.rule-badge-icon--classic {
+    background-image: url('../Textures/icon_domino_badge_gold.png');
+}
+
+.rule-badge-icon--fives {
+    background-image: url('../Textures/icon_five_badge.png');
+}
+
+.rule-badge-icon--block {
+    background-image: url('../Textures/icon_block_badge.png');
+}
+
+.rule-badge-icon--draw {
+    background-image: url('../Textures/icon_draw_badge.png');
+}
+
+.rule-title {
+    font-size: 11px;
+    color: #FEF08A;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    margin-bottom: 1px;
+}
+
+.rule-desc {
+    font-size: 8px;
+    color: #94A3B8;
+    -unity-text-align: middle-center;
+    margin-top: 0;
+    white-space: normal;
+}
+
+/* --------------------------------------------------------------------------
+   Friend Room Modal Styles (Tabs, Code Display, Input)
+   -------------------------------------------------------------------------- */
+.friend-tab-bar {
+    width: 100%;
+    height: 44px;
+    flex-direction: row;
+    background-color: rgba(30, 41, 59, 0.9);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 24px;
+}
+
+.friend-tab-btn {
+    flex: 1;
+    height: 100%;
+    border-radius: 12px;
+    background-color: transparent;
+    border-width: 0;
+    color: #94A3B8;
+    font-size: 12px;
+    -unity-font-style: bold;
+    justify-content: center;
+    align-items: center;
+}
+
+.friend-tab-btn--active {
+    background-color: #F59E0B;
+    color: #FFFFFF;
+}
+
+.friend-tab-panel {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.friend-panel-hint {
+    font-size: 10px;
+    color: #CBD5E1;
+    -unity-text-align: middle-center;
+    margin-bottom: 16px;
+}
+
+.room-code-display-box {
+    width: 80%;
+    height: 52px;
+    background-color: rgba(15, 23, 42, 0.95);
+    border-radius: 16px;
+    border-width: 2px;
+    border-color: #F59E0B;
+    border-top-color: #FEF08A;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.room-code-text {
+    font-size: 24px;
+    color: #FEF08A;
+    -unity-font-style: bold;
+    letter-spacing: 3px;
+}
+
+.copy-code-btn {
+    width: 80%;
+    height: 36px;
+    border-radius: 12px;
+    background-color: #0284C7;
+    border-width: 1.5px;
+    border-color: #38BDF8;
+    color: #FFFFFF;
+    font-size: 10px;
+    -unity-font-style: bold;
+    margin-bottom: 24px;
+}
+
+.room-code-input-box {
+    width: 85%;
+    height: 44px;
+    margin-bottom: 16px;
+}
+
+.room-code-input {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 23, 42, 0.95);
+    border-radius: 12px;
+    border-width: 2px;
+    border-color: #F59E0B;
+    color: #FEF08A;
+    font-size: 18px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+
+.friend-join-status-txt {
+    font-size: 10px;
+    color: #EF4444;
+    -unity-font-style: bold;
+    margin-bottom: 8px;
+    min-height: 16px;
+}
+
+/* Modal Buttons - Responsive */
+.modal-btn-primary {
+    width: 100%;
+    height: 40px;
+    border-radius: 12px;
+    background-color: #F59E0B;
+    border-width: 2px;
+    border-color: #FEF08A;
+    border-bottom-color: #D97706;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    margin: 0;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.modal-btn-secondary {
+    width: 100%;
+    height: 34px;
+    border-radius: 10px;
+    background-color: rgba(51, 65, 85, 0.9);
+    border-width: 1.5px;
+    border-color: #64748B;
+    color: #CBD5E1;
+    -unity-font-style: bold;
+    font-size: 10px;
+    margin: 0;
+    margin-top: 2px;
+}
+
+/* Settings Modal & Profile Modal Inner Styles */
+.profile-stats-grid {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.stat-pill {
+    flex: 1;
+    background-color: rgba(30, 41, 59, 0.8);
+    border-radius: 12px;
+    border-width: 1px;
+    border-color: #475569;
+    align-items: center;
+    padding: 8px 4px;
+}
+
+.stat-num {
+    font-size: 18px;
+    color: #FEF08A;
+    -unity-font-style: bold;
+}
+
+.stat-lbl {
+    font-size: 10px;
+    color: #94A3B8;
+}
+
+.settings-rows-container {
+    width: 100%;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.settings-row {
+    width: 100%;
+    height: 46px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(30, 41, 59, 0.85);
+    border-radius: 12px;
+    padding: 0 14px;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+}
+
+.settings-label {
+    font-size: 13px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+}
+
+.settings-toggle-btn {
+    width: 52px;
+    height: 26px;
+    min-width: 52px;
+    min-height: 26px;
+    max-width: 52px;
+    max-height: 26px;
+    border-radius: 13px;
+    justify-content: center;
+    align-items: center;
+    border-width: 1.5px;
+    flex-shrink: 0;
+    transition-property: background-color, scale;
+    transition-duration: 0.12s;
+}
+
+.settings-toggle-btn:active {
+    scale: 0.94;
+}
+
+.settings-toggle-btn--on {
+    background-color: #16A34A;
+    border-color: #86EFAC;
+}
+
+.settings-toggle-btn--off {
+    background-color: #475569;
+    border-color: #94A3B8;
+}
+
+.settings-toggle-text {
+    font-size: 10px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+}
+
+.settings-action-btn {
+    width: 100%;
+    height: 40px;
+    border-radius: 12px;
+    background-color: #0284C7;
+    border-width: 1.5px;
+    border-color: #38BDF8;
+    color: #FFFFFF;
+    font-size: 11px;
+    -unity-font-style: bold;
+    margin-top: 4px;
+}
+
+/* ==========================================================================
+   GAME LOADING SCREEN (First-time & App Launch)
+   ========================================================================== */
+.game-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #064e3b;
+    overflow: hidden;
+    opacity: 1;
+    transition-property: opacity;
+    transition-duration: 0.5s;
+}
+
+.game-loading-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../Textures/loading_screen_bg.jpg');
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.game-loading-vignette {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(5, 20, 15, 0.35);
+}
+
+.game-loading-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    padding: 16px 12px 12px 12px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.game-loading-top-spacer {
+    flex-grow: 1;
+    min-height: 10px;
+}
+
+.game-loading-center {
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.game-loading-logo-badge {
+    padding: 16px 20px;
+    background-color: rgba(10, 18, 32, 0.84);
+    border-radius: 20px;
+    border-width: 2px;
+    border-color: #F59E0B;
+    border-top-color: #FDE047;
+    border-bottom-color: #D97706;
+    align-items: center;
+    width: 90%;
+    max-width: 300px;
+    align-self: center;
+    overflow: hidden;
+}
+
+.game-loading-eyebrow {
+    font-size: 11px;
+    color: #FDE047;
+    -unity-font-style: bold;
+    margin-bottom: 2px;
+}
+
+.game-loading-title {
+    font-size: 26px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    -unity-text-align: middle-center;
+    letter-spacing: 2px;
+}
+
+.game-loading-subtitle {
+    font-size: 13px;
+    color: #38BDF8;
+    -unity-font-style: bold;
+}
+
+.game-loading-footer {
+    width: 90%;
+    max-width: 300px;
+    align-items: center;
+    align-self: center;
+    background-color: rgba(10, 18, 32, 0.88);
+    border-radius: 18px;
+    border-width: 2px;
+    border-color: #F59E0B;
+    border-top-color: #FDE047;
+    border-bottom-color: #D97706;
+    padding: 14px 16px 10px 16px;
+    margin-bottom: 12px;
+}
+
+.game-loading-status-row {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.game-loading-status-text {
+    font-size: 11px;
+    color: #FEF3C7;
+    -unity-font-style: bold;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.game-loading-percent-text {
+    font-size: 13px;
+    color: #FDE047;
+    -unity-font-style: bold;
+    flex-shrink: 0;
+    margin-left: 6px;
+}
+
+.game-loading-progress-track {
+    width: 100%;
+    height: 18px;
+    border-radius: 9px;
+    background-color: rgba(3, 7, 18, 0.95);
+    border-width: 1.5px;
+    border-color: #E2E8F0;
+    overflow: hidden;
+    padding: 2px;
+    margin-bottom: 8px;
+}
+
+.game-loading-progress-fill {
+    height: 100%;
+    border-radius: 6px;
+    background-color: #10B981;
+    border-top-width: 1px;
+    border-top-color: #6EE7B7;
+    border-bottom-width: 1px;
+    border-bottom-color: #047857;
+}
+
+.game-loading-version-text {
+    font-size: 10px;
+    color: rgba(254, 243, 199, 0.75);
+}

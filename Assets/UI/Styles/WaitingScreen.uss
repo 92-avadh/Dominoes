@@ -1,8 +1,6 @@
 /* ==========================================================================
-   WaitingScreen.uss - Dynamic VS Matchmaking & Commercial Alert Modal
-   Reference: Diagonal Laser Split • Cyan vs Crimson • 3D Gold VS Crest
-   Alert Modal: Emerald Felt • Broken Domino Art • Glossy Red & Green Buttons
-   Mobile-First Responsive Flexbox Architecture
+   WaitingScreen.uss - Responsive VS Matchmaking & Commercial Alert Modal
+   Kenney Asset Integration • Mobile-First • Safe Area Aware
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -17,10 +15,18 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #0F172A;
-    background-image: url('../Textures/bg_matchmaking_vs.png');
+    background-color: #0b0f19;
+    background-image: url('../Textures/bg_waiting_screen.jpg');
     -unity-background-scale-mode: scale-and-crop;
     overflow: hidden;
+    /* Safe area handling */
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    opacity: 1;
+    transition-property: opacity;
+    transition-duration: 0.35s;
 }
 
 .safe-content {
@@ -31,50 +37,47 @@
     align-items: center;
     flex-direction: column;
     overflow: hidden;
-    padding: 8px 12px;
+    padding: 8px 8px;
 }
 
-/* --------------------------------------------------------------------------
-   1. TOP HEADER: Metallic Ribbon with Golden 3D "VS" Crest
-   -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/*   1. TOP HEADER: Metallic Ribbon with Golden 3D "VS" Crest                 */
+/* -------------------------------------------------------------------------- */
 .vs-header-ribbon {
     width: 100%;
-    max-width: 360px;
-    height: 56px;
+    max-width: 100%;
+    height: 44px;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     background-color: rgba(2, 132, 199, 0.94);
-    border-radius: 18px;
-    border-width: 2.5px;
+    border-radius: 20px;
+    border-width: 2px;
     border-color: #F59E0B;
     border-top-color: #FEF08A;
     border-bottom-color: #D97706;
-    padding: 4px 10px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.65);
+    padding: 4px 12px;
     flex-shrink: 0;
-    margin-top: 2px;
+    margin-top: 4px;
 }
 
 .vs-mode-badge-left, .vs-mode-badge-right {
-    width: 36px;
-    height: 36px;
-    border-radius: 18px;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
     background-color: rgba(3, 105, 161, 0.95);
-    border-width: 2px;
+    border-width: 1.5px;
     border-color: #FEF08A;
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
-.vs-mode-badge-text {
-    font-size: 18px;
-    color: #FEF08A;
-    -unity-font-style: bold;
-    padding: 0;
-    margin-top: -1px;
+.vs-badge-icon {
+    width: 20px;
+    height: 20px;
+    background-image: url('../Textures/icon_domino_badge_gold.png');
+    -unity-background-scale-mode: scale-to-fit;
 }
 
 .vs-crest-wrap {
@@ -87,23 +90,20 @@
 }
 
 .vs-crest-text {
-    font-size: 26px;
+    font-size: 20px;
     color: #FEF08A;
     -unity-font-style: bold;
-    letter-spacing: 2px;
-    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.9);
+    letter-spacing: 1.5px;
     padding: 0;
-    margin-top: -2px;
-    margin-bottom: -2px;
-    line-height: 28px;
+    margin-top: -1px;
+    margin-bottom: -1px;
 }
 
 .vs-mode-title {
-    font-size: 10px;
+    font-size: 9px;
     color: #FFFFFF;
     -unity-font-style: bold;
-    letter-spacing: 0.8px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    letter-spacing: 0.3px;
     padding: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -115,31 +115,36 @@
    -------------------------------------------------------------------------- */
 .vs-arena-container {
     width: 100%;
-    max-width: 360px;
+    max-width: 100%;
     flex-grow: 1;
+    flex-shrink: 1;
     justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
     position: relative;
-    padding: 8px 0;
+    padding: 4px 0;
 }
 
-/* TOP-RIGHT: Opponents Sector (Crimson Zone) */
+/* TOP: Opponents Sector (Crimson Zone) */
 .vs-opponents-sector {
     width: 100%;
     flex-direction: row;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: flex-start;
-    padding-right: 4px;
-    padding-top: 6px;
+    padding: 4px 4px;
+    flex-shrink: 0;
+    min-height: 80px;
 }
 
-/* BOTTOM-LEFT: Human Player Sector (Cyan Zone) */
+/* BOTTOM: Human Player Sector (Cyan Zone) */
 .vs-human-sector {
     width: 100%;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: flex-end;
-    padding-left: 4px;
-    padding-bottom: 6px;
+    padding: 4px 4px;
+    flex-shrink: 0;
+    min-height: 80px;
 }
 
 /* Generic Dynamic Avatar Slot */
@@ -147,6 +152,8 @@
     flex-direction: column;
     align-items: center;
     margin: 0 4px;
+    flex-shrink: 1;
+    min-width: 0;
     transition-property: scale, opacity;
     transition-duration: 0.2s;
 }
@@ -157,13 +164,12 @@
 
 .vs-avatar-ring {
     position: relative;
-    width: 52px;
-    height: 52px;
-    border-radius: 26px;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
     border-width: 2.5px;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
     overflow: hidden;
     flex-shrink: 0;
 }
@@ -172,20 +178,18 @@
     border-color: #38BDF8;
     border-top-color: #7DD3FC;
     background-color: #0369A1;
-    box-shadow: 0 0 14px rgba(56, 189, 248, 0.7);
 }
 
 .vs-avatar-ring--red {
     border-color: #FB7185;
     border-top-color: #FDA4AF;
     background-color: #9F1239;
-    box-shadow: 0 0 12px rgba(251, 113, 133, 0.6);
 }
 
 .vs-avatar-img {
     width: 100%;
     height: 100%;
-    border-radius: 24px;
+    border-radius: 10px;
     -unity-background-scale-mode: scale-and-crop;
 }
 
@@ -198,7 +202,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    border-radius: 24px;
+    border-radius: 8px;
     border-width: 2px;
     border-color: rgba(254, 240, 138, 0.8);
     border-top-color: transparent;
@@ -209,19 +213,18 @@
     position: absolute;
     bottom: -2px;
     left: -2px;
-    width: 18px;
-    height: 18px;
-    border-radius: 9px;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
     background-color: #F59E0B;
     border-width: 1.5px;
     border-color: #FFFFFF;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 .vs-star-num {
-    font-size: 9px;
+    font-size: 10px;
     color: #FFFFFF;
     -unity-font-style: bold;
     padding: 0;
@@ -229,12 +232,14 @@
 }
 
 .vs-name-pill {
-    padding: 2px 8px;
-    border-radius: 10px;
+    padding: 4px 8px;
+    border-radius: 8px;
     border-width: 1.5px;
-    margin-top: 3px;
-    max-width: 84px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    margin-top: 4px;
+    max-width: 140px;
+    min-width: 0;
+    flex-shrink: 1;
+    overflow: hidden;
     align-items: center;
     justify-content: center;
 }
@@ -242,7 +247,7 @@
 .vs-name-pill--blue {
     background-color: rgba(15, 23, 42, 0.92);
     border-color: #38BDF8;
-    max-width: 110px;
+    max-width: 140px;
 }
 
 .vs-name-pill--red {
@@ -251,10 +256,9 @@
 }
 
 .vs-name-text {
-    font-size: 9.5px;
+    font-size: 10px;
     color: #FFFFFF;
     -unity-font-style: bold;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
     padding: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -262,11 +266,11 @@
 }
 
 .vs-status-pill {
-    font-size: 8px;
+    font-size: 10px;
     -unity-font-style: bold;
-    padding: 1px 6px;
-    border-radius: 5px;
-    margin-top: 2px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-top: 4px;
     white-space: nowrap;
 }
 
@@ -282,38 +286,64 @@
 
 /* CENTER FLOATING MATCH STATUS & COUNTDOWN */
 .vs-center-status-card {
-    position: absolute;
     align-self: center;
-    top: 40%;
     background-color: rgba(15, 23, 42, 0.94);
-    border-radius: 18px;
+    border-radius: 24px;
     border-width: 2px;
-    border-color: #F59E0B;
-    border-top-color: #FDE047;
-    padding: 8px 18px;
+    border-color: #38BDF8;
+    border-top-color: #7DD3FC;
+    padding: 16px 32px;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
-    z-index: 20;
+    flex-shrink: 0;
+    margin: 8px 0;
+}
+
+/* Neon Electric Lightning Streak Polish */
+.vs-lightning-streak {
+    position: absolute;
+    width: 220px;
+    height: 48px;
+    top: -24px;
+    background-image: url('../Textures/Particles/particle_lightning_beam.png');
+    -unity-background-scale-mode: scale-to-fit;
+    opacity: 0.95;
+}
+
+.vs-sparkle-fx {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    background-image: url('../Textures/Particles/particle_spark_blue.png');
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.vs-sparkle-fx--left {
+    top: -12px;
+    left: -14px;
+}
+
+.vs-sparkle-fx--right {
+    bottom: -12px;
+    right: -14px;
 }
 
 .vs-status-eyebrow {
-    font-size: 9.5px;
+    font-size: 10px;
     color: #F59E0B;
     -unity-font-style: bold;
     letter-spacing: 1.2px;
     padding: 0;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
 }
 
 .vs-countdown-hero {
-    font-size: 20px;
+    font-size: 24px;
     color: #FEF08A;
     -unity-font-style: bold;
     letter-spacing: 0.5px;
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
     padding: 0;
-    margin-bottom: 1px;
+    margin-bottom: 4px;
 }
 
 .vs-players-ready-text {
@@ -327,7 +357,7 @@
    -------------------------------------------------------------------------- */
 .waiting-footer {
     width: 100%;
-    max-width: 360px;
+    max-width: 100%;
     align-items: center;
     flex-shrink: 0;
     margin-bottom: 4px;
@@ -335,8 +365,8 @@
 
 .vs-cancel-btn {
     width: 100%;
-    height: 46px;
-    border-radius: 23px;
+    height: 44px;
+    border-radius: 14px;
     background-color: #DC2626;
     border-width: 2px;
     border-color: #FBBF24;
@@ -344,11 +374,10 @@
     border-bottom-color: #B91C1C;
     color: #FFFFFF;
     -unity-font-style: bold;
-    font-size: 13px;
+    font-size: 12px;
     letter-spacing: 0.8px;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
     transition-property: scale, background-color;
     transition-duration: 0.1s;
 }
@@ -371,7 +400,8 @@
     height: 100%;
     justify-content: center;
     align-items: center;
-    z-index: 900;
+    /* Account for safe areas */
+    padding: 0 0 0 0;
 }
 
 .alert-dialog-backdrop {
@@ -387,29 +417,29 @@
 
 .alert-felt-card {
     position: relative;
-    width: 88%;
-    max-width: 340px;
+    width: auto;
+    max-width: 90%;
+    min-width: 260px;
     background-color: #065F46;
-    background-image: url('../Textures/bg_emerald_felt_luxury.png');
+    background-image: url('../Textures/bg_emerald_felt.jpg');
     -unity-background-scale-mode: scale-and-crop;
     border-radius: 20px;
-    border-width: 2.5px;
+    border-width: 2px;
     border-color: #F59E0B;
     border-top-color: #FEF08A;
     border-bottom-color: #D97706;
-    padding: 22px 18px 18px 18px;
+    padding: 24px 20px 20px 20px;
     align-items: center;
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), inset 0 0 14px rgba(0, 0, 0, 0.5);
 }
 
 /* Close X Button on Top-Right */
 .alert-close-x-btn {
     position: absolute;
-    top: -10px;
-    right: -10px;
-    width: 32px;
-    height: 32px;
-    border-radius: 16px;
+    top: -12px;
+    right: -12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
     background-color: #DC2626;
     border-width: 2px;
     border-color: #F59E0B;
@@ -418,7 +448,6 @@
     align-items: center;
     padding: 0;
     margin: 0;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.6);
     transition-property: scale;
     transition-duration: 0.1s;
 }
@@ -437,47 +466,44 @@
 /* Top Gold-Framed Header Tab */
 .alert-header-tab {
     position: absolute;
-    top: -16px;
+    top: -18px;
     align-self: center;
     background-color: #064E3B;
-    border-radius: 8px;
+    border-radius: 12px;
     border-width: 2px;
     border-color: #F59E0B;
     border-top-color: #FEF08A;
     border-bottom-color: #D97706;
-    padding: 3px 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.65);
+    padding: 4px 32px;
 }
 
 .alert-header-tab-text {
-    font-size: 13px;
+    font-size: 12px;
     color: #FEF08A;
     -unity-font-style: bold;
     letter-spacing: 0.5px;
     padding: 0;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 /* Center Broken Domino Illustration */
 .alert-broken-domino-img {
-    width: 110px;
-    height: 110px;
+    width: 120px;
+    height: 120px;
     background-image: url('../Textures/icon_broken_domino_luxury.png');
     -unity-background-scale-mode: scale-to-fit;
-    margin-top: 6px;
-    margin-bottom: 10px;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    border-radius: 8px;
 }
 
 /* Confirmation Message Text */
 .alert-message-text {
-    font-size: 13px;
+    font-size: 14px;
     color: #FFFFFF;
     -unity-font-style: bold;
-    text-align: center;
-    line-height: 19px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-    margin-bottom: 16px;
-    padding: 0 6px;
+    -unity-text-align: middle-center;
+    margin-bottom: 24px;
+    padding: 0 16px;
     white-space: normal;
 }
 
@@ -490,9 +516,9 @@
 }
 
 .alert-game-btn {
-    width: 47%;
-    height: 40px;
-    border-radius: 20px;
+    width: 48%;
+    height: 44px;
+    border-radius: 14px;
     border-width: 2px;
     border-color: #FBBF24;
     border-top-color: #FEF08A;
@@ -501,9 +527,8 @@
     align-items: center;
     color: #FFFFFF;
     -unity-font-style: bold;
-    font-size: 13.5px;
+    font-size: 14px;
     letter-spacing: 0.8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.55);
     transition-property: scale;
     transition-duration: 0.1s;
 }

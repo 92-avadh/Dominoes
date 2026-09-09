@@ -5,30 +5,31 @@
     xmlns:uie="UnityEditor.UIElements"
     xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
     editor-extension-mode="False">
+    <ui:Style src="../Styles/ResponsiveFoundation.uss" />
     <ui:Style src="../Styles/LoadingScreen.uss" />
 
     <ui:VisualElement name="loading-root" class="loading-root">
-        <ui:VisualElement name="loading-safe-content" class="loading-safe-content">
-            
+        <ui:VisualElement name="loading-safe-content" class="loading-safe-content flex flex-col justify-between items-center flex-1">
+
             <!-- Top Spacer -->
             <ui:VisualElement class="loading-spacer" />
 
             <!-- Center Logo & Branding -->
-            <ui:VisualElement class="loading-brand-container">
+            <ui:VisualElement class="loading-brand-container flex flex-col items-center justify-center">
                 <!-- Gold Dominoes Title Crest (Matching Master Design System) -->
-                <ui:VisualElement class="loading-logo-box">
-                    <ui:VisualElement class="loading-logo-tile loading-logo-tile--left">
+                <ui:VisualElement class="loading-logo-box flex flex-row items-center justify-center">
+                    <ui:VisualElement class="loading-logo-tile loading-logo-tile--left flex flex-col items-center justify-between">
                         <ui:VisualElement class="loading-mini-pip" />
                         <ui:VisualElement class="loading-mini-divider" />
                         <ui:VisualElement class="loading-mini-pip" />
                     </ui:VisualElement>
 
-                    <ui:VisualElement class="loading-title-column">
-                        <ui:Label class="loading-brand-title" text="DOMINOES" />
-                        <ui:Label class="loading-brand-subtitle" text="CLASSIC TABLE GAME" />
+                    <ui:VisualElement class="loading-title-column flex flex-col items-center justify-center">
+                        <ui:Label class="loading-brand-title font-kenney-future font-bold" text="DOMINOES" />
+                        <ui:Label class="loading-brand-subtitle font-kenney-future-narrow font-bold" text="CLASSIC TABLE GAME" />
                     </ui:VisualElement>
 
-                    <ui:VisualElement class="loading-logo-tile loading-logo-tile--right">
+                    <ui:VisualElement class="loading-logo-tile loading-logo-tile--right flex flex-col items-center justify-between">
                         <ui:VisualElement class="loading-mini-pip" />
                         <ui:VisualElement class="loading-mini-divider" />
                         <ui:VisualElement class="loading-mini-pip" />
@@ -37,18 +38,18 @@
             </ui:VisualElement>
 
             <!-- Bottom Progress & Status Bar -->
-            <ui:VisualElement class="loading-footer">
-                <ui:VisualElement class="loading-status-row">
-                    <ui:Label name="loading-status-text" class="loading-status-text" text="Preparing your table..." />
-                    <ui:Label name="loading-percent-text" class="loading-percent-text" text="67%" />
+            <ui:VisualElement class="loading-footer flex flex-col items-center w-full max-w-sm">
+                <ui:VisualElement class="loading-status-row flex flex-row justify-between items-center w-full">
+                    <ui:Label name="loading-status-text" class="loading-status-text font-kenney-future font-bold" text="Preparing your table..." />
+                    <ui:Label name="loading-percent-text" class="loading-percent-text font-kenney-future font-bold" text="67%" />
                 </ui:VisualElement>
                 
                 <!-- Game-Style Rounded Capsule Progress Bar -->
-                <ui:VisualElement class="loading-progress-track">
+                <ui:VisualElement class="loading-progress-track w-full">
                     <ui:VisualElement name="loading-progress-bar" class="loading-progress-fill" style="width: 0%;" />
                 </ui:VisualElement>
                 
-                <ui:Label class="loading-version-text" text="v1.0.0 • Mobile Edition" />
+                <ui:Label class="loading-version-text font-kenney-future-narrow" text="v1.0.0 • Mobile Edition" />
             </ui:VisualElement>
 
         </ui:VisualElement>

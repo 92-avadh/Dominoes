@@ -84,9 +84,25 @@ namespace Dominoes
 
         private void Awake()
         {
+            // Ensure we're not parented to a disabled object (e.g., Canvas)
+            // which would prevent coroutines from running
+            if (transform.parent != null && !transform.parent.gameObject.activeInHierarchy)
+            {
+                transform.SetParent(null, false);
+            }
+            if (!gameObject.activeSelf) gameObject.SetActive(true);
+
             ValidateReferences();
             matchManager ??= new DominoMatchManager(waitingCountdownDuration);
             matchManager.Initialize();
+
+            // Isolate legacy uGUI GraphicRaycaster so it cannot intercept UI Toolkit touch events
+            var canvas = GetComponentInParent<Canvas>();
+            if (canvas != null)
+            {
+                var raycaster = canvas.GetComponent<GraphicRaycaster>();
+                if (raycaster != null) raycaster.enabled = false;
+            }
         }
 
         private void OnEnable()
@@ -119,43 +135,12 @@ namespace Dominoes
         }
 
         /// <summary>
-        /// Validates assigned inspector references safely and logs clear warnings/errors.
-        /// </summary>
         private void ValidateReferences()
         {
-            if (homeScreen == null)
-            {
-                Debug.LogWarning("[DominoWaitingScreenController] 'HomeScreen' reference is not assigned (optional when using UI Toolkit HomeScreen).", this);
-            }
-
+            // UI Toolkit is the primary modern presentation layer; uGUI fields are optional legacy fallback
             if (waitingScreen == null)
             {
-                Debug.LogError("[DominoWaitingScreenController] 'WaitingScreen' reference is missing! Please assign it in the Inspector.", this);
-            }
-
-            if (playDominoesButton == null)
-            {
-                Debug.LogWarning("[DominoWaitingScreenController] 'PlayDominoesButton' reference is not assigned (optional when using UI Toolkit HomeScreen).", this);
-            }
-
-            if (leaveWaitingButton == null)
-            {
-                Debug.LogError("[DominoWaitingScreenController] 'LeaveWaitingButton' reference is missing! Please assign it in the Inspector.", this);
-            }
-
-            if (playerCountText == null && playerCountLegacyText == null)
-            {
-                Debug.LogWarning("[DominoWaitingScreenController] 'PlayerCountText' is not assigned. Assign either TextMeshPro or Legacy Text.", this);
-            }
-
-            if (countdownText == null && countdownLegacyText == null)
-            {
-                Debug.LogWarning("[DominoWaitingScreenController] 'CountdownText' is not assigned. Assign either TextMeshPro or Legacy Text.", this);
-            }
-
-            if (waitingMessageText == null && waitingMessageLegacyText == null)
-            {
-                Debug.LogWarning("[DominoWaitingScreenController] 'WaitingMessageText' is not assigned. Assign either TextMeshPro or Legacy Text.", this);
+                Debug.Log("[DominoWaitingScreenController] Pure UI Toolkit mode active (uGUI WaitingScreen omitted).", this);
             }
         }
 
@@ -231,6 +216,13 @@ namespace Dominoes
         /// </summary>
         public void OnPlayDominoesClicked()
         {
+            // Ensure this GameObject is active and not parented to a disabled object
+            if (!gameObject.activeSelf) gameObject.SetActive(true);
+            if (transform.parent != null && !transform.parent.gameObject.activeInHierarchy)
+            {
+                transform.SetParent(null, false);
+            }
+
             if (homeScreen != null) homeScreen.SetActive(false);
             if (waitingScreen != null) waitingScreen.SetActive(true);
 
@@ -238,31 +230,108 @@ namespace Dominoes
         }
 
         /// <summary>
-        /// Starts the waiting state, resets timer, registers the human player, and starts bot simulation.
+        /// Starts the waiting state based on the globally active DominoGameModeContext.
         /// </summary>
         public void StartWaitingFlow()
         {
+            EnsureActive();
+
+            if (DominoGameModeContext.CurrentMode == GameModeType.VsComputer)
+            {
+                StartDirectVsComputerMatch(DominoGameModeContext.Difficulty);
+                return;
+            }
+            else if (DominoGameModeContext.CurrentMode == GameModeType.FriendRoom)
+            {
+                StartFriendRoomFlow(DominoGameModeContext.RoomCode, DominoGameModeContext.IsHost);
+                return;
+            }
+            else
+            {
+                StartOnlineMatchmakingFlow(DominoGameModeContext.OnlineRule);
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Starts a direct 1v1 match against the Computer AI with no waiting countdown.
+        /// </summary>
+        public void StartDirectVsComputerMatch(ComputerDifficulty difficulty, string humanName = "Player 1 (You)")
+        {
+            EnsureActive();
             StopBotSimulation();
-
             matchManager.ResetMatch();
-            matchManager.WaitingManager.CountdownDuration = waitingCountdownDuration;
 
-            // Register the human player (1st player)
-            var humanPlayer = new DominoPlayer(1, "Player 1 (You)", isHuman: true);
+            string botName = $"Computer ({difficulty})";
+            var humanPlayer = new DominoPlayer(1, string.IsNullOrEmpty(humanName) ? "Player 1 (You)" : humanName, isHuman: true);
+            var botPlayer = new DominoPlayer(2, botName, isHuman: false);
+
             matchManager.AddPlayer(humanPlayer);
+            matchManager.AddPlayer(botPlayer);
 
-            // Start waiting countdown timer
-            matchManager.StartWaitingPhase(waitingCountdownDuration);
+            if (waitingScreen != null) waitingScreen.SetActive(false);
+            if (homeScreen != null) homeScreen.SetActive(false);
 
-            // Initial UI refresh
+            bool started = matchManager.TryStartMatch(out string err);
+            if (!started)
+            {
+                Debug.LogError($"[DominoWaitingScreenController] Failed to start direct computer match: {err}");
+            }
+        }
+
+        /// <summary>
+        /// Starts a 4-player online matchmaking lobby with international players and a snappy 5s countdown.
+        /// </summary>
+        public void StartOnlineMatchmakingFlow(string ruleName, string humanName = "Player 1 (You)")
+        {
+            EnsureActive();
+            StopBotSimulation();
+            matchManager.ResetMatch();
+
+            float onlineCountdown = 5f;
+            matchManager.WaitingManager.CountdownDuration = onlineCountdown;
+
+            var humanPlayer = new DominoPlayer(1, string.IsNullOrEmpty(humanName) ? "Player 1 (You)" : humanName, isHuman: true);
+            matchManager.AddPlayer(humanPlayer);
+            matchManager.StartWaitingPhase(onlineCountdown);
+
             UpdatePlayerCountUI(matchManager.WaitingManager.PlayerCount);
-            UpdateCountdownUI(waitingCountdownDuration);
+            UpdateCountdownUI(onlineCountdown);
             UpdateWaitingMessageUI(matchManager.WaitingManager.PlayerCount);
 
-            // Start bot joins if configured
-            if (simulateBots && simulatedBotsCount > 0)
+            botSimulationCoroutine = StartCoroutine(SimulateOnlinePlayersCoroutine());
+        }
+
+        /// <summary>
+        /// Starts a 2-player private friend room lounge with room code and 4s connection countdown.
+        /// </summary>
+        public void StartFriendRoomFlow(string roomCode, bool isHost, string humanName = "Player 1 (You)")
+        {
+            EnsureActive();
+            StopBotSimulation();
+            matchManager.ResetMatch();
+
+            float friendCountdown = 4f;
+            matchManager.WaitingManager.CountdownDuration = friendCountdown;
+
+            string myName = string.IsNullOrEmpty(humanName) ? (isHost ? "You (Host)" : "You (Guest)") : humanName;
+            var humanPlayer = new DominoPlayer(1, myName, isHuman: true);
+            matchManager.AddPlayer(humanPlayer);
+            matchManager.StartWaitingPhase(friendCountdown);
+
+            UpdatePlayerCountUI(matchManager.WaitingManager.PlayerCount);
+            UpdateCountdownUI(friendCountdown);
+            UpdateWaitingMessageUI(matchManager.WaitingManager.PlayerCount);
+
+            botSimulationCoroutine = StartCoroutine(SimulateFriendJoinCoroutine(isHost));
+        }
+
+        private void EnsureActive()
+        {
+            if (!gameObject.activeSelf) gameObject.SetActive(true);
+            if (transform.parent != null && !transform.parent.gameObject.activeInHierarchy)
             {
-                botSimulationCoroutine = StartCoroutine(SimulateBotJoinsCoroutine());
+                transform.SetParent(null, false);
             }
         }
 
@@ -289,6 +358,47 @@ namespace Dominoes
                 StopCoroutine(botSimulationCoroutine);
                 botSimulationCoroutine = null;
             }
+        }
+
+        private IEnumerator SimulateOnlinePlayersCoroutine()
+        {
+            string[] onlineOpponents = new[] { "Lucas 🇧🇷", "Aoi 🇯🇵", "Mateo 🇪🇸" };
+            for (int i = 0; i < onlineOpponents.Length; i++)
+            {
+                yield return new WaitForSeconds(1.1f);
+
+                if (matchManager.CurrentState != MatchState.Waiting || !matchManager.WaitingManager.IsWaitingActive)
+                {
+                    yield break;
+                }
+
+                if (matchManager.WaitingManager.PlayerCount >= DominoWaitingManager.MaxPlayers)
+                {
+                    yield break;
+                }
+
+                var botPlayer = new DominoPlayer(i + 2, onlineOpponents[i], isHuman: false);
+                matchManager.AddPlayer(botPlayer);
+            }
+        }
+
+        private IEnumerator SimulateFriendJoinCoroutine(bool isHost)
+        {
+            yield return new WaitForSeconds(1.6f);
+
+            if (matchManager.CurrentState != MatchState.Waiting || !matchManager.WaitingManager.IsWaitingActive)
+            {
+                yield break;
+            }
+
+            if (matchManager.WaitingManager.PlayerCount >= 2)
+            {
+                yield break;
+            }
+
+            string friendName = isHost ? "Alex (Friend) 🎮" : "Host Room 👑";
+            var friendPlayer = new DominoPlayer(2, friendName, isHuman: false);
+            matchManager.AddPlayer(friendPlayer);
         }
 
         private IEnumerator SimulateBotJoinsCoroutine()
@@ -356,7 +466,8 @@ namespace Dominoes
 
         private void UpdatePlayerCountUI(int count)
         {
-            string formattedCount = $"Players Ready: {count} / {DominoWaitingManager.MaxPlayers}";
+            int max = (DominoGameModeContext.CurrentMode == GameModeType.FriendRoom) ? 2 : DominoWaitingManager.MaxPlayers;
+            string formattedCount = $"Players Ready: {count} / {max}";
             SetText(playerCountText, playerCountLegacyText, formattedCount);
         }
 
@@ -369,18 +480,30 @@ namespace Dominoes
 
         private void UpdateWaitingMessageUI(int playerCount)
         {
-            string message = (playerCount < DominoWaitingManager.MinPlayersToStart)
-                ? "Waiting for more players..."
-                : "Players found!";
+            string message;
+            if (DominoGameModeContext.CurrentMode == GameModeType.FriendRoom)
+            {
+                message = (playerCount < 2)
+                    ? $"Waiting for friend to connect using code {DominoGameModeContext.RoomCode}..."
+                    : "Friend connected! Starting private match...";
+            }
+            else
+            {
+                message = (playerCount < DominoWaitingManager.MinPlayersToStart)
+                    ? "Searching for players worldwide..."
+                    : "Players found! Ready to start.";
+            }
 
             SetText(waitingMessageText, waitingMessageLegacyText, message);
         }
 
         private void ResetWaitingUI()
         {
-            SetText(playerCountText, playerCountLegacyText, $"Players Ready: 0 / {DominoWaitingManager.MaxPlayers}");
-            SetText(countdownText, countdownLegacyText, $"Starting in {Mathf.CeilToInt(waitingCountdownDuration)}");
-            SetText(waitingMessageText, waitingMessageLegacyText, "Waiting for more players...");
+            int max = (DominoGameModeContext.CurrentMode == GameModeType.FriendRoom) ? 2 : DominoWaitingManager.MaxPlayers;
+            float duration = (DominoGameModeContext.CurrentMode == GameModeType.FriendRoom) ? 4f : 5f;
+            SetText(playerCountText, playerCountLegacyText, $"Players Ready: 0 / {max}");
+            SetText(countdownText, countdownLegacyText, $"Starting in {Mathf.CeilToInt(duration)}");
+            SetText(waitingMessageText, waitingMessageLegacyText, "Waiting for players...");
         }
 
         private void SetText(TMP_Text tmp, Text legacy, string content)

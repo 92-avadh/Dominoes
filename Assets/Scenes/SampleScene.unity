@@ -136,7 +136,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &18750138
 RectTransform:
   m_ObjectHideFlags: 0
@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 76304617}
   - component: {fileID: 76304618}
   m_Layer: 5
-  m_Name: EntryScreen
+  m_Name: DominoMatchController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -227,7 +227,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2127463090}
-  - {fileID: 1873947153}
   - {fileID: 1638133626}
   - {fileID: 1418474547}
   m_Father: {fileID: 749988804}
@@ -287,8 +286,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70129c36f43289f44ad35ce7e3d7df22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dominoes.DominoLoadingScreen
-  loadingScreen: {fileID: 1873947152}
-  homeScreen: {fileID: 2127463089}
+  loadingScreenDocument: {fileID: 0}
+  homeScreenDocument: {fileID: 0}
   loadingDuration: 2.5
 --- !u!114 &76304618
 MonoBehaviour:
@@ -413,6 +412,58 @@ MonoBehaviour:
       roundNumber: 0
       defaultTilesPerPlayer: 7
     tilesPerPlayer: 7
+--- !u!1 &84436635
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 84436637}
+  - component: {fileID: 84436636}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &84436636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 84436635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b812401366d220847801e7fe923cd6cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  sfxSource: {fileID: 0}
+  musicSource: {fileID: 0}
+  secondarySfxSource: {fileID: 0}
+  musicEnabled: 1
+  sfxEnabled: 1
+  masterVolume: 1
+  sfxVolume: 0.8
+  musicVolume: 0.5
+--- !u!4 &84436637
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 84436635}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 617.05505, y: 193.02415, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &211745059
 GameObject:
   m_ObjectHideFlags: 0
@@ -431,7 +482,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &211745060
 RectTransform:
   m_ObjectHideFlags: 0
@@ -533,6 +584,59 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 211745059}
   m_CullTransparentMesh: 1
+--- !u!1 &230218077
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 230218079}
+  - component: {fileID: 230218078}
+  m_Layer: 0
+  m_Name: ResponsiveUIManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &230218078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 230218077}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4346a54ea27fa74d980fcbfca4f17a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResponsiveUIManager
+  baseFontSize: 16
+  minScale: 0.75
+  maxScale: 1.5
+  compactMaxWidth: 359
+  standardMaxWidth: 389
+  largeMaxWidth: 429
+  useSafeArea: 1
+  simulateNotch: 0
+  logScaleChanges: 1
+--- !u!4 &230218079
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 230218077}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &352050779
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,7 +654,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &352050780
 RectTransform:
   m_ObjectHideFlags: 0
@@ -687,7 +791,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &436504314
 RectTransform:
   m_ObjectHideFlags: 0
@@ -824,7 +928,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &463653000
 RectTransform:
   m_ObjectHideFlags: 0
@@ -918,7 +1022,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.01, g: 0.52, b: 0.78, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -939,8 +1043,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
+  near clip plane: 0.1
+  far clip plane: 100
   field of view: 60
   orthographic: 1
   orthographic size: 5
@@ -991,7 +1095,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &720806260
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1129,7 +1233,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &749988801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1310,7 +1414,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &975270915
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1398,10 +1502,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6ccfb4819b33da4aa615d7c5e3c1595, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dominoes.DominoGameScreenUIToolkitController
-  uiDocument: {fileID: 0}
-  waitingScreenController: {fileID: 0}
-  homeScreenController: {fileID: 0}
-  waitingScreenUIToolkitController: {fileID: 0}
+  uiDocument: {fileID: 1014149433}
+  waitingScreenController: {fileID: 76304618}
+  homeScreenController: {fileID: 2043555297}
+  waitingScreenUIToolkitController: {fileID: 1145279970}
 --- !u!114 &1014149433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1417,7 +1521,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: 92241710e175a88428ecc0d345860452, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: c8ab598a253af584294dc42ad0935b92, type: 3}
-  m_SortingOrder: 0
+  m_SortingOrder: 6
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -1434,7 +1538,7 @@ Transform:
   m_GameObject: {fileID: 1014149431}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 600.0003, y: 238.79959, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1470,9 +1574,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09cebb45a0cdf034ba39c9e5ef35e789, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dominoes.DominoWaitingScreenUIToolkitController
-  uiDocument: {fileID: 0}
-  waitingScreenController: {fileID: 0}
-  homeScreenController: {fileID: 0}
+  uiDocument: {fileID: 1145279971}
+  waitingScreenController: {fileID: 76304618}
+  homeScreenController: {fileID: 2043555297}
+  gameScreenUIToolkitController: {fileID: 1014149432}
 --- !u!114 &1145279971
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1488,7 +1593,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: 92241710e175a88428ecc0d345860452, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 852aa662b2e6e0b4a95e49df6c3d0d3c, type: 3}
-  m_SortingOrder: 0
+  m_SortingOrder: 8
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -1505,7 +1610,57 @@ Transform:
   m_GameObject: {fileID: 1145279969}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 600.0003, y: 238.79959, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1198164972
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1198164974}
+  - component: {fileID: 1198164973}
+  m_Layer: 0
+  m_Name: KenneyDominoTiles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1198164973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1198164972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0fb0c652ceec5142bd9aff6601226ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KenneyDominoTiles
+  _defaultTheme: 0
+  _starsSheet: {fileID: 0}
+  _lightSheet: {fileID: 0}
+  _darkSheet: {fileID: 0}
+  _heartsSheet: {fileID: 0}
+  _gingerbreadSheet: {fileID: 0}
+--- !u!4 &1198164974
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1198164972}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1528,7 +1683,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1259141206
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1666,7 +1821,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1348878272
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1769,6 +1924,61 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1348878271}
   m_CullTransparentMesh: 1
+--- !u!1 &1357492182
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1357492184}
+  - component: {fileID: 1357492183}
+  m_Layer: 0
+  m_Name: DominoAudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1357492183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1357492182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e82f143a579b4cefa94b087612f0367d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Dominoes.DominoAudioManager
+  musicSource: {fileID: 0}
+  sfxSource: {fileID: 0}
+  musicClip: {fileID: 0}
+  sfxClick: {fileID: 0}
+  sfxTilePickup: {fileID: 0}
+  sfxTileClack: {fileID: 0}
+  sfxTileDraw: {fileID: 0}
+  sfxTurnChime: {fileID: 0}
+  sfxPass: {fileID: 0}
+  sfxWin: {fileID: 0}
+  sfxLoss: {fileID: 0}
+--- !u!4 &1357492184
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1357492182}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1418474546
 GameObject:
   m_ObjectHideFlags: 0
@@ -2071,81 +2281,6 @@ RectTransform:
   m_AnchoredPosition: {x: -300, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1873947152
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1873947153}
-  - component: {fileID: 1873947155}
-  - component: {fileID: 1873947154}
-  m_Layer: 5
-  m_Name: LoadingScreen
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &1873947153
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1873947152}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 76304614}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1873947154
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1873947152}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 7390256443274236391, guid: 196c86f003e859248b6e3fb247f6e803, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &1873947155
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1873947152}
-  m_CullTransparentMesh: 1
 --- !u!1 &1893197535
 GameObject:
   m_ObjectHideFlags: 0
@@ -2351,7 +2486,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: 92241710e175a88428ecc0d345860452, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 33778cb6e5af355479567a774416476d, type: 3}
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -2368,7 +2503,7 @@ Transform:
   m_GameObject: {fileID: 2043555294}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 600.0003, y: 238.79959, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2388,7 +2523,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Dominoes.DominoHomeScreenController
   uiDocument: {fileID: 2043555295}
   waitingScreenController: {fileID: 76304618}
-  waitingScreenUIToolkitController: {fileID: 0}
+  waitingScreenUIToolkitController: {fileID: 1145279970}
+  gameScreenUIToolkitController: {fileID: 1014149432}
 --- !u!1 &2127463089
 GameObject:
   m_ObjectHideFlags: 0
@@ -2476,3 +2612,7 @@ SceneRoots:
   - {fileID: 2043555296}
   - {fileID: 1145279972}
   - {fileID: 1014149434}
+  - {fileID: 1357492184}
+  - {fileID: 230218079}
+  - {fileID: 1198164974}
+  - {fileID: 84436637}

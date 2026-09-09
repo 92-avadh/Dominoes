@@ -33,7 +33,7 @@ namespace Dominoes
     }
 
     /// <summary>
-    /// Placement and visual marker information for an active open board endpoint.
+    
     /// </summary>
     [Serializable]
     public struct EndpointVisualPlacement
@@ -71,14 +71,16 @@ namespace Dominoes
     {
         public const float DefaultTileLength = 54f;
         public const float DefaultTileThickness = 27f;
-        public const float DefaultSpacing = 0.5f; // Seamless end-to-end touching matching Reference Image 3
+        public const float DefaultSpacing = 0.0f; // Flush 0-gap seamless touching matching real dominoes
         public const float DefaultPadding = 16f;
-        public const float RowPitch = 58f; // Vertical distance between horizontal row baselines
+        public const float RowPitch = 81f; // 3 * DefaultTileThickness: guarantees >=27px gap even between adjacent double dominoes
         public const float LaneHeight = 54f;
-        public const float MinScale = 0.40f;
+        public const float MinScale = 0.20f; // Dynamic zoom out ensuring all 28 tiles fit cleanly on any screen
+        public const float MaxScale = 1.35f; // Zoomed in when few tiles on table
 
         /// <summary>
         /// Calculates the non-overlapping 2D layout for the given placed tiles within the available board area.
+        /// Uses a strict downward row-lane serpentine model that mathematically prevents any tile overlap.
         /// </summary>
         public static DominoBoardLayoutResult CalculateLayout(
             IReadOnlyList<DominoTile> placedTiles,
@@ -92,15 +94,23 @@ namespace Dominoes
         {
             var result = new DominoBoardLayoutResult();
 
+            if (boardWidth <= 0f) boardWidth = 360f;
+            if (boardHeight <= 0f) boardHeight = 320f;
+
+            const float TopReserved = 48f;
+            const float BottomReserved = 44f;
+            float usableHeight = Mathf.Max(100f, boardHeight - TopReserved - BottomReserved);
+            float centerY = TopReserved + usableHeight * 0.5f;
+
             if (placedTiles == null || placedTiles.Count == 0)
             {
                 result.Bounds = new Rect(0, 0, 0, 0);
-                result.Scale = 1f;
+                result.Scale = MaxScale;
                 result.LeftEndpoint = new EndpointVisualPlacement
                 {
                     Side = BoardSide.Left,
                     Value = leftEndpointValue,
-                    Position = new Vector2(boardWidth * 0.5f, boardHeight * 0.5f),
+                    Position = new Vector2(boardWidth * 0.5f, centerY),
                     DirectionVector = Vector2.left,
                     IsActive = true
                 };
@@ -108,7 +118,7 @@ namespace Dominoes
                 {
                     Side = BoardSide.Right,
                     Value = rightEndpointValue,
-                    Position = new Vector2(boardWidth * 0.5f, boardHeight * 0.5f),
+                    Position = new Vector2(boardWidth * 0.5f, centerY),
                     DirectionVector = Vector2.right,
                     IsActive = false
                 };
@@ -118,14 +128,14 @@ namespace Dominoes
             int count = placedTiles.Count;
             var resolvedFaces = ResolveTileFaces(placedTiles, leftEndpointValue, rightEndpointValue);
 
-            // Safe usable width for a horizontal row
-            float safeWidth = Mathf.Max(boardWidth - DefaultPadding * 2f, tileLength * 3.5f);
-
-            // Row-lane state tracking
-            int rowIndex = 0;
-            bool movingRight = true;
+            int dirX = 1;
             float currentX = 0f;
             float currentY = 0f;
+            int tilesInRow = 0;
+            int maxTilesPerRow = Mathf.Clamp(Mathf.FloorToInt(boardWidth / (tileLength + 12f)), 4, 6);
+            int cornerStep = 0; // 0: horizontal row, 1: corner step 1 (down), 2: corner step 2 (down)
+            float lastRowEndX = 0f;
+            int lastRowDirX = 1;
 
             float minX = float.MaxValue;
             float maxX = float.MinValue;
@@ -138,35 +148,70 @@ namespace Dominoes
                 var (faceA, faceB) = resolvedFaces[i];
                 bool isDouble = tile.IsDouble;
 
-                // On horizontal row: regular tile is (Length x Thickness), double tile is (Thickness x Length)
-                bool isVertical = isDouble;
-                Vector2 size = isVertical
-                    ? new Vector2(tileThickness, tileLength)
-                    : new Vector2(tileLength, tileThickness);
-
-                // Check boundary turn condition
-                if (movingRight && (currentX + size.x) > safeWidth && i > 0)
+                // Check if current row should turn into a downward corner
+                if (cornerStep == 0 && i > 0 && tilesInRow >= maxTilesPerRow)
                 {
-                    // Transition to next row (moving Left)
-                    rowIndex++;
-                    movingRight = false;
-                    currentY = rowIndex * RowPitch;
-                    // Start next row aligned to right edge
-                    currentX = safeWidth - size.x;
-                }
-                else if (!movingRight && (currentX - size.x) < 0f && i > 0)
-                {
-                    // Transition to next row (moving Right)
-                    rowIndex++;
-                    movingRight = true;
-                    currentY = rowIndex * RowPitch;
-                    // Start next row aligned to left edge
-                    currentX = 0f;
+                    cornerStep = 1;
+                    lastRowEndX = currentX;
+                    lastRowDirX = dirX;
                 }
 
-                // Center tile vertically within its lane
-                float tilePosY = currentY + (LaneHeight - size.y) * 0.5f;
-                float tilePosX = currentX;
+                bool isVertical;
+                Vector2 size;
+                float tilePosX;
+                float tilePosY;
+                ChainDirection chainDir;
+
+                if (cornerStep == 1)
+                {
+                    // First step of downward corner (vertical down)
+                    chainDir = ChainDirection.Down;
+                    isVertical = true;
+                    size = new Vector2(tileThickness, tileLength);
+                    tilePosX = (lastRowDirX > 0) ? lastRowEndX : (lastRowEndX - tileThickness);
+                    tilePosY = currentY - tileThickness * 0.5f;
+
+                    cornerStep = 2;
+                }
+                else if (cornerStep == 2)
+                {
+                    // Second step of downward corner (vertical down)
+                    chainDir = ChainDirection.Down;
+                    isVertical = true;
+                    size = new Vector2(tileThickness, tileLength);
+                    tilePosX = (lastRowDirX > 0) ? lastRowEndX : (lastRowEndX - tileThickness);
+                    tilePosY = currentY + tileThickness * 1.5f; // currentY + 40.5f
+
+                    // Complete corner: advance to next row baseline and flip horizontal direction
+                    currentY += RowPitch; // 81f
+                    dirX = -lastRowDirX;
+                    currentX = lastRowEndX; // New row starts flush against the corner column
+                    tilesInRow = 0;
+                    cornerStep = 0;
+                }
+                else
+                {
+                    // Normal horizontal row placement
+                    chainDir = (dirX > 0) ? ChainDirection.Right : ChainDirection.Left;
+                    if (isDouble)
+                    {
+                        isVertical = true;
+                        size = new Vector2(tileThickness, tileLength);
+                        tilePosX = dirX > 0 ? currentX : (currentX - tileThickness);
+                        tilePosY = currentY - tileLength * 0.5f;
+                        currentX += dirX * tileThickness;
+                    }
+                    else
+                    {
+                        isVertical = false;
+                        size = new Vector2(tileLength, tileThickness);
+                        tilePosX = dirX > 0 ? currentX : (currentX - tileLength);
+                        tilePosY = currentY - tileThickness * 0.5f;
+                        currentX += dirX * tileLength;
+                    }
+
+                    tilesInRow++;
+                }
 
                 var placement = new DominoVisualPlacement
                 {
@@ -178,43 +223,33 @@ namespace Dominoes
                     IsDouble = isDouble,
                     FirstFace = faceA,
                     SecondFace = faceB,
-                    Direction = movingRight ? ChainDirection.Right : ChainDirection.Left
+                    Direction = chainDir
                 };
 
                 result.Placements.Add(placement);
 
-                // Track bounding box
                 minX = Mathf.Min(minX, tilePosX);
                 maxX = Mathf.Max(maxX, tilePosX + size.x);
                 minY = Mathf.Min(minY, tilePosY);
                 maxY = Mathf.Max(maxY, tilePosY + size.y);
-
-                // Advance X for next tile with seamless 0.5px touching gap
-                if (movingRight)
-                {
-                    currentX += size.x + spacing;
-                }
-                else
-                {
-                    currentX -= (size.x + spacing);
-                }
             }
 
-            // Step 4: Aggregate bounding box & auto-fit scaling
+            // Step 4: Aggregate bounding box & auto-fit scaling (Dynamic Zoom Out as tiles increase)
             float rawWidth = Mathf.Max(1f, maxX - minX);
             float rawHeight = Mathf.Max(1f, maxY - minY);
             result.Bounds = new Rect(minX, minY, rawWidth, rawHeight);
 
-            float scaleX = (boardWidth - DefaultPadding * 2f) / rawWidth;
-            float scaleY = (boardHeight - DefaultPadding * 2f) / rawHeight;
-            float targetScale = Mathf.Min(1f, Mathf.Min(scaleX, scaleY));
-            result.Scale = Mathf.Clamp(targetScale, MinScale, 1f);
+            float usableWidth = Mathf.Max(100f, boardWidth - DefaultPadding * 2f);
+            float scaleX = usableWidth / rawWidth;
+            float scaleY = usableHeight / rawHeight;
+            float targetScale = Mathf.Min(scaleX, scaleY);
+            result.Scale = Mathf.Clamp(targetScale, MinScale, MaxScale);
 
-            // Centering offset
+            // Centering offset within usable felt area (safe from boneyard and turn guidance)
             float scaledWidth = rawWidth * result.Scale;
             float scaledHeight = rawHeight * result.Scale;
             float offsetX = (boardWidth - scaledWidth) * 0.5f - minX * result.Scale;
-            float offsetY = (boardHeight - scaledHeight) * 0.5f - minY * result.Scale;
+            float offsetY = TopReserved + (usableHeight - scaledHeight) * 0.5f - minY * result.Scale;
 
             for (int i = 0; i < result.Placements.Count; i++)
             {
@@ -231,37 +266,101 @@ namespace Dominoes
             if (result.Placements.Count > 0)
             {
                 var first = result.Placements[0];
-                Vector2 leftPos = first.Position + new Vector2(
-                    first.IsVertical ? first.Size.x * 0.5f : -26f * result.Scale,
-                    first.IsVertical ? -26f * result.Scale : first.Size.y * 0.5f
-                );
+                Vector2 leftPos = first.Position + (first.Direction switch
+                {
+                    ChainDirection.Right => new Vector2(-26f * result.Scale, first.Size.y * 0.5f),
+                    ChainDirection.Left => new Vector2(first.Size.x + 26f * result.Scale, first.Size.y * 0.5f),
+                    ChainDirection.Down => new Vector2(first.Size.x * 0.5f, -26f * result.Scale),
+                    _ => new Vector2(first.Size.x * 0.5f, first.Size.y + 26f * result.Scale)
+                });
+
+                Vector2 leftDir = first.Direction switch
+                {
+                    ChainDirection.Right => Vector2.left,
+                    ChainDirection.Left => Vector2.right,
+                    ChainDirection.Down => Vector2.up,
+                    _ => Vector2.down
+                };
 
                 result.LeftEndpoint = new EndpointVisualPlacement
                 {
                     Side = BoardSide.Left,
                     Value = leftEndpointValue,
                     Position = leftPos,
-                    DirectionVector = first.IsVertical ? Vector2.up : Vector2.left,
+                    DirectionVector = leftDir,
                     IsActive = true
                 };
 
                 var last = result.Placements[result.Placements.Count - 1];
-                Vector2 rightPos = last.Position + new Vector2(
-                    last.IsVertical ? last.Size.x * 0.5f : (last.Size.x + 26f * result.Scale),
-                    last.IsVertical ? (last.Size.y + 26f * result.Scale) : last.Size.y * 0.5f
-                );
+                Vector2 rightPos = last.Position + (last.Direction switch
+                {
+                    ChainDirection.Right => new Vector2(last.Size.x + 26f * result.Scale, last.Size.y * 0.5f),
+                    ChainDirection.Left => new Vector2(-26f * result.Scale, last.Size.y * 0.5f),
+                    ChainDirection.Down => new Vector2(last.Size.x * 0.5f, last.Size.y + 26f * result.Scale),
+                    _ => new Vector2(last.Size.x * 0.5f, -26f * result.Scale)
+                });
+
+                Vector2 rightDir = last.Direction switch
+                {
+                    ChainDirection.Right => Vector2.right,
+                    ChainDirection.Left => Vector2.left,
+                    ChainDirection.Down => Vector2.down,
+                    _ => Vector2.up
+                };
 
                 result.RightEndpoint = new EndpointVisualPlacement
                 {
                     Side = BoardSide.Right,
                     Value = rightEndpointValue,
                     Position = rightPos,
-                    DirectionVector = last.IsVertical ? Vector2.down : Vector2.right,
+                    DirectionVector = rightDir,
                     IsActive = true
                 };
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Validates that no two placed domino tiles overlap each other on the 2D board canvas.
+        /// Returns true if an overlap area (> 0.5px) is detected.
+        /// </summary>
+        public static bool HasAnyTileOverlaps(DominoBoardLayoutResult layout)
+        {
+            if (layout == null || layout.Placements == null || layout.Placements.Count <= 1)
+                return false;
+
+            const float tolerance = 0.5f;
+            int count = layout.Placements.Count;
+
+            for (int i = 0; i < count; i++)
+            {
+                var a = layout.Placements[i];
+                float ax1 = a.Position.x;
+                float ay1 = a.Position.y;
+                float ax2 = ax1 + a.Size.x;
+                float ay2 = ay1 + a.Size.y;
+
+                for (int j = i + 1; j < count; j++)
+                {
+                    var b = layout.Placements[j];
+                    float bx1 = b.Position.x;
+                    float by1 = b.Position.y;
+                    float bx2 = bx1 + b.Size.x;
+                    float by2 = by1 + b.Size.y;
+
+                    float overlapX = Mathf.Min(ax2, bx2) - Mathf.Max(ax1, bx1);
+                    float overlapY = Mathf.Min(ay2, by2) - Mathf.Max(ay1, by1);
+
+                    if (overlapX > tolerance && overlapY > tolerance)
+                    {
+                        Debug.LogWarning($"[DominoBoardLayoutEngine] Overlap detected between Tile {i} [{a.Tile}] and Tile {j} [{b.Tile}]: overlap=({overlapX:F1}, {overlapY:F1})");
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         private static List<(int faceA, int faceB)> ResolveTileFaces(
@@ -303,7 +402,8 @@ namespace Dominoes
         {
             Debug.Log("================ STARTING BOARD LAYOUT ENGINE TEST ================");
 
-            var tiles = new List<DominoTile>
+            // Test case 1: 10 tiles with mixed doubles
+            var tiles10 = new List<DominoTile>
             {
                 new DominoTile(6, 6), // Double 6
                 new DominoTile(6, 4),
@@ -317,20 +417,30 @@ namespace Dominoes
                 new DominoTile(0, 4)
             };
 
-            var layout = CalculateLayout(tiles, 6, 4, 360f, 450f);
+            var layout10 = CalculateLayout(tiles10, 6, 4, 360f, 450f);
+            bool overlaps10 = HasAnyTileOverlaps(layout10);
 
-            Debug.Log($"Calculated {layout.Placements.Count} placements. Scale: {layout.Scale:F2}, Bounds: {layout.Bounds}");
+            Debug.Log($"10-Tile Layout: Placements={layout10.Placements.Count}, Scale={layout10.Scale:F2}, Overlaps={overlaps10}");
 
-            for (int i = 0; i < layout.Placements.Count; i++)
+            // Test case 2: Worst-case full 28 tiles
+            var tiles28 = new List<DominoTile>();
+            int currentVal = 6;
+            for (int i = 0; i < 28; i++)
             {
-                var p = layout.Placements[i];
-                Debug.Log($"Tile {i} [{p.Tile}]: Pos={p.Position}, Size={p.Size}, IsVertical={p.IsVertical}, IsDouble={p.IsDouble}, Faces=({p.FirstFace}|{p.SecondFace})");
+                int nextVal = (currentVal + 1) % 7;
+                tiles28.Add(new DominoTile(currentVal, nextVal));
+                currentVal = nextVal;
             }
 
-            bool passed = layout.Placements.Count == tiles.Count && layout.Scale > 0f && layout.Scale <= 1f;
+            var layout28 = CalculateLayout(tiles28, 6, currentVal, 360f, 450f);
+            bool overlaps28 = HasAnyTileOverlaps(layout28);
+
+            Debug.Log($"28-Tile Worst-Case Layout: Placements={layout28.Placements.Count}, Scale={layout28.Scale:F2}, Overlaps={overlaps28}");
+
+            bool passed = !overlaps10 && !overlaps28 && layout10.Placements.Count == 10 && layout28.Placements.Count == 28;
             if (passed)
             {
-                Debug.Log("<color=green>✓ Board Layout Engine Test PASSED (Zero Overlaps, Clean Row Lanes).</color>");
+                Debug.Log("<color=green>✓ Board Layout Engine Test PASSED: Zero overlaps across both 10 and 28 tiles!</color>");
             }
             else
             {

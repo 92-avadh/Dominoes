@@ -4,10 +4,11 @@ using UnityEngine;
 namespace Dominoes
 {
     /// <summary>
-    /// Professional singleton Audio Manager for the Dominoes game.
-    /// Handles background music, tactile UI sound effects, tile placement "clack",
-    /// boneyard draw shuffles, turn chimes, and win/loss feedback.
-    /// Supports volume controls, mute toggles, and PlayerPrefs persistence.
+    /// Production-ready singleton Audio Manager for the Dominoes game.
+    /// Automatically initializes at runtime before scene load.
+    /// Plays relaxing tropical lounge background music, tactile tile clack sounds,
+    /// boneyard draw shuffles, pickup sounds, turn chimes, and victory fanfares.
+    /// Supports persistent volume controls and mute toggles via PlayerPrefs.
     /// </summary>
     [DisallowMultipleComponent]
     public class DominoAudioManager : MonoBehaviour
@@ -17,7 +18,39 @@ namespace Dominoes
         private const string PrefMusicMute = "Dominoes_MusicMuted";
         private const string PrefSfxMute = "Dominoes_SfxMuted";
 
-        public static DominoAudioManager Instance { get; private set; }
+        private static DominoAudioManager instance;
+
+        public static DominoAudioManager Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+#if UNITY_2023_1_OR_NEWER
+                    instance = FindAnyObjectByType<DominoAudioManager>();
+#else
+                    instance = FindObjectOfType<DominoAudioManager>();
+#endif
+                    if (instance == null)
+                    {
+                        var go = new GameObject("DominoAudioManager");
+                        instance = go.AddComponent<DominoAudioManager>();
+                        DontDestroyOnLoad(go);
+                    }
+                }
+                return instance;
+            }
+            private set => instance = value;
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void AutoInitialize()
+        {
+            if (Instance != null)
+            {
+                Instance.PlayMusic();
+            }
+        }
 
         [Header("Audio Sources")]
         [SerializeField] private AudioSource musicSource;
@@ -33,9 +66,10 @@ namespace Dominoes
         [SerializeField] private AudioClip sfxPass;
         [SerializeField] private AudioClip sfxWin;
         [SerializeField] private AudioClip sfxLoss;
+        [SerializeField] private AudioClip sfxErrorBuzz;
 
-        private float musicVolume = 0.6f;
-        private float sfxVolume = 0.85f;
+        private float musicVolume = 0.65f;
+        private float sfxVolume = 0.90f;
         private bool isMusicMuted = false;
         private bool isSfxMuted = false;
 
@@ -85,15 +119,15 @@ namespace Dominoes
 
         private void Awake()
         {
-            if (Instance == null)
+            if (instance == null)
             {
-                Instance = this;
+                instance = this;
                 DontDestroyOnLoad(gameObject);
                 InitializeAudioSources();
                 LoadSettings();
-                LoadAudioClipsIfMissing();
+                LoadAudioClips();
             }
-            else if (Instance != this)
+            else if (instance != this)
             {
                 Destroy(gameObject);
             }
@@ -121,9 +155,33 @@ namespace Dominoes
             }
         }
 
-        private void LoadAudioClipsIfMissing()
+        private void LoadAudioClips()
         {
+            // 1. Background Music (Tropical Lounge / Secret of Tiki Island or ambient loop)
+            if (musicClip == null) musicClip = Resources.Load<AudioClip>("Audio/Music/Tropical Lounge - Secret of Tiki Island");
+            if (musicClip == null) musicClip = Resources.Load<AudioClip>("Audio/Music/music_ambient_loop");
+            if (musicClip == null) musicClip = Resources.Load<AudioClip>("Audio/Music/Upbeat Electron - Cloud Dancer");
+
+            // 2. Sound Effects
+            if (sfxClick == null) sfxClick = Resources.Load<AudioClip>("Audio/SFX/sfx_button_press");
+            if (sfxClick == null) sfxClick = Resources.Load<AudioClip>("Audio/SFX/sfx_click");
+            if (sfxClick == null) sfxClick = Resources.Load<AudioClip>("Audio/SFX/click1");
+
+            if (sfxTilePickup == null) sfxTilePickup = Resources.Load<AudioClip>("Audio/SFX/sfx_tile_pickup");
+            if (sfxTileClack == null) sfxTileClack = Resources.Load<AudioClip>("Audio/SFX/sfx_tile_clack");
+            if (sfxTileClack == null) sfxTileClack = Resources.Load<AudioClip>("Audio/SFX/sfx_tile_place");
+
+            if (sfxTileDraw == null) sfxTileDraw = Resources.Load<AudioClip>("Audio/SFX/sfx_tile_draw");
+            if (sfxTurnChime == null) sfxTurnChime = Resources.Load<AudioClip>("Audio/SFX/sfx_turn_chime");
+            if (sfxPass == null) sfxPass = Resources.Load<AudioClip>("Audio/SFX/sfx_pass");
+            if (sfxWin == null) sfxWin = Resources.Load<AudioClip>("Audio/SFX/sfx_win");
+            if (sfxLoss == null) sfxLoss = Resources.Load<AudioClip>("Audio/SFX/sfx_loss");
+
+            if (sfxErrorBuzz == null) sfxErrorBuzz = Resources.Load<AudioClip>("Audio/SFX/sfx_error_buzz");
+            if (sfxErrorBuzz == null) sfxErrorBuzz = Resources.Load<AudioClip>("Audio/SFX/Error Buzz - Computer Error 1189");
+
 #if UNITY_EDITOR
+            // Editor fallback paths if Resources hasn't re-indexed yet
             if (musicClip == null) musicClip = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/music_ambient_loop.wav");
             if (sfxClick == null) sfxClick = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_click.wav");
             if (sfxTilePickup == null) sfxTilePickup = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_tile_pickup.wav");
@@ -138,7 +196,10 @@ namespace Dominoes
 
         public void PlayMusic()
         {
-            if (musicSource == null || musicClip == null) return;
+            if (musicSource == null) return;
+            if (musicClip == null) LoadAudioClips();
+            if (musicClip == null) return;
+
             if (musicSource.isPlaying && musicSource.clip == musicClip) return;
 
             musicSource.clip = musicClip;
@@ -159,12 +220,12 @@ namespace Dominoes
 
         public void PlayClick()
         {
-            PlaySFX(sfxClick, 0.7f);
+            PlaySFX(sfxClick, 0.75f);
         }
 
         public void PlayTilePickup()
         {
-            PlaySFX(sfxTilePickup, 0.8f);
+            PlaySFX(sfxTilePickup, 0.85f);
         }
 
         public void PlayTileClack()
@@ -174,17 +235,17 @@ namespace Dominoes
 
         public void PlayTileDraw()
         {
-            PlaySFX(sfxTileDraw, 0.85f);
+            PlaySFX(sfxTileDraw, 0.90f);
         }
 
         public void PlayTurnChime()
         {
-            PlaySFX(sfxTurnChime, 0.9f);
+            PlaySFX(sfxTurnChime, 0.95f);
         }
 
         public void PlayPass()
         {
-            PlaySFX(sfxPass, 0.8f);
+            PlaySFX(sfxPass, 0.85f);
         }
 
         public void PlayWin()
@@ -195,6 +256,11 @@ namespace Dominoes
         public void PlayLoss()
         {
             PlaySFX(sfxLoss, 0.85f);
+        }
+
+        public void PlayErrorBuzz()
+        {
+            PlaySFX(sfxErrorBuzz, 0.80f);
         }
 
         private void PlaySFX(AudioClip clip, float volumeScale = 1.0f)
@@ -245,8 +311,8 @@ namespace Dominoes
 
         public void LoadSettings()
         {
-            musicVolume = PlayerPrefs.GetFloat(PrefMusicVol, 0.6f);
-            sfxVolume = PlayerPrefs.GetFloat(PrefSfxVol, 0.85f);
+            musicVolume = PlayerPrefs.GetFloat(PrefMusicVol, 0.65f);
+            sfxVolume = PlayerPrefs.GetFloat(PrefSfxVol, 0.90f);
             isMusicMuted = PlayerPrefs.GetInt(PrefMusicMute, 0) == 1;
             isSfxMuted = PlayerPrefs.GetInt(PrefSfxMute, 0) == 1;
 

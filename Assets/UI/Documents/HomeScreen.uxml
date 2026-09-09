@@ -5,222 +5,368 @@
     xmlns:uie="UnityEditor.UIElements"
     xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
     editor-extension-mode="False">
-    <ui:Style src="../Styles/HomeScreen.uss" />
+    <ui:Style src="../Styles/ResponsiveFoundation.uss" />
+    <ui:Style src="../Styles/HomeScreen_v2.uss" />
 
-    <!-- Pure Flexbox Game Root (Safe-Area Aware, Commercial Mobile Presentation) -->
+    <!-- Pure Flexbox Game Root with Exact Tropical Beach Background -->
     <ui:VisualElement name="home-root" class="home-root">
-        <ui:VisualElement name="safe-content" class="safe-content">
+        <ui:VisualElement name="safe-content" class="safe-content flex flex-col justify-between items-center flex-1 overflow-hidden">
             
-            <!-- 1. TOP HUD (Clean Header without duplicate Gear) -->
-            <ui:VisualElement name="top-bar" class="top-bar">
+            <!-- 1. TOP HUD (Header matching Reference Screenshot) -->
+            <ui:VisualElement name="top-bar" class="top-bar flex flex-row justify-between items-center flex-shrink-0">
                 
-                <!-- Left: Circular Menu Button (Opens Settings & Audio Options) -->
-                <ui:Button name="hamburger-button" class="hud-circle-btn" tooltip="Open Settings &amp; Options">
+                <!-- Left: Circular Menu Button -->
+                <ui:Button name="hamburger-button" class="hud-circle-btn touch-target" tooltip="Open Settings &amp; Options">
                     <ui:VisualElement class="hamburger-bar" />
                     <ui:VisualElement class="hamburger-bar" />
                     <ui:VisualElement class="hamburger-bar" />
                 </ui:Button>
 
-                <!-- Center: Player Profile Capsule (Tappable Avatar & Level) -->
-                <ui:Button name="profile-button" class="hud-profile-capsule" tooltip="View Profile &amp; Stats">
+                <!-- Center: Player Profile Capsule (Avatar, Star Level 1, NewPlayer, XP Bar) -->
+                <ui:Button name="profile-button" class="hud-profile-capsule touch-target" tooltip="View Profile &amp; Stats">
                     <ui:VisualElement class="hud-avatar-frame">
                         <ui:VisualElement class="hud-avatar-img" />
                         <ui:VisualElement class="hud-level-star">
-                            <ui:Label name="profile-level-text" class="hud-level-number" text="5" />
+                            <ui:Label name="profile-level-text" class="hud-level-number font-kenney-future-narrow font-bold" text="1" />
                         </ui:VisualElement>
                     </ui:VisualElement>
 
-                    <ui:VisualElement class="hud-profile-info">
-                        <ui:Label name="profile-name-label" class="hud-player-name" text="Player 1" />
-                        <!-- Subtle XP Progress Track -->
+                    <ui:VisualElement class="hud-profile-info flex flex-col justify-center min-w-0 flex-shrink">
+                        <ui:Label name="profile-name-label" class="hud-player-name font-kenney-future font-bold" text="NewPlayer" />
                         <ui:VisualElement class="hud-xp-track">
                             <ui:VisualElement class="hud-xp-fill" />
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:Button>
 
-                <!-- Right: Balance Spacer for symmetrical centering -->
-                <ui:VisualElement class="hud-balance-spacer" />
+                <!-- Right: Crown Gold Coin Chip (+ 100) -->
+                <ui:VisualElement class="hud-coin-badge flex flex-row items-center touch-target">
+                    <ui:VisualElement class="hud-coin-icon" />
+                    <ui:Label class="hud-coin-text font-kenney-future font-bold" text="100" />
+                    <ui:Label class="hud-coin-plus font-kenney-future font-bold" text="+" />
+                </ui:VisualElement>
             </ui:VisualElement>
 
-            <!-- 2. MAIN GAME WORLD LOBBY SECTION -->
-            <ui:VisualElement name="main-lobby-area" class="main-lobby-area">
+            <!-- 2. MAIN 3 GAME MODE BUTTONS (Online, VS Computer, Friend) -->
+            <ui:VisualElement class="mode-buttons-group flex flex-col justify-center items-center flex-shrink-0">
                 
-                <!-- BRANDING: Polished Game Logo -->
-                <ui:VisualElement class="brand-section">
-                    <ui:VisualElement class="brand-logo-crest">
-                        <ui:Label class="brand-logo-text" text="DOMINOES" />
-                    </ui:VisualElement>
-                    <ui:VisualElement class="brand-ribbon">
-                        <ui:Label class="brand-ribbon-text" text="CHOOSE HOW TO PLAY" />
-                    </ui:VisualElement>
-                </ui:VisualElement>
+                <!-- OPTION 1: ONLINE (Royal Blue Glossy Pill with 3D Gold Rim) -->
+                <ui:Button name="mode-online-btn" class="mode-btn mode-btn--online touch-target" tooltip="Play Online Matches">
+                    <ui:VisualElement class="mode-badge-img mode-badge-img--online" />
+                    <ui:Label class="mode-label-text font-kenney-future font-bold" text="Online" />
+                </ui:Button>
 
-                <!-- 3 HERO GAME MODE BUTTONS (Rich Physical Game Buttons) -->
-                <ui:VisualElement class="mode-buttons-group">
-                    
-                    <!-- MODE 1: ONLINE (Glossy Royal Blue Game Button) -->
-                    <ui:Button name="mode-online-btn" class="game-mode-btn game-mode-btn--online" tooltip="Play Online Multiplayer">
-                        <!-- Top Gloss Specular Highlight Layer -->
-                        <ui:VisualElement class="btn-top-specular" />
-                        
-                        <!-- Left Icon Circular Badge -->
-                        <ui:VisualElement class="mode-icon-badge mode-icon-badge--online">
-                            <ui:VisualElement class="mode-icon-glyph mode-icon-glyph--online" />
-                        </ui:VisualElement>
+                <!-- OPTION 2: VS COMPUTER (Emerald Green Glossy Pill with 3D Gold Rim) -->
+                <ui:Button name="mode-computer-btn" class="mode-btn mode-btn--computer touch-target" tooltip="Play VS Computer AI">
+                    <ui:VisualElement class="mode-badge-img mode-badge-img--computer" />
+                    <ui:Label class="mode-label-text font-kenney-future font-bold" text="VS Computer" />
+                </ui:Button>
 
-                        <!-- Center Title & Subtitle -->
-                        <ui:VisualElement class="mode-text-column">
-                            <ui:Label class="mode-title-text" text="ONLINE" />
-                            <ui:Label class="mode-subtitle-text" text="Play with real players" />
-                        </ui:VisualElement>
-
-                        <!-- Right PLAY Action Pill -->
-                        <ui:VisualElement class="mode-play-pill mode-play-pill--online">
-                            <ui:Label class="mode-play-text" text="PLAY" />
-                        </ui:VisualElement>
-                    </ui:Button>
-
-                    <!-- MODE 2: VS COMPUTER (Glossy Vibrant Emerald Green Game Button) -->
-                    <ui:Button name="mode-computer-btn" class="game-mode-btn game-mode-btn--computer" tooltip="Play against AI">
-                        <!-- Top Gloss Specular Highlight Layer -->
-                        <ui:VisualElement class="btn-top-specular" />
-
-                        <!-- Left Icon Circular Badge -->
-                        <ui:VisualElement class="mode-icon-badge mode-icon-badge--computer">
-                            <ui:VisualElement class="mode-icon-glyph mode-icon-glyph--computer" />
-                        </ui:VisualElement>
-
-                        <!-- Center Title & Subtitle -->
-                        <ui:VisualElement class="mode-text-column">
-                            <ui:Label class="mode-title-text" text="VS COMPUTER" />
-                            <ui:Label class="mode-subtitle-text" text="Play against AI" />
-                        </ui:VisualElement>
-
-                        <!-- Right PLAY Action Pill -->
-                        <ui:VisualElement class="mode-play-pill mode-play-pill--computer">
-                            <ui:Label class="mode-play-text" text="PLAY" />
-                        </ui:VisualElement>
-                    </ui:Button>
-
-                    <!-- MODE 3: WITH FRIENDS (Glossy Vibrant Purple/Magenta Game Button) -->
-                    <ui:Button name="mode-friends-btn" class="game-mode-btn game-mode-btn--friends" tooltip="Play with Friends">
-                        <!-- Top Gloss Specular Highlight Layer -->
-                        <ui:VisualElement class="btn-top-specular" />
-
-                        <!-- Left Icon Circular Badge -->
-                        <ui:VisualElement class="mode-icon-badge mode-icon-badge--friends">
-                            <ui:VisualElement class="mode-icon-glyph mode-icon-glyph--friends" />
-                        </ui:VisualElement>
-
-                        <!-- Center Title & Subtitle -->
-                        <ui:VisualElement class="mode-text-column">
-                            <ui:Label class="mode-title-text" text="WITH FRIENDS" />
-                            <ui:Label class="mode-subtitle-text" text="Create or join a private game" />
-                        </ui:VisualElement>
-
-                        <!-- Right PLAY Action Pill -->
-                        <ui:VisualElement class="mode-play-pill mode-play-pill--friends">
-                            <ui:Label class="mode-play-text" text="PLAY" />
-                        </ui:VisualElement>
-                    </ui:Button>
-
-                </ui:VisualElement>
-
-                <!-- OPTIONAL: How to Play / Tutorial Ribbon -->
-                <ui:Button name="home-tutorial-btn" class="tutorial-ribbon-btn" tooltip="Learn the Rules">
-                    <ui:Label class="tutorial-ribbon-icon" text="📖" />
-                    <ui:Label class="tutorial-ribbon-text" text="HOW TO PLAY • TUTORIAL" />
-                    <ui:Label class="tutorial-ribbon-arrow" text="→" />
+                <!-- OPTION 3: FRIEND (Purple/Violet Glossy Pill with 3D Gold Rim) -->
+                <ui:Button name="mode-friends-btn" class="mode-btn mode-btn--friends touch-target" tooltip="Play with Friends (Create/Join Room)">
+                    <ui:VisualElement class="mode-badge-img mode-badge-img--friends" />
+                    <ui:Label class="mode-label-text font-kenney-future font-bold" text="Friend" />
                 </ui:Button>
 
             </ui:VisualElement>
 
-            <!-- Bottom Spacer for Tropical Scenery & Physical Domino Depth -->
-            <ui:VisualElement class="scenery-spacer" />
-
-            <!-- 3. PROFILE & STATS MODAL (Opened ONLY by tapping Player Avatar) -->
-            <ui:VisualElement name="profile-stats-modal" class="home-modal" style="display: none;">
-                <ui:VisualElement class="modal-backdrop" />
-                <ui:VisualElement class="modal-card">
-                    <ui:Label class="modal-eyebrow" text="• PLAYER CAREER •" />
-                    <ui:Label class="modal-title" text="PLAYER PROFILE" />
-
-                    <!-- Profile Header Card -->
-                    <ui:VisualElement class="modal-profile-header">
-                        <ui:VisualElement class="modal-avatar-lg" />
-                        <ui:VisualElement class="modal-profile-info">
-                            <ui:Label name="modal-player-name" class="modal-player-name" text="Player 1" />
-                            <ui:Label class="modal-rank-tier" text="Classic Dominoes Player" />
-                            <ui:Label name="modal-player-level" class="modal-level-tag" text="Level 5 • Master" />
-                        </ui:VisualElement>
+            <!-- 3. CENTER FLOATING FEATURES (3D Domino & Reward Wheel) -->
+            <ui:VisualElement class="center-feature-area flex-1 flex justify-center items-center relative min-h-[120px]">
+                
+                <!-- Center 3D Tilted Domino Tile [4|5] -->
+                <ui:VisualElement class="tilted-hero-domino">
+                    <!-- Ivory Half 1 (4 pips) -->
+                    <ui:VisualElement class="domino-half domino-half--top">
+                        <ui:VisualElement class="domino-pip pip-tl" />
+                        <ui:VisualElement class="domino-pip pip-tr" />
+                        <ui:VisualElement class="domino-pip pip-bl" />
+                        <ui:VisualElement class="domino-pip pip-br" />
                     </ui:VisualElement>
-
-                    <!-- Stats Grid -->
-                    <ui:VisualElement class="modal-stats-grid">
-                        <ui:VisualElement class="modal-stat-box">
-                            <ui:Label class="modal-stat-val" text="48" />
-                            <ui:Label class="modal-stat-lbl" text="Matches" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="modal-stat-box">
-                            <ui:Label class="modal-stat-val" text="68%" />
-                            <ui:Label class="modal-stat-lbl" text="Win Rate" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="modal-stat-box">
-                            <ui:Label class="modal-stat-val" text="33" />
-                            <ui:Label class="modal-stat-lbl" text="Victories" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="modal-stat-box">
-                            <ui:Label class="modal-stat-val" text="7" />
-                            <ui:Label class="modal-stat-lbl" text="Best Streak" />
-                        </ui:VisualElement>
+                    <!-- Metal Inset Divider -->
+                    <ui:VisualElement class="domino-divider-line" />
+                    <!-- Ivory Half 2 (5 pips) -->
+                    <ui:VisualElement class="domino-half domino-half--bottom">
+                        <ui:VisualElement class="domino-pip pip-tl" />
+                        <ui:VisualElement class="domino-pip pip-tr" />
+                        <ui:VisualElement class="domino-pip pip-center" />
+                        <ui:VisualElement class="domino-pip pip-bl" />
+                        <ui:VisualElement class="domino-pip pip-br" />
                     </ui:VisualElement>
-
-                    <ui:Button name="profile-close-btn" class="modal-btn-primary" text="CLOSE" />
                 </ui:VisualElement>
+
+                <!-- Bottom-Right: Video Wheel Ad Chip (+100) -->
+                <ui:VisualElement class="reward-wheel-chip">
+                    <ui:VisualElement class="wheel-icon-inner" />
+                    <ui:VisualElement class="wheel-video-badge">
+                        <ui:Label class="video-camera-glyph font-kenney-future font-bold" text="▶" />
+                    </ui:VisualElement>
+                    <ui:Label class="reward-plus-text font-kenney-future font-bold" text="+100" />
+                </ui:VisualElement>
+
             </ui:VisualElement>
 
-            <!-- 4. SETTINGS & OPTIONS MODAL (Opened by Menu Button, with Gear Icon in Middle Header) -->
-            <ui:VisualElement name="home-settings-modal" class="home-modal" style="display: none;">
-                <ui:VisualElement class="modal-backdrop" />
-                <ui:VisualElement class="modal-card">
-                    <!-- Gear Icon in Middle of Header -->
-                    <ui:VisualElement class="modal-gear-badge">
-                        <ui:Label class="modal-gear-icon" text="⚙" />
-                    </ui:VisualElement>
-
-                    <ui:Label class="modal-eyebrow" text="• PREFERENCES •" />
-                    <ui:Label class="modal-title" text="SETTINGS &amp; OPTIONS" />
-
-                    <!-- Music Setting Row -->
-                    <ui:VisualElement class="settings-row">
-                        <ui:Label class="settings-row-label" text="Background Music" />
-                        <ui:Button name="home-settings-music-btn" class="settings-toggle-btn settings-toggle-btn--on">
-                            <ui:Label name="home-settings-music-txt" class="settings-toggle-text" text="ON" />
-                        </ui:Button>
-                    </ui:VisualElement>
-
-                    <!-- Sound Effects Setting Row -->
-                    <ui:VisualElement class="settings-row">
-                        <ui:Label class="settings-row-label" text="Sound Effects" />
-                        <ui:Button name="home-settings-sfx-btn" class="settings-toggle-btn settings-toggle-btn--on">
-                            <ui:Label name="home-settings-sfx-txt" class="settings-toggle-text" text="ON" />
-                        </ui:Button>
-                    </ui:VisualElement>
-
-                    <!-- Haptics Setting Row -->
-                    <ui:VisualElement class="settings-row">
-                        <ui:Label class="settings-row-label" text="Vibration / Haptics" />
-                        <ui:Button name="home-settings-haptics-btn" class="settings-toggle-btn settings-toggle-btn--on">
-                            <ui:Label name="home-settings-haptics-txt" class="settings-toggle-text" text="ON" />
-                        </ui:Button>
-                    </ui:VisualElement>
-
-                    <ui:Button name="home-replay-tutorial-btn" class="modal-btn-secondary" text="Replay Interactive Tutorial" />
-                    <ui:Button name="home-settings-close-btn" class="modal-btn-primary" text="SAVE &amp; CLOSE" />
-                </ui:VisualElement>
+            <!-- 4. BOTTOM NAVIGATION DOCK (Home) -->
+            <ui:VisualElement class="bottom-nav-dock flex flex-row justify-center items-end">
+                <!-- Tab: Home (Active Raised Pavilion) -->
+                <ui:Button name="nav-home-btn" class="nav-tab-btn nav-tab-btn--active flex-1 touch-target">
+                    <ui:VisualElement class="nav-tab-icon nav-tab-icon--home" />
+                    <ui:Label class="nav-tab-label nav-tab-label--active font-kenney-future font-bold" text="Home" />
+                </ui:Button>
             </ui:VisualElement>
 
         </ui:VisualElement>
+
+        <!-- ================================================================== -->
+        <!-- SUB-MODAL 1: VS COMPUTER DIFFICULTY SELECTION -->
+        <!-- ================================================================== -->
+        <ui:VisualElement name="computer-difficulty-modal" class="home-modal" style="display: none;">
+            <ui:VisualElement class="modal-backdrop" />
+            <ui:VisualElement class="modal-card modal-card--options">
+                <ui:VisualElement class="modal-header-row flex flex-col items-center w-full">
+                    <ui:Label class="modal-eyebrow font-kenney-future-narrow font-bold" text="VS COMPUTER" />
+                    <ui:Label class="modal-title font-kenney-future font-bold" text="Choose Difficulty" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="modal-options-list flex flex-col gap-sm">
+                    <!-- Easy -->
+                    <ui:Button name="diff-easy-btn" class="option-card option-card--easy touch-target">
+                        <ui:VisualElement class="option-icon-box option-icon-box--easy flex justify-center items-center">
+                            <ui:Label class="option-icon-text font-kenney-future font-bold" text="★" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="option-info-col flex flex-col justify-center flex-grow flex-shrink min-w-0">
+                            <ui:Label class="option-title font-kenney-future font-bold" text="Easy" />
+                            <ui:Label class="option-desc font-kenney-future" text="Casual AI with relaxed, beginner-friendly plays" />
+                        </ui:VisualElement>
+                    </ui:Button>
+
+                    <!-- Medium -->
+                    <ui:Button name="diff-medium-btn" class="option-card option-card--medium touch-target">
+                        <ui:VisualElement class="option-icon-box option-icon-box--medium flex justify-center items-center">
+                            <ui:Label class="option-icon-text font-kenney-future font-bold" text="★★" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="option-info-col flex flex-col justify-center flex-grow flex-shrink min-w-0">
+                            <ui:Label class="option-title font-kenney-future font-bold" text="Medium" />
+                            <ui:Label class="option-desc font-kenney-future" text="Balanced tactical AI with standard strategy" />
+                        </ui:VisualElement>
+                    </ui:Button>
+
+                    <!-- Hard -->
+                    <ui:Button name="diff-hard-btn" class="option-card option-card--hard touch-target">
+                        <ui:VisualElement class="option-icon-box option-icon-box--hard flex justify-center items-center">
+                            <ui:Label class="option-icon-text font-kenney-future font-bold" text="★★★" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="option-info-col flex flex-col justify-center flex-grow flex-shrink min-w-0">
+                            <ui:Label class="option-title font-kenney-future font-bold" text="Hard" />
+                            <ui:Label class="option-desc font-kenney-future" text="Master AI that actively blocks and maximizes points" />
+                        </ui:VisualElement>
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <ui:Button name="computer-modal-close-btn" class="modal-btn-secondary touch-target" text="CANCEL" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- ================================================================== -->
+        <!-- SUB-MODAL 2: ONLINE RULE SET SELECTION -->
+        <!-- ================================================================== -->
+        <ui:VisualElement name="online-rules-modal" class="home-modal" style="display: none;">
+            <ui:VisualElement class="modal-backdrop" />
+            <ui:VisualElement class="modal-card modal-card--options">
+                <ui:VisualElement class="modal-header-row flex flex-col items-center w-full">
+                    <ui:Label class="modal-eyebrow font-kenney-future-narrow font-bold" text="PLAY ONLINE" />
+                    <ui:Label class="modal-title font-kenney-future font-bold" text="Select Rule Set" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="rules-grid flex flex-row flex-wrap justify-between">
+                    <!-- Classic -->
+                    <ui:Button name="rule-classic-btn" class="rule-card rule-card--active touch-target">
+                        <ui:VisualElement class="rule-badge rule-badge--classic flex justify-center items-center">
+                            <ui:VisualElement class="rule-badge-icon rule-badge-icon--classic" />
+                        </ui:VisualElement>
+                        <ui:Label class="rule-title font-kenney-future font-bold" text="Classic" />
+                        <ui:Label class="rule-desc font-kenney-future" text="Standard point matching rules" />
+                    </ui:Button>
+
+                    <!-- All Fives -->
+                    <ui:Button name="rule-fives-btn" class="rule-card touch-target">
+                        <ui:VisualElement class="rule-badge rule-badge--fives flex justify-center items-center">
+                            <ui:VisualElement class="rule-badge-icon rule-badge-icon--fives" />
+                        </ui:VisualElement>
+                        <ui:Label class="rule-title font-kenney-future font-bold" text="All Fives" />
+                        <ui:Label class="rule-desc font-kenney-future" text="Score whenever open ends sum to 5" />
+                    </ui:Button>
+
+                    <!-- Block -->
+                    <ui:Button name="rule-block-btn" class="rule-card touch-target">
+                        <ui:VisualElement class="rule-badge rule-badge--block flex justify-center items-center">
+                            <ui:VisualElement class="rule-badge-icon rule-badge-icon--block" />
+                        </ui:VisualElement>
+                        <ui:Label class="rule-title font-kenney-future font-bold" text="Block" />
+                        <ui:Label class="rule-desc font-kenney-future" text="No drawing; lowest pips win locked game" />
+                    </ui:Button>
+
+                    <!-- Draw -->
+                    <ui:Button name="rule-draw-btn" class="rule-card touch-target">
+                        <ui:VisualElement class="rule-badge rule-badge--draw flex justify-center items-center">
+                            <ui:VisualElement class="rule-badge-icon rule-badge-icon--draw" />
+                        </ui:VisualElement>
+                        <ui:Label class="rule-title font-kenney-future font-bold" text="Draw" />
+                        <ui:Label class="rule-desc font-kenney-future" text="Draw from boneyard until a move is possible" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <ui:Button name="online-find-match-btn" class="modal-btn-primary touch-target" text="FIND MATCH" />
+                <ui:Button name="online-modal-close-btn" class="modal-btn-secondary touch-target" text="CANCEL" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- ================================================================== -->
+        <!-- SUB-MODAL 3: FRIEND (CREATE ROOM / JOIN ROOM) -->
+        <!-- ================================================================== -->
+        <ui:VisualElement name="friend-room-modal" class="home-modal" style="display: none;">
+            <ui:VisualElement class="modal-backdrop" />
+            <ui:VisualElement class="modal-card modal-card--friend">
+                <ui:VisualElement class="modal-header-row flex flex-col items-center w-full">
+                    <ui:Label class="modal-eyebrow font-kenney-future-narrow font-bold" text="PLAY WITH FRIENDS" />
+                    <ui:Label class="modal-title font-kenney-future font-bold" text="Private Match" />
+                </ui:VisualElement>
+
+                <!-- Tabs: Create Room vs Join Room -->
+                <ui:VisualElement class="friend-tab-bar flex flex-row">
+                    <ui:Button name="friend-tab-create-btn" class="friend-tab-btn friend-tab-btn--active touch-target" text="Create Room" />
+                    <ui:Button name="friend-tab-join-btn" class="friend-tab-btn touch-target" text="Join Room" />
+                </ui:VisualElement>
+
+                <!-- Panel 1: Create Room -->
+                <ui:VisualElement name="friend-create-panel" class="friend-tab-panel flex flex-col items-center">
+                    <ui:Label class="friend-panel-hint font-kenney-future" text="Share this room code with your friend to play together:" />
+                    
+                    <ui:VisualElement class="room-code-display-box flex justify-center items-center">
+                        <ui:Label name="friend-generated-code" class="room-code-text font-kenney-future font-bold" text="DOM-5829" />
+                    </ui:VisualElement>
+
+                    <ui:Button name="friend-copy-code-btn" class="copy-code-btn touch-target" text="📋 COPY ROOM CODE" />
+                    <ui:Button name="friend-start-room-btn" class="modal-btn-primary touch-target" text="START MATCH" />
+                </ui:VisualElement>
+
+                <!-- Panel 2: Join Room -->
+                <ui:VisualElement name="friend-join-panel" class="friend-tab-panel flex flex-col items-center" style="display: none;">
+                    <ui:Label class="friend-panel-hint font-kenney-future" text="Enter your friend's 6-digit room code:" />
+                    
+                    <ui:VisualElement class="room-code-input-box">
+                        <ui:TextField name="friend-code-input" class="room-code-input font-kenney-future font-bold" placeholder="e.g. DOM-5829" max-length="12" />
+                    </ui:VisualElement>
+
+                    <ui:Label name="friend-join-status" class="friend-join-status-txt font-kenney-future font-bold" text="" />
+                    <ui:Button name="friend-join-room-btn" class="modal-btn-primary touch-target" text="JOIN ROOM" />
+                </ui:VisualElement>
+
+                <ui:Button name="friend-modal-close-btn" class="modal-btn-secondary touch-target" text="CLOSE" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- ================================================================== -->
+        <!-- PROFILE STATS MODAL -->
+        <!-- ================================================================== -->
+        <ui:VisualElement name="profile-stats-modal" class="home-modal" style="display: none;">
+            <ui:VisualElement class="modal-backdrop" />
+            <ui:VisualElement class="modal-card">
+                <ui:Label class="modal-eyebrow font-kenney-future-narrow font-bold" text="PLAYER PROFILE" />
+                <ui:Label name="modal-player-name" class="modal-title font-kenney-future font-bold" text="NewPlayer" />
+                <ui:VisualElement class="profile-stats-grid flex flex-row justify-between gap-sm">
+                    <ui:VisualElement class="stat-pill flex flex-col items-center">
+                        <ui:Label class="stat-num font-kenney-future font-bold" text="1" />
+                        <ui:Label class="stat-lbl font-kenney-future" text="Level" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="stat-pill flex flex-col items-center">
+                        <ui:Label class="stat-num font-kenney-future font-bold" text="100" />
+                        <ui:Label class="stat-lbl font-kenney-future" text="Coins" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="stat-pill flex flex-col items-center">
+                        <ui:Label class="stat-num font-kenney-future font-bold" text="0" />
+                        <ui:Label class="stat-lbl font-kenney-future" text="Wins" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Button name="profile-close-btn" class="modal-btn-primary touch-target" text="CLOSE PROFILE" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- ================================================================== -->
+        <!-- SETTINGS MODAL -->
+        <!-- ================================================================== -->
+        <ui:VisualElement name="home-settings-modal" class="home-modal" style="display: none;">
+            <ui:VisualElement class="modal-backdrop" />
+            <ui:VisualElement class="modal-card">
+                <ui:Label class="modal-eyebrow font-kenney-future-narrow font-bold" text="GAME SETTINGS" />
+                <ui:Label class="modal-title font-kenney-future font-bold" text="Audio &amp; Options" />
+
+                <ui:VisualElement class="settings-rows-container flex flex-col gap-md">
+                    <!-- Music -->
+                    <ui:VisualElement class="settings-row flex flex-row justify-between items-center">
+                        <ui:Label class="settings-label font-kenney-future font-bold" text="Background Music" />
+                        <ui:Button name="home-settings-music-btn" class="settings-toggle-btn settings-toggle-btn--on">
+                            <ui:Label name="home-settings-music-txt" class="settings-toggle-text font-kenney-future font-bold" text="ON" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <!-- SFX -->
+                    <ui:VisualElement class="settings-row flex flex-row justify-between items-center">
+                        <ui:Label class="settings-label font-kenney-future font-bold" text="Sound Effects" />
+                        <ui:Button name="home-settings-sfx-btn" class="settings-toggle-btn settings-toggle-btn--on">
+                            <ui:Label name="home-settings-sfx-txt" class="settings-toggle-text font-kenney-future font-bold" text="ON" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <!-- Haptics -->
+                    <ui:VisualElement class="settings-row flex flex-row justify-between items-center">
+                        <ui:Label class="settings-label font-kenney-future font-bold" text="Haptic Feedback" />
+                        <ui:Button name="home-settings-haptics-btn" class="settings-toggle-btn settings-toggle-btn--on">
+                            <ui:Label name="home-settings-haptics-txt" class="settings-toggle-text font-kenney-future font-bold" text="ON" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <!-- Replay Tutorial -->
+                    <ui:Button name="home-replay-tutorial-btn" class="settings-action-btn" text="📖 REPLAY TUTORIAL" />
+                </ui:VisualElement>
+
+                <ui:Button name="home-settings-close-btn" class="modal-btn-primary" text="SAVE &amp; EXIT" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- FULL-SCREEN FIRST-TIME GAME LOADING SCREEN -->
+        <ui:VisualElement name="game-loading-screen" class="game-loading-overlay">
+            <ui:VisualElement class="game-loading-bg" />
+            <ui:VisualElement class="game-loading-vignette" />
+
+            <ui:VisualElement class="game-loading-content flex flex-col justify-between items-center flex-1">
+                <!-- Top Spacer -->
+                <ui:VisualElement class="game-loading-top-spacer" />
+
+                <!-- Center Luxury Branding Crest -->
+                <ui:VisualElement class="game-loading-center flex flex-col items-center">
+                    <ui:VisualElement class="game-loading-logo-badge flex flex-col items-center">
+                        <ui:Label class="game-loading-eyebrow font-kenney-future-narrow font-bold" />
+                        <ui:Label class="game-loading-title font-kenney-future font-bold" text="DOMINOES" />
+                        <ui:Label class="game-loading-subtitle font-kenney-future-narrow font-bold"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Bottom Animated Loading Container -->
+                <ui:VisualElement class="game-loading-footer flex flex-col items-center w-full max-w-sm">
+                    <ui:VisualElement class="game-loading-status-row flex flex-row justify-between items-center w-full">
+                        <ui:Label name="game-loading-status-text" class="game-loading-status-text font-kenney-future font-bold" text="Preparing your table..." />
+                        <ui:Label name="game-loading-percent-text" class="game-loading-percent-text font-kenney-future font-bold" text="0%" />
+                    </ui:VisualElement>
+
+                    <!-- Animated Progress Bar Track -->
+                    <ui:VisualElement class="game-loading-progress-track w-full">
+                        <ui:VisualElement name="game-loading-progress-bar" class="game-loading-progress-fill" style="width: 0%;" />
+                    </ui:VisualElement>
+
+                    <ui:Label class="game-loading-version-text font-kenney-future-narrow" text="v1.0.0 • Mobile Edition" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
     </ui:VisualElement>
 </ui:UXML>

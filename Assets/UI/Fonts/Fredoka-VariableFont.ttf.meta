@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: cac4a501138f474990b2c755dd1936c3
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceLegacyFont: 0
+  fontNames: []
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  advanceRoundingMode: 1
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontDimensions:
+    width: 0
+    height: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
