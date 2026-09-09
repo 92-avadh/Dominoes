@@ -83,6 +83,14 @@ namespace Dominoes
         private Button passButton;
         private Button hintButton;
 
+        // Side Choice Panel (when tile can be played on both Left and Right)
+        private VisualElement sideChoicePanel;
+        private Label sideChoiceTitle;
+        private Button playLeftBtn;
+        private Label playLeftBtnLabel;
+        private Button playRightBtn;
+        private Label playRightBtnLabel;
+
         // 5. Player Hand Area
         private Label handTileCountLabel;
         private VisualElement handTilesContainer;
@@ -108,6 +116,7 @@ namespace Dominoes
 
         // 9. Result Modal
         private VisualElement resultModal;
+        private Label resultTrophyIcon;
         private Label resultTitle;
         private Label resultWinnerLabel;
         private Label animatedScoreLabel;
@@ -121,13 +130,25 @@ namespace Dominoes
         private Button leaveModalCancelBtn;
         private Button leaveModalConfirmBtn;
 
-        // Runtime State
+        // 11. Skeuomorphic Boneyard Tray Modal (Image 2)
+        private VisualElement drawModal;
+        private VisualElement boneyardTrayWrapper;
+        private Button boneyardModalXBtn;
+        private VisualElement boneyardTilesGrid;
+        private Label boneyardTrayHintLabel;
+        private Button drawModalCloseBtn;
+        private int humanDrawsThisTurn = 0;
+        private Coroutine autoOpenDrawCoroutine;
+
         private DominoTile selectedTile;
         private DominoTile draggingTile;
         private bool isDragging;
         private Vector2 dragStartPosition;
         private DominoBoardLayoutResult lastLayoutResult;
         private readonly Dictionary<DominoTile, Vector2> previousTilePositions = new Dictionary<DominoTile, Vector2>();
+        private DominoTile lastPlacedTileRef;
+        private Vector2 lastPlacedTileOriginWorldPos = Vector2.zero;
+        private bool lastPlacedByHuman = true;
         private Coroutine botTurnCoroutine;
         private Coroutine scoreCountCoroutine;
         private Coroutine boardAnimationCoroutine;
@@ -161,6 +182,11 @@ namespace Dominoes
 #else
                 waitingScreenController = FindObjectOfType<DominoWaitingScreenController>(true);
 #endif
+                if (waitingScreenController == null)
+                {
+                    var matchGO = new GameObject("DominoMatchController");
+                    waitingScreenController = matchGO.AddComponent<DominoWaitingScreenController>();
+                }
             }
 
             if (homeScreenController == null)
@@ -215,6 +241,27 @@ namespace Dominoes
         {
         }
 
+        private void Update()
+        {
+            if (waitingScreenController == null) return;
+            var match = waitingScreenController.MatchManager;
+            if (match == null || match.CurrentState != MatchState.Playing) return;
+
+            var human = match.TurnManager.GetCurrentPlayer(match.GameState.Players);
+            if (human != null && human.IsHuman && !isDragging && selectedTile == null)
+            {
+                bool hasPlayable = passDrawManager.HasPlayableTile(match.Board, human);
+                int boneyardCount = match.Dealer != null ? match.Dealer.RemainingCount : 0;
+                if (!hasPlayable && boneyardCount > 0 && humanDrawsThisTurn < 2)
+                {
+                    if (drawModal == null || drawModal.style.display == DisplayStyle.None || (boneyardTrayWrapper != null && boneyardTrayWrapper.style.display == DisplayStyle.None))
+                    {
+                        ShowBoneyardTrayModal();
+                    }
+                }
+            }
+        }
+
         private void StopAllGameCoroutines()
         {
             if (botTurnCoroutine != null) { StopCoroutine(botTurnCoroutine); botTurnCoroutine = null; }
@@ -266,6 +313,21 @@ namespace Dominoes
 
             // 3. Board Area & Boneyard Stack
             boardFelt = rootElement.Q<VisualElement>("board-felt");
+            if (boardFelt != null)
+            {
+                boardFelt.RegisterCallback<ClickEvent>(evt =>
+                {
+                    if (evt.target == boardFelt || evt.target == boardTilesContainer)
+                    {
+                        if (selectedTile != null)
+                        {
+                            selectedTile = null;
+                            RefreshAll(animateBoard: false);
+                        }
+                    }
+                });
+            }
+
             boneyardPileBtn = rootElement.Q<Button>("boneyard-pile-btn");
             boneyardCountLabel = rootElement.Q<Label>("boneyard-count-label");
             boneyardActionHint = rootElement.Q<Label>("boneyard-action-hint");
@@ -295,9 +357,23 @@ namespace Dominoes
             if (passButton != null) passButton.clicked += OnPassButtonClicked;
             if (hintButton != null) hintButton.clicked += OnHintButtonClicked;
 
+            // Side Choice Panel
+            sideChoicePanel = rootElement.Q<VisualElement>("side-choice-panel");
+            sideChoiceTitle = rootElement.Q<Label>("side-choice-title");
+            playLeftBtn = rootElement.Q<Button>("play-left-btn");
+            playLeftBtnLabel = rootElement.Q<Label>("play-left-btn-label");
+            playRightBtn = rootElement.Q<Button>("play-right-btn");
+            playRightBtnLabel = rootElement.Q<Label>("play-right-btn-label");
+
+            if (playLeftBtn != null) playLeftBtn.clicked += OnPlayLeftButtonClicked;
+            if (playRightBtn != null) playRightBtn.clicked += OnPlayRightButtonClicked;
+
             // 5. Player Hand Area
             handTileCountLabel = rootElement.Q<Label>("hand-tile-count-label");
-            handTilesContainer = rootElement.Q<VisualElement>("hand-tiles-container");
+            var handScrollView = rootElement.Q<ScrollView>("hand-scroll-view");
+            handTilesContainer = handScrollView?.contentContainer?.Q<VisualElement>("hand-tiles-container") 
+                                 ?? handScrollView?.contentContainer 
+                                 ?? rootElement.Q<VisualElement>("hand-tiles-container");
 
             // 6. Drag Ghost Element
             dragGhostTile = rootElement.Q<VisualElement>("drag-ghost-tile");
@@ -329,6 +405,7 @@ namespace Dominoes
 
             // 9. Results Modal
             resultModal = rootElement.Q<VisualElement>("result-modal");
+            resultTrophyIcon = rootElement.Q<Label>("result-trophy-icon");
             resultTitle = rootElement.Q<Label>("result-title");
             resultWinnerLabel = rootElement.Q<Label>("result-winner-label");
             animatedScoreLabel = rootElement.Q<Label>("animated-score-label");
@@ -350,7 +427,20 @@ namespace Dominoes
             if (leaveModalConfirmBtn != null) leaveModalConfirmBtn.clicked += OnConfirmLeaveClicked;
             if (alertCloseXBtn != null) alertCloseXBtn.clicked += HideLeaveConfirmation;
 
-            // 11. Bind Tutorial Controller
+            // 11. Skeuomorphic Boneyard Tray Modal
+            drawModal = rootElement.Q<VisualElement>("draw-modal");
+            boneyardTrayWrapper = rootElement.Q<VisualElement>("boneyard-tray-wrapper");
+            boneyardTilesGrid = rootElement.Q<VisualElement>("boneyard-tiles-grid");
+            boneyardTrayHintLabel = rootElement.Q<Label>("boneyard-tray-hint-label");
+            drawModalCloseBtn = rootElement.Q<Button>("draw-modal-close-btn");
+            boneyardModalXBtn = rootElement.Q<Button>("boneyard-modal-x-btn");
+            var boneyardModalBackdrop = rootElement.Q<VisualElement>("boneyard-modal-backdrop");
+
+            if (drawModalCloseBtn != null) drawModalCloseBtn.clicked += HideBoneyardTrayModal;
+            if (boneyardModalXBtn != null) boneyardModalXBtn.clicked += HideBoneyardTrayModal;
+            if (boneyardModalBackdrop != null) boneyardModalBackdrop.RegisterCallback<ClickEvent>(evt => HideBoneyardTrayModal());
+
+            // 12. Bind Tutorial Controller
             tutorialController ??= new DominoTutorialController(this);
             tutorialController.BindUIElements(rootElement);
 
@@ -395,6 +485,11 @@ namespace Dominoes
             if (leaveModalCancelBtn != null) leaveModalCancelBtn.clicked -= HideLeaveConfirmation;
             if (leaveModalConfirmBtn != null) leaveModalConfirmBtn.clicked -= OnConfirmLeaveClicked;
 
+            if (drawModalCloseBtn != null) drawModalCloseBtn.clicked -= HideBoneyardTrayModal;
+            if (boneyardModalXBtn != null) boneyardModalXBtn.clicked -= HideBoneyardTrayModal;
+            if (playLeftBtn != null) playLeftBtn.clicked -= OnPlayLeftButtonClicked;
+            if (playRightBtn != null) playRightBtn.clicked -= OnPlayRightButtonClicked;
+
             if (tutorialController != null)
             {
                 tutorialController.UnbindUIElements();
@@ -411,6 +506,10 @@ namespace Dominoes
             leaveModalCard = null;
             leaveModalCancelBtn = null;
             leaveModalConfirmBtn = null;
+            drawModal = null;
+            boneyardTilesGrid = null;
+            boneyardTrayHintLabel = null;
+            drawModalCloseBtn = null;
         }
 
         private void SubscribeMatchEvents()
@@ -508,7 +607,8 @@ namespace Dominoes
             if (roundInfoLabel != null)
             {
                 int roundNum = match.RoundManager != null ? match.RoundManager.RoundNumber : 1;
-                roundInfoLabel.text = $"ROUND {Math.Max(1, roundNum)}";
+                string modeBadge = DominoGameModeContext.GetGameScreenHeader();
+                roundInfoLabel.text = $"{modeBadge} (R{Math.Max(1, roundNum)})";
             }
         }
 
@@ -544,7 +644,23 @@ namespace Dominoes
 
                     if (opponentTileCounts[oppIndex] != null)
                     {
-                        opponentTileCounts[oppIndex].text = $"{player.HandCount} tiles";
+                        opponentTileCounts[oppIndex].text = (player.HandCount == 1) ? "1 tile" : $"{player.HandCount} tiles";
+                    }
+
+                    // Dynamically bind avatar texture
+                    var avatarElem = slot.Q<VisualElement>(className: "opponent-avatar");
+                    if (avatarElem != null)
+                    {
+                        string pName = player.PlayerName?.ToLowerInvariant() ?? "";
+                        string avatarFile = pName.Contains("sophia") || pName.Contains("aoi") || pName.Contains("alex") ? "avatar_sophia" :
+                                            pName.Contains("marcus") || pName.Contains("lucas") || pName.Contains("computer") ? "avatar_marcus" :
+                                            pName.Contains("elena") || pName.Contains("mateo") ? "avatar_elena" :
+                                            (oppIndex == 0 ? "avatar_sophia" : oppIndex == 1 ? "avatar_marcus" : "avatar_elena");
+                        var avatarTex = Resources.Load<Texture2D>($"Textures/Avatars/{avatarFile}");
+                        if (avatarTex != null)
+                        {
+                            avatarElem.style.backgroundImage = new StyleBackground(avatarTex);
+                        }
                     }
                 }
 
@@ -576,6 +692,7 @@ namespace Dominoes
 
             if (board.IsEmpty)
             {
+                previousTilePositions.Clear();
                 if (emptyBoardMessage != null)
                 {
                     emptyBoardMessage.style.display = DisplayStyle.Flex;
@@ -607,7 +724,7 @@ namespace Dominoes
             );
 
             // Render 2D physical ivory dominoes
-            var visualElements = new List<(VisualElement el, Vector2 startPos, Vector2 targetPos)>();
+            var visualElements = new List<(VisualElement el, Vector2 startPos, Vector2 targetPos, bool isNewPlacement)>();
 
             for (int i = 0; i < lastLayoutResult.Placements.Count; i++)
             {
@@ -617,13 +734,45 @@ namespace Dominoes
 
                 Vector2 targetPos = placement.Position;
                 Vector2 startPos = targetPos;
+                bool isNewPlacement = false;
 
-                if (animate && previousTilePositions.TryGetValue(placement.Tile, out var prevPos))
+                if (animate)
                 {
-                    startPos = prevPos;
+                    if (previousTilePositions.TryGetValue(placement.Tile, out var prevPos))
+                    {
+                        startPos = prevPos;
+                        isNewPlacement = false;
+                    }
+                    else
+                    {
+                        // Newly placed tile from hand/player side or bot side!
+                        isNewPlacement = true;
+                        if (placement.Tile == lastPlacedTileRef || lastPlacedTileRef == null)
+                        {
+                            if (lastPlacedByHuman)
+                            {
+                                if (lastPlacedTileOriginWorldPos != Vector2.zero && boardTilesContainer != null)
+                                {
+                                    startPos = boardTilesContainer.WorldToLocal(lastPlacedTileOriginWorldPos);
+                                }
+                                else
+                                {
+                                    startPos = new Vector2(targetPos.x, containerH + 140f); // Arcs up from our hand rack at bottom
+                                }
+                            }
+                            else
+                            {
+                                startPos = new Vector2(targetPos.x, -100f); // Arcs down from opponent sector at top
+                            }
+                        }
+                        else
+                        {
+                            startPos = new Vector2(targetPos.x, containerH + 140f);
+                        }
+                    }
                 }
 
-                visualElements.Add((tileEl, startPos, targetPos));
+                visualElements.Add((tileEl, startPos, targetPos, isNewPlacement));
                 previousTilePositions[placement.Tile] = targetPos;
             }
 
@@ -633,7 +782,7 @@ namespace Dominoes
                 boardAnimationCoroutine = StartCoroutine(AnimateBoardTilesSmoothly(visualElements));
             }
 
-            // Update on-board drop zones
+            // Update on-board drop zones (displayed ONLY during active drag-and-drop to keep board clean during tap-selection)
             var currentPlayer = match.TurnManager.GetCurrentPlayer(match.GameState.Players);
             bool isHumanTurn = currentPlayer != null && currentPlayer.IsHuman;
 
@@ -647,13 +796,19 @@ namespace Dominoes
                 canRight = board.IsEmpty || board.CanConnectRight(testTile);
             }
 
+            bool showDropZones = isDragging && isHumanTurn && testTile != null && lastLayoutResult != null;
+            float targetW = 64f;
+            float targetH = 36f;
+
             if (leftEndTarget != null)
             {
-                if (testTile != null && canLeft && lastLayoutResult != null)
+                if (showDropZones && canLeft)
                 {
                     leftEndTarget.style.display = DisplayStyle.Flex;
-                    leftEndTarget.style.left = lastLayoutResult.LeftEndpoint.Position.x - 19f;
-                    leftEndTarget.style.top = lastLayoutResult.LeftEndpoint.Position.y - 19f;
+                    float safeLeftX = Mathf.Clamp(lastLayoutResult.LeftEndpoint.Position.x - targetW * 0.5f, 6f, Mathf.Max(6f, containerW - targetW - 6f));
+                    float safeLeftY = Mathf.Clamp(lastLayoutResult.LeftEndpoint.Position.y - targetH * 0.5f, 6f, Mathf.Max(6f, containerH - targetH - 6f));
+                    leftEndTarget.style.left = safeLeftX;
+                    leftEndTarget.style.top = safeLeftY;
                     if (leftTargetNum != null) leftTargetNum.text = board.IsEmpty ? "Any" : $"{board.LeftEndpoint}";
                 }
                 else
@@ -664,11 +819,13 @@ namespace Dominoes
 
             if (rightEndTarget != null)
             {
-                if (testTile != null && canRight && !board.IsEmpty && lastLayoutResult != null)
+                if (showDropZones && canRight && !board.IsEmpty)
                 {
                     rightEndTarget.style.display = DisplayStyle.Flex;
-                    rightEndTarget.style.left = lastLayoutResult.RightEndpoint.Position.x - 19f;
-                    rightEndTarget.style.top = lastLayoutResult.RightEndpoint.Position.y - 19f;
+                    float safeRightX = Mathf.Clamp(lastLayoutResult.RightEndpoint.Position.x - targetW * 0.5f, 6f, Mathf.Max(6f, containerW - targetW - 6f));
+                    float safeRightY = Mathf.Clamp(lastLayoutResult.RightEndpoint.Position.y - targetH * 0.5f, 6f, Mathf.Max(6f, containerH - targetH - 6f));
+                    rightEndTarget.style.left = safeRightX;
+                    rightEndTarget.style.top = safeRightY;
                     if (rightTargetNum != null) rightTargetNum.text = $"{board.RightEndpoint}";
                 }
                 else
@@ -678,24 +835,49 @@ namespace Dominoes
             }
         }
 
-        private IEnumerator AnimateBoardTilesSmoothly(List<(VisualElement el, Vector2 startPos, Vector2 targetPos)> tiles)
+        private IEnumerator AnimateBoardTilesSmoothly(List<(VisualElement el, Vector2 startPos, Vector2 targetPos, bool isNewPlacement)> tiles)
         {
-            float duration = 0.28f;
+            float duration = 0.36f; // Smooth fluid travel
             float elapsed = 0f;
+            bool clackPlayed = false;
 
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
-                float t = Mathf.SmoothStep(0f, 1f, elapsed / duration);
+                float progress = Mathf.Clamp01(elapsed / duration);
+                float t = Mathf.SmoothStep(0f, 1f, progress);
 
                 foreach (var item in tiles)
                 {
                     if (item.el != null)
                     {
                         Vector2 currentPos = Vector2.Lerp(item.startPos, item.targetPos, t);
-                        item.el.style.left = currentPos.x;
-                        item.el.style.top = currentPos.y;
+
+                        if (item.isNewPlacement)
+                        {
+                            // 3D Parabolic physical lift arc (raises up in air then lands on felt)
+                            float arcLift = -Mathf.Sin(progress * Mathf.PI) * 45f;
+                            item.el.style.left = currentPos.x;
+                            item.el.style.top = currentPos.y + arcLift;
+
+                            // Scale down smoothly from hand pick (1.20) to board landing (1.0)
+                            float scaleVal = Mathf.Lerp(1.20f, 1.0f, t);
+                            item.el.style.scale = new StyleScale(new Scale(new Vector3(scaleVal, scaleVal, 1f)));
+                        }
+                        else
+                        {
+                            item.el.style.left = currentPos.x;
+                            item.el.style.top = currentPos.y;
+                        }
                     }
+                }
+
+                // Play sound and haptic right upon touchdown (at 85% progress)
+                if (progress >= 0.85f && !clackPlayed)
+                {
+                    clackPlayed = true;
+                    DominoAudioManager.Instance?.PlayTileClack();
+                    DominoHapticsManager.TriggerMediumPulse();
                 }
 
                 yield return null;
@@ -707,10 +889,13 @@ namespace Dominoes
                 {
                     item.el.style.left = item.targetPos.x;
                     item.el.style.top = item.targetPos.y;
+                    item.el.style.scale = new StyleScale(new Scale(Vector3.one));
                 }
             }
 
             boardAnimationCoroutine = null;
+            lastPlacedTileRef = null;
+            lastPlacedTileOriginWorldPos = Vector2.zero;
         }
 
         private void RefreshTurnInstruction(DominoMatchManager match)
@@ -718,9 +903,13 @@ namespace Dominoes
             var currentPlayer = match.TurnManager.GetCurrentPlayer(match.GameState.Players);
             bool isHumanTurn = currentPlayer != null && currentPlayer.IsHuman;
 
-            // Trigger turn chime if it just became human turn
-            if (isHumanTurn && lastActivePlayer != currentPlayer)
+            if (!isHumanTurn)
             {
+                humanDrawsThisTurn = 0;
+            }
+            else if (lastActivePlayer != currentPlayer)
+            {
+                humanDrawsThisTurn = 0;
                 DominoAudioManager.Instance?.PlayTurnChime();
                 DominoHapticsManager.TriggerLightTap();
             }
@@ -740,6 +929,8 @@ namespace Dominoes
 
             if (!isHumanTurn)
             {
+                if (sideChoicePanel != null) sideChoicePanel.style.display = DisplayStyle.None;
+                if (turnGuidanceBar != null) turnGuidanceBar.style.display = DisplayStyle.Flex;
                 string botName = currentPlayer?.PlayerName ?? "Opponent";
                 if (turnTitleLabel != null) turnTitleLabel.text = $"{botName.ToUpperInvariant()}'S TURN";
                 if (turnSubtitleLabel != null) turnSubtitleLabel.text = $"{botName} is thinking...";
@@ -747,18 +938,53 @@ namespace Dominoes
             else if (selectedTile != null || isDragging)
             {
                 var activeTile = isDragging ? draggingTile : selectedTile;
-                if (turnTitleLabel != null) turnTitleLabel.text = "PLACE YOUR TILE";
-                if (turnSubtitleLabel != null) turnSubtitleLabel.text = $"Drag [{activeTile?.Left}|{activeTile?.Right}] onto matching board end";
+                bool canLeft = match.Board.IsEmpty || match.Board.CanConnectLeft(activeTile);
+                bool canRight = !match.Board.IsEmpty && match.Board.CanConnectRight(activeTile);
+
+                if (canLeft && canRight && !match.Board.IsEmpty && !isDragging)
+                {
+                    // Human tapped a tile matching BOTH ends -> Show sideChoicePanel, hide turnGuidanceBar to eliminate visual overlap!
+                    if (turnGuidanceBar != null) turnGuidanceBar.style.display = DisplayStyle.None;
+
+                    if (sideChoicePanel != null)
+                    {
+                        sideChoicePanel.style.display = DisplayStyle.Flex;
+                        if (sideChoiceTitle != null) sideChoiceTitle.text = $"PLAY [{activeTile.Left}|{activeTile.Right}] ON WHICH END?";
+                        if (playLeftBtnLabel != null) playLeftBtnLabel.text = $"◀ PLAY LEFT ({match.Board.LeftEndpoint})";
+                        if (playRightBtnLabel != null) playRightBtnLabel.text = $"PLAY RIGHT ({match.Board.RightEndpoint}) ▶";
+                    }
+                }
+                else
+                {
+                    if (sideChoicePanel != null) sideChoicePanel.style.display = DisplayStyle.None;
+                    if (turnGuidanceBar != null) turnGuidanceBar.style.display = DisplayStyle.Flex;
+
+                    string sideName = canLeft ? $"LEFT ({match.Board.LeftEndpoint})" : (canRight ? $"RIGHT ({match.Board.RightEndpoint})" : "BOARD");
+                    if (turnTitleLabel != null) turnTitleLabel.text = "PLACE YOUR TILE";
+                    if (turnSubtitleLabel != null) turnSubtitleLabel.text = $"Drag [{activeTile?.Left}|{activeTile?.Right}] to {sideName}";
+                }
             }
             else
             {
+                if (sideChoicePanel != null) sideChoicePanel.style.display = DisplayStyle.None;
+                if (turnGuidanceBar != null) turnGuidanceBar.style.display = DisplayStyle.Flex;
+
                 bool hasPlayable = passDrawManager.HasPlayableTile(match.Board, currentPlayer);
+                int boneyardCount = match.Dealer != null ? match.Dealer.RemainingCount : 0;
+
                 if (turnTitleLabel != null) turnTitleLabel.text = "YOUR TURN";
                 if (turnSubtitleLabel != null)
                 {
                     turnSubtitleLabel.text = hasPlayable
                         ? "Drag a highlighted domino from your hand"
-                        : "No matching dominoes — Tap Boneyard stack to Draw";
+                        : "No matching dominoes — Drawing from boneyard...";
+                }
+
+                // Automatically open Boneyard Tray Popup immediately when human player has no playable moves!
+                if (!hasPlayable && boneyardCount > 0 && humanDrawsThisTurn < 2)
+                {
+                    Debug.Log($"[DominoGameScreen] Auto-opening boneyard: hasPlayable={hasPlayable}, boneyardCount={boneyardCount}, draws={humanDrawsThisTurn}");
+                    ShowBoneyardTrayModal();
                 }
             }
         }
@@ -772,11 +998,48 @@ namespace Dominoes
                 if (p.IsHuman) { human = p; break; }
             }
 
+            if (handTilesContainer == null && rootElement != null)
+            {
+                var handScrollView = rootElement.Q<ScrollView>("hand-scroll-view");
+                handTilesContainer = handScrollView?.contentContainer?.Q<VisualElement>("hand-tiles-container") 
+                                     ?? handScrollView?.contentContainer 
+                                     ?? rootElement.Q<VisualElement>("hand-tiles-container");
+            }
+
             if (human == null || handTilesContainer == null) return;
 
             if (handTileCountLabel != null)
             {
                 handTileCountLabel.text = $"{human.HandCount} TILES";
+            }
+
+            // Dynamic alignment: center when normal hand count (<= 7), FlexStart when large hand
+            // so tiles scroll cleanly from left to right without being clipped into negative coordinates!
+            if (human.HandCount <= 7)
+            {
+                handTilesContainer.style.justifyContent = Justify.Center;
+            }
+            else
+            {
+                handTilesContainer.style.justifyContent = Justify.FlexStart;
+            }
+
+            // Dynamic compact tile sizing for responsive mobile racks (up to 21 tiles drawn)
+            float tileWidth = 38f;
+            float tileHeight = 76f;
+            float marginH = 2f;
+
+            if (human.HandCount >= 12)
+            {
+                tileWidth = 32f;
+                tileHeight = 64f;
+                marginH = 1f;
+            }
+            else if (human.HandCount >= 8)
+            {
+                tileWidth = 35f;
+                tileHeight = 70f;
+                marginH = 1.5f;
             }
 
             handTilesContainer.Clear();
@@ -792,7 +1055,7 @@ namespace Dominoes
                 bool isSelected = (tile == selectedTile);
                 bool isTutorialHighlight = isTutorialActive && (tile == tutorialTarget || (tutorialTarget == null && isPlayable));
 
-                var tileEl = CreateHandTileVisual(tile, isPlayable, isSelected, isTutorialActive, isTutorialHighlight);
+                var tileEl = CreateHandTileVisual(tile, isPlayable, isSelected, tileWidth, tileHeight, marginH, isTutorialActive, isTutorialHighlight);
                 handTilesContainer.Add(tileEl);
             }
         }
@@ -824,12 +1087,14 @@ namespace Dominoes
                     }
                 }
 
-                // Pass Button (Visible & enabled ONLY when pass is required)
+                // Pass Button (Visible & enabled when pass is required, or when max draws exhausted with no playable tile)
                 bool canPass = isHumanTurn && passDrawManager.CanPass(match.Board, human, boneyardCount);
+                bool maxDrawsExhausted = isHumanTurn && humanDrawsThisTurn >= 2 && !hasPlayable;
                 if (passButton != null)
                 {
-                    passButton.style.visibility = canPass ? Visibility.Visible : Visibility.Hidden;
-                    passButton.SetEnabled(canPass);
+                    bool showPass = canPass || maxDrawsExhausted;
+                    passButton.style.display = showPass ? DisplayStyle.Flex : DisplayStyle.None;
+                    passButton.SetEnabled(showPass);
                 }
 
                 // Hint Button
@@ -865,24 +1130,19 @@ namespace Dominoes
             el.style.width = placement.Size.x;
             el.style.height = placement.Size.y;
 
-            var firstHalf = new VisualElement();
-            firstHalf.AddToClassList("domino-half-board-2d");
-            firstHalf.Add(CreatePipMatrix3x3(placement.FirstFace, isHand: false));
+            DominoTileTextureManager.ApplyDominoTexture(
+                el,
+                placement.FirstFace,
+                placement.SecondFace,
+                placement.IsVertical,
+                placement.Size.x,
+                placement.Size.y
+            );
 
-            var divider = new VisualElement();
-            divider.AddToClassList(placement.IsVertical ? "domino-divider-board-v" : "domino-divider-board-h");
-
-            var secondHalf = new VisualElement();
-            secondHalf.AddToClassList("domino-half-board-2d");
-            secondHalf.Add(CreatePipMatrix3x3(placement.SecondFace, isHand: false));
-
-            el.Add(firstHalf);
-            el.Add(divider);
-            el.Add(secondHalf);
             return el;
         }
 
-        private VisualElement CreateHandTileVisual(DominoTile tile, bool isPlayable, bool isSelected, bool isTutorialActive = false, bool isTutorialTarget = false)
+        private VisualElement CreateHandTileVisual(DominoTile tile, bool isPlayable, bool isSelected, float width = 38f, float height = 76f, float marginH = 2f, bool isTutorialActive = false, bool isTutorialTarget = false)
         {
             var el = new VisualElement();
             el.AddToClassList("domino-tile-hand");
@@ -898,20 +1158,20 @@ namespace Dominoes
                 else if (!isSelected) el.AddToClassList("domino-tile-hand--dimmed");
             }
 
-            var topHalf = new VisualElement();
-            topHalf.AddToClassList("domino-half-hand");
-            topHalf.Add(CreatePipMatrix3x3(tile.Left, isHand: true));
+            el.style.width = width;
+            el.style.height = height;
+            el.style.marginLeft = marginH;
+            el.style.marginRight = marginH;
 
-            var divider = new VisualElement();
-            divider.AddToClassList("domino-divider-hand");
-
-            var bottomHalf = new VisualElement();
-            bottomHalf.AddToClassList("domino-half-hand");
-            bottomHalf.Add(CreatePipMatrix3x3(tile.Right, isHand: true));
-
-            el.Add(topHalf);
-            el.Add(divider);
-            el.Add(bottomHalf);
+            // Apply authentic high-resolution Kenney domino image
+            DominoTileTextureManager.ApplyDominoTexture(
+                el,
+                tile.Left,
+                tile.Right,
+                isVertical: true,
+                width: width,
+                height: height
+            );
 
             // Register Pointer Down for Drag & Drop
             el.RegisterCallback<PointerDownEvent>(evt =>
@@ -984,6 +1244,7 @@ namespace Dominoes
             if (!isPlayable)
             {
                 SetInstruction($"[{tile.Left}|{tile.Right}] cannot match board ends ({match.Board.LeftEndpoint} or {match.Board.RightEndpoint}).");
+                DominoAudioManager.Instance?.PlayErrorBuzz();
                 DominoHapticsManager.TriggerWarningBuzz();
                 return;
             }
@@ -1004,23 +1265,23 @@ namespace Dominoes
             selectedTile = tile;
             dragStartPosition = evt.position;
 
+            if (rootElement != null)
+            {
+                rootElement.CapturePointer(evt.pointerId);
+            }
+
             if (dragGhostTile != null)
             {
                 dragGhostTile.Clear();
-                var topHalf = new VisualElement();
-                topHalf.AddToClassList("domino-half-hand");
-                topHalf.Add(CreatePipMatrix3x3(tile.Left, isHand: true));
-
-                var divider = new VisualElement();
-                divider.AddToClassList("domino-divider-hand");
-
-                var bottomHalf = new VisualElement();
-                bottomHalf.AddToClassList("domino-half-hand");
-                bottomHalf.Add(CreatePipMatrix3x3(tile.Right, isHand: true));
-
-                dragGhostTile.Add(topHalf);
-                dragGhostTile.Add(divider);
-                dragGhostTile.Add(bottomHalf);
+                dragGhostTile.AddToClassList("drag-ghost-tile");
+                DominoTileTextureManager.ApplyDominoTexture(
+                    dragGhostTile,
+                    tile.Left,
+                    tile.Right,
+                    isVertical: true,
+                    width: 46f,
+                    height: 92f
+                );
 
                 dragGhostTile.style.display = DisplayStyle.Flex;
                 UpdateDragGhostPosition(evt.position);
@@ -1039,9 +1300,24 @@ namespace Dominoes
             if (boardTilesContainer != null && lastLayoutResult != null)
             {
                 Vector2 boardLocalPos = boardTilesContainer.WorldToLocal(evt.position);
+                float threshold = Mathf.Max(55f, 70f * lastLayoutResult.Scale);
 
-                bool nearLeft = Vector2.Distance(boardLocalPos, lastLayoutResult.LeftEndpoint.Position) < 65f;
-                bool nearRight = Vector2.Distance(boardLocalPos, lastLayoutResult.RightEndpoint.Position) < 65f;
+                bool hitLeftZone = false;
+                if (leftEndTarget != null && leftEndTarget.style.display != DisplayStyle.None)
+                {
+                    Vector2 leftLocal = leftEndTarget.WorldToLocal(evt.position);
+                    hitLeftZone = leftEndTarget.ContainsPoint(leftLocal);
+                }
+
+                bool hitRightZone = false;
+                if (rightEndTarget != null && rightEndTarget.style.display != DisplayStyle.None)
+                {
+                    Vector2 rightLocal = rightEndTarget.WorldToLocal(evt.position);
+                    hitRightZone = rightEndTarget.ContainsPoint(rightLocal);
+                }
+
+                bool nearLeft = hitLeftZone || Vector2.Distance(boardLocalPos, lastLayoutResult.LeftEndpoint.Position) <= threshold;
+                bool nearRight = hitRightZone || Vector2.Distance(boardLocalPos, lastLayoutResult.RightEndpoint.Position) <= threshold;
 
                 if (leftEndTarget != null)
                 {
@@ -1059,6 +1335,11 @@ namespace Dominoes
 
         private void OnRootPointerUp(PointerUpEvent evt)
         {
+            if (rootElement != null && rootElement.HasPointerCapture(evt.pointerId))
+            {
+                rootElement.ReleasePointer(evt.pointerId);
+            }
+
             if (!isDragging || draggingTile == null) return;
 
             var tile = draggingTile;
@@ -1087,10 +1368,25 @@ namespace Dominoes
                 bool canLeft = match.Board.CanConnectLeft(tile);
                 bool canRight = match.Board.CanConnectRight(tile);
 
+                float threshold = Mathf.Max(60f, 75f * lastLayoutResult.Scale);
                 float distLeft = Vector2.Distance(boardLocalPos, lastLayoutResult.LeftEndpoint.Position);
                 float distRight = Vector2.Distance(boardLocalPos, lastLayoutResult.RightEndpoint.Position);
 
-                if (canLeft && distLeft < 70f)
+                bool hitLeftZone = false;
+                if (leftEndTarget != null && leftEndTarget.style.display != DisplayStyle.None)
+                {
+                    Vector2 leftLocal = leftEndTarget.WorldToLocal(evt.position);
+                    hitLeftZone = leftEndTarget.ContainsPoint(leftLocal);
+                }
+
+                bool hitRightZone = false;
+                if (rightEndTarget != null && rightEndTarget.style.display != DisplayStyle.None)
+                {
+                    Vector2 rightLocal = rightEndTarget.WorldToLocal(evt.position);
+                    hitRightZone = rightEndTarget.ContainsPoint(rightLocal);
+                }
+
+                if (canLeft && (hitLeftZone || distLeft <= threshold))
                 {
                     if (tutorialController != null && tutorialController.IsActive)
                     {
@@ -1101,7 +1397,7 @@ namespace Dominoes
                     return;
                 }
 
-                if (canRight && distRight < 70f)
+                if (canRight && (hitRightZone || distRight <= threshold))
                 {
                     if (tutorialController != null && tutorialController.IsActive)
                     {
@@ -1136,6 +1432,10 @@ namespace Dominoes
 
         private void OnRootPointerCancel(PointerCancelEvent evt)
         {
+            if (rootElement != null && rootElement.HasPointerCapture(evt.pointerId))
+            {
+                rootElement.ReleasePointer(evt.pointerId);
+            }
             CancelDragging();
             RefreshAll(animateBoard: false);
         }
@@ -1199,22 +1499,37 @@ namespace Dominoes
             ExecutePlacement(selectedTile, side);
         }
 
+        private void OnPlayLeftButtonClicked()
+        {
+            OnPlaceEndpointClicked(BoardSide.Left);
+        }
+
+        private void OnPlayRightButtonClicked()
+        {
+            OnPlaceEndpointClicked(BoardSide.Right);
+        }
+
         public void ExecutePlacement(DominoTile tile, BoardSide side)
         {
+            if (sideChoicePanel != null) sideChoicePanel.style.display = DisplayStyle.None;
+
             if (waitingScreenController == null) return;
             var match = waitingScreenController.MatchManager;
             var human = match.TurnManager.GetCurrentPlayer(match.GameState.Players);
 
             if (human == null || !human.IsHuman) return;
 
+            lastPlacedTileRef = tile;
+            lastPlacedByHuman = true;
+            if (isDragging && dragStartPosition != Vector2.zero)
+            {
+                lastPlacedTileOriginWorldPos = dragStartPosition;
+            }
+
             var placement = placementManager.PlaceTile(match.Board, human, tile, side);
             if (placement.Success)
             {
                 selectedTile = null;
-
-                // Play tactile placement clack and haptic pulse
-                DominoAudioManager.Instance?.PlayTileClack();
-                DominoHapticsManager.TriggerMediumPulse();
 
                 if (tutorialController != null && tutorialController.IsActive)
                 {
@@ -1253,7 +1568,12 @@ namespace Dominoes
             var match = waitingScreenController.MatchManager;
             var human = match.TurnManager.GetCurrentPlayer(match.GameState.Players);
 
-            if (human == null || !human.IsHuman) return;
+            if (human == null || !human.IsHuman)
+            {
+                SetInstruction("Please wait for your turn.");
+                DominoHapticsManager.TriggerWarningBuzz();
+                return;
+            }
 
             if (passDrawManager.HasPlayableTile(match.Board, human))
             {
@@ -1269,6 +1589,159 @@ namespace Dominoes
                 return;
             }
 
+            ShowBoneyardTrayModal();
+        }
+
+        private IEnumerator AutoOpenBoneyardTrayCoroutine()
+        {
+            yield return new WaitForSeconds(0.15f);
+            autoOpenDrawCoroutine = null;
+
+            if (waitingScreenController == null)
+            {
+#if UNITY_2023_1_OR_NEWER
+                waitingScreenController = FindAnyObjectByType<DominoWaitingScreenController>(FindObjectsInactive.Include);
+#else
+                waitingScreenController = FindObjectOfType<DominoWaitingScreenController>(true);
+#endif
+            }
+
+            var match = CurrentMatchManager;
+            if (match == null || match.CurrentState != MatchState.Playing) yield break;
+
+            var human = match.TurnManager.GetCurrentPlayer(match.GameState.Players);
+            if (human == null || !human.IsHuman) yield break;
+
+            if (!passDrawManager.HasPlayableTile(match.Board, human) && match.Dealer != null && match.Dealer.RemainingCount > 0)
+            {
+                ShowBoneyardTrayModal();
+            }
+        }
+
+        public void ShowBoneyardTrayModal()
+        {
+            if (waitingScreenController == null)
+            {
+#if UNITY_2023_1_OR_NEWER
+                waitingScreenController = FindAnyObjectByType<DominoWaitingScreenController>(FindObjectsInactive.Include);
+#else
+                waitingScreenController = FindObjectOfType<DominoWaitingScreenController>(true);
+#endif
+            }
+
+            var match = CurrentMatchManager;
+            if (match == null || match.Dealer == null)
+            {
+                Debug.LogWarning("[DominoGameScreen] ShowBoneyardTrayModal: match or dealer is null");
+                return;
+            }
+            int remaining = match.Dealer.RemainingCount;
+            if (remaining <= 0)
+            {
+                Debug.LogWarning("[DominoGameScreen] ShowBoneyardTrayModal: boneyard is empty");
+                return;
+            }
+
+            Debug.Log($"[DominoGameScreen] ShowBoneyardTrayModal: opening with {remaining} tiles remaining");
+
+            // Defensively ensure UI elements are bound
+            if (rootElement == null && uiDocument != null) rootElement = uiDocument.rootVisualElement;
+            if (rootElement != null)
+            {
+                if (drawModal == null) drawModal = rootElement.Q<VisualElement>("draw-modal");
+                if (boneyardTilesGrid == null) boneyardTilesGrid = rootElement.Q<VisualElement>("boneyard-tiles-grid");
+                if (boneyardTrayHintLabel == null) boneyardTrayHintLabel = rootElement.Q<Label>("boneyard-tray-hint-label");
+                if (drawModalCloseBtn == null)
+                {
+                    drawModalCloseBtn = rootElement.Q<Button>("draw-modal-close-btn");
+                    if (drawModalCloseBtn != null) drawModalCloseBtn.clicked += HideBoneyardTrayModal;
+                }
+            }
+
+            if (boneyardTilesGrid != null)
+            {
+                boneyardTilesGrid.Clear();
+                int tileCountToDisplay = Mathf.Min(14, Mathf.Max(6, remaining));
+                for (int i = 0; i < tileCountToDisplay; i++)
+                {
+                    var tile = new VisualElement();
+                    tile.AddToClassList("boneyard-face-down-tile");
+                    DominoTileTextureManager.ApplyFaceDownTexture(tile, dark: true);
+
+                    tile.RegisterCallback<ClickEvent>(evt => OnBoneyardTilePicked(tile));
+                    boneyardTilesGrid.Add(tile);
+                }
+            }
+
+            if (boneyardTrayHintLabel != null)
+            {
+                boneyardTrayHintLabel.text = $"Tap any face-down domino to draw ({humanDrawsThisTurn + 1} of 2)";
+            }
+
+            if (drawModal != null)
+            {
+                drawModal.style.display = DisplayStyle.Flex;
+                drawModal.pickingMode = PickingMode.Position;
+                drawModal.BringToFront();
+
+                if (boneyardTrayWrapper != null)
+                {
+                    boneyardTrayWrapper.style.display = DisplayStyle.Flex;
+                    boneyardTrayWrapper.style.opacity = 1f;
+                    boneyardTrayWrapper.transform.scale = Vector3.one;
+
+                    if (AnimationManager.Instance != null)
+                    {
+                        AnimationManager.Instance.AnimateModalOpen(boneyardTrayWrapper);
+                    }
+                }
+            }
+
+            if (drawModalCloseBtn != null)
+            {
+                drawModalCloseBtn.style.display = DisplayStyle.Flex;
+            }
+        }
+
+        public void HideBoneyardTrayModal()
+        {
+            if (autoOpenDrawCoroutine != null)
+            {
+                StopCoroutine(autoOpenDrawCoroutine);
+                autoOpenDrawCoroutine = null;
+            }
+
+            if (drawModal != null && drawModal.style.display != DisplayStyle.None)
+            {
+                if (boneyardTrayWrapper != null && AnimationManager.Instance != null)
+                {
+                    AnimationManager.Instance.AnimateModalClose(boneyardTrayWrapper, () =>
+                    {
+                        if (drawModal != null) drawModal.style.display = DisplayStyle.None;
+                        if (boneyardTrayWrapper != null) boneyardTrayWrapper.style.display = DisplayStyle.None;
+                    });
+                }
+                else
+                {
+                    if (drawModal != null) drawModal.style.display = DisplayStyle.None;
+                    if (boneyardTrayWrapper != null) boneyardTrayWrapper.style.display = DisplayStyle.None;
+                }
+            }
+        }
+
+        private void OnBoneyardTilePicked(VisualElement clickedTile)
+        {
+            if (clickedTile == null || !clickedTile.enabledSelf) return;
+            clickedTile.SetEnabled(false);
+            clickedTile.style.visibility = Visibility.Hidden;
+
+            DominoAudioManager.Instance?.PlayClick();
+
+            if (waitingScreenController == null) return;
+            var match = waitingScreenController.MatchManager;
+            var human = match.TurnManager.GetCurrentPlayer(match.GameState.Players);
+            if (human == null || !human.IsHuman) return;
+
             if (tutorialController != null && tutorialController.IsActive)
             {
                 tutorialController.InterceptDrawClick();
@@ -1277,6 +1750,7 @@ namespace Dominoes
             var result = passDrawManager.ExecuteDraw(match.Board, human, match.Dealer);
             if (result.Success && result.DrawnTile != null)
             {
+                humanDrawsThisTurn++;
                 selectedTile = null;
                 DominoAudioManager.Instance?.PlayTileDraw();
                 DominoHapticsManager.TriggerLightTap();
@@ -1285,17 +1759,74 @@ namespace Dominoes
                 if (isDrawnPlayable)
                 {
                     selectedTile = result.DrawnTile;
-                    SetInstruction($"Drew matching tile [{result.DrawnTile.Left}|{result.DrawnTile.Right}]! Drag it onto the board.");
+                    SetInstruction($"Drew playable tile [{result.DrawnTile.Left}|{result.DrawnTile.Right}]! Tap or drag to board.");
+                    RefreshAll(animateBoard: false);
+
+                    // Auto-close tray quickly so player can play immediately
+                    StartCoroutine(CloseBoneyardTrayWithDelay(0.40f));
+                }
+                else if (humanDrawsThisTurn < 2 && match.Dealer != null && match.Dealer.RemainingCount > 0)
+                {
+                    SetInstruction($"Drew [{result.DrawnTile.Left}|{result.DrawnTile.Right}]. No match — Pick 1 more domino!");
+                    if (boneyardTrayHintLabel != null)
+                    {
+                        boneyardTrayHintLabel.text = $"No match — Pick 1 more domino ({humanDrawsThisTurn + 1} of 2)";
+                    }
+                    RefreshAll(animateBoard: false);
                 }
                 else
                 {
-                    SetInstruction($"Drew [{result.DrawnTile.Left}|{result.DrawnTile.Right}]. (Still no match — Draw again or Pass if empty)");
+                    // 2 draws used and still no moves -> Auto-pass turn
+                    SetInstruction($"Drew [{result.DrawnTile.Left}|{result.DrawnTile.Right}]. Both tiles unplayable — Passing turn...");
+                    RefreshAll(animateBoard: false);
+                    StartCoroutine(AutoPassAfterFailedDraws(0.80f));
                 }
-                RefreshAll(animateBoard: false);
             }
             else
             {
                 SetInstruction(result.Message);
+                HideBoneyardTrayModal();
+            }
+        }
+
+        private IEnumerator CloseBoneyardTrayWithDelay(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            HideBoneyardTrayModal();
+        }
+
+        private IEnumerator AutoPassAfterFailedDraws(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            HideBoneyardTrayModal();
+
+            if (waitingScreenController == null) yield break;
+            var match = waitingScreenController.MatchManager;
+            if (match == null || match.CurrentState != MatchState.Playing) yield break;
+
+            var human = match.TurnManager.GetCurrentPlayer(match.GameState.Players);
+            if (human == null || !human.IsHuman) yield break;
+
+            var passResult = passDrawManager.ForcePass(match.Board, human);
+            if (passResult.Success)
+            {
+                selectedTile = null;
+                humanDrawsThisTurn = 0;
+                DominoAudioManager.Instance?.PlayPass();
+                SetInstruction("You had no matching dominoes and passed your turn.");
+
+                var completion = match.CompletionManager.CheckGameCompletion(match.GameState, match.Board, match.Dealer, passDrawManager);
+                if (completion.IsGameOver)
+                {
+                    match.GameState.SetState(MatchState.Finished);
+                    RefreshAll(animateBoard: true);
+                    ShowResultModal();
+                    yield break;
+                }
+
+                match.TurnManager.NextTurn(match.GameState);
+                RefreshAll(animateBoard: false);
+                CheckBotTurn();
             }
         }
 
@@ -1365,7 +1896,7 @@ namespace Dominoes
             }
 
             int boneyardCount = match.Dealer != null ? match.Dealer.RemainingCount : 0;
-            if (boneyardCount > 0)
+            if (boneyardCount > 0 && humanDrawsThisTurn < 2)
             {
                 SetInstruction($"Cannot pass yet! Draw from the boneyard ({boneyardCount} remaining).");
                 DominoHapticsManager.TriggerWarningBuzz();
@@ -1377,10 +1908,14 @@ namespace Dominoes
                 tutorialController.InterceptPassClick();
             }
 
-            var result = passDrawManager.ExecutePass(match.Board, human, match.Dealer);
+            // Use ForcePass when max draws exhausted (boneyard may still have tiles)
+            var result = humanDrawsThisTurn >= 2
+                ? passDrawManager.ForcePass(match.Board, human)
+                : passDrawManager.ExecutePass(match.Board, human, match.Dealer);
             if (result.Success)
             {
                 selectedTile = null;
+                humanDrawsThisTurn = 0;
                 DominoAudioManager.Instance?.PlayPass();
                 SetInstruction("You passed your turn.");
 
@@ -1411,25 +1946,83 @@ namespace Dominoes
         {
             if (waitingScreenController == null) return;
             var match = waitingScreenController.MatchManager;
-            if (match.CurrentState != MatchState.Playing) return;
+            if (match == null || match.CurrentState != MatchState.Playing) return;
 
             var currentPlayer = match.TurnManager.GetCurrentPlayer(match.GameState.Players);
             if (currentPlayer != null && !currentPlayer.IsHuman)
             {
-                if (botTurnCoroutine != null) StopCoroutine(botTurnCoroutine);
-                botTurnCoroutine = StartCoroutine(SimulateBotTurnCoroutine(currentPlayer));
+                if (botTurnCoroutine == null)
+                {
+                    botTurnCoroutine = StartCoroutine(SimulateBotTurnCoroutine(currentPlayer));
+                }
             }
+            else
+            {
+                if (botTurnCoroutine != null)
+                {
+                    StopCoroutine(botTurnCoroutine);
+                    botTurnCoroutine = null;
+                }
+
+                if (currentPlayer != null && currentPlayer.IsHuman)
+                {
+                    bool hasPlayable = passDrawManager.HasPlayableTile(match.Board, currentPlayer);
+                    int boneyardCount = match.Dealer != null ? match.Dealer.RemainingCount : 0;
+                    if (!hasPlayable && boneyardCount > 0 && humanDrawsThisTurn < 2)
+                    {
+                        if (drawModal == null || drawModal.style.display == DisplayStyle.None)
+                        {
+                            ShowBoneyardTrayModal();
+                        }
+                    }
+                }
+            }
+        }
+
+        private struct ValidBotMove
+        {
+            public DominoTile Tile;
+            public BoardSide Side;
         }
 
         private IEnumerator SimulateBotTurnCoroutine(DominoPlayer bot)
         {
-            // Natural randomized thinking delay (0.8s to 1.5s)
-            float thinkDelay = UnityEngine.Random.Range(0.85f, 1.45f);
+            // Mode & difficulty aware thinking delay
+            float thinkDelay;
+            if (DominoGameModeContext.CurrentMode == GameModeType.VsComputer)
+            {
+                switch (DominoGameModeContext.Difficulty)
+                {
+                    case ComputerDifficulty.Easy:
+                        thinkDelay = UnityEngine.Random.Range(0.4f, 0.7f);
+                        break;
+                    case ComputerDifficulty.Hard:
+                        thinkDelay = UnityEngine.Random.Range(1.2f, 1.6f);
+                        break;
+                    case ComputerDifficulty.Medium:
+                    default:
+                        thinkDelay = UnityEngine.Random.Range(0.8f, 1.2f);
+                        break;
+                }
+            }
+            else
+            {
+                thinkDelay = UnityEngine.Random.Range(0.85f, 1.35f);
+            }
+
             yield return new WaitForSeconds(thinkDelay);
 
-            if (waitingScreenController == null) yield break;
+            if (waitingScreenController == null)
+            {
+                botTurnCoroutine = null;
+                yield break;
+            }
             var match = waitingScreenController.MatchManager;
-            if (match.CurrentState != MatchState.Playing) yield break;
+            if (match == null || match.CurrentState != MatchState.Playing)
+            {
+                botTurnCoroutine = null;
+                yield break;
+            }
 
             // 1. If bot has no playable tile, bot draws from boneyard until playable or empty
             while (!passDrawManager.HasPlayableTile(match.Board, bot) && match.Dealer != null && match.Dealer.RemainingCount > 0)
@@ -1440,7 +2033,7 @@ namespace Dominoes
                     DominoAudioManager.Instance?.PlayTileDraw();
                     SetInstruction($"{bot.PlayerName} drew a tile from the boneyard.");
                     RefreshAll(animateBoard: false);
-                    yield return new WaitForSeconds(0.7f);
+                    yield return new WaitForSeconds(0.6f);
                 }
                 else
                 {
@@ -1448,32 +2041,102 @@ namespace Dominoes
                 }
             }
 
-            // 2. Look for playable tile in bot's hand
+            // 2. Collect all valid playable moves for the bot
+            var validMoves = new List<ValidBotMove>();
+            foreach (var tile in bot.Hand)
+            {
+                if (match.Board.IsEmpty)
+                {
+                    validMoves.Add(new ValidBotMove { Tile = tile, Side = BoardSide.Left });
+                }
+                else
+                {
+                    if (match.Board.CanConnectLeft(tile))
+                    {
+                        validMoves.Add(new ValidBotMove { Tile = tile, Side = BoardSide.Left });
+                    }
+                    if (match.Board.CanConnectRight(tile))
+                    {
+                        validMoves.Add(new ValidBotMove { Tile = tile, Side = BoardSide.Right });
+                    }
+                }
+            }
+
             DominoTile playedTile = null;
             BoardSide playedSide = BoardSide.Left;
 
-            foreach (var tile in bot.Hand)
+            if (validMoves.Count > 0)
             {
-                if (match.Board.IsEmpty || match.Board.CanConnectLeft(tile))
+                if (DominoGameModeContext.CurrentMode == GameModeType.VsComputer && DominoGameModeContext.Difficulty == ComputerDifficulty.Easy)
                 {
-                    playedTile = tile;
-                    playedSide = BoardSide.Left;
-                    break;
+                    // Easy AI: Casual play, choose random valid move
+                    var chosen = validMoves[UnityEngine.Random.Range(0, validMoves.Count)];
+                    playedTile = chosen.Tile;
+                    playedSide = chosen.Side;
                 }
-                if (match.Board.CanConnectRight(tile))
+                else if (DominoGameModeContext.CurrentMode == GameModeType.VsComputer && DominoGameModeContext.Difficulty == ComputerDifficulty.Hard)
                 {
-                    playedTile = tile;
-                    playedSide = BoardSide.Right;
-                    break;
+                    // Hard AI: Strategic play
+                    // Priority 1: High doubles disposal to avoid holding dangerous doubles
+                    ValidBotMove bestMove = validMoves[0];
+                    float bestScore = float.MinValue;
+
+                    foreach (var move in validMoves)
+                    {
+                        float score = move.Tile.TotalPips;
+                        if (move.Tile.IsDouble) score += 25f;
+
+                        // Synergy: prefer leaving an open end matching other tiles in bot's hand
+                        int openEnd = (move.Side == BoardSide.Left)
+                            ? (move.Tile.Right == match.Board.LeftEndpoint ? move.Tile.Left : move.Tile.Right)
+                            : (move.Tile.Left == match.Board.RightEndpoint ? move.Tile.Right : move.Tile.Left);
+
+                        int synergyCount = 0;
+                        foreach (var other in bot.Hand)
+                        {
+                            if (other != move.Tile && (other.Left == openEnd || other.Right == openEnd))
+                            {
+                                synergyCount++;
+                            }
+                        }
+                        score += synergyCount * 4f;
+
+                        if (score > bestScore)
+                        {
+                            bestScore = score;
+                            bestMove = move;
+                        }
+                    }
+
+                    playedTile = bestMove.Tile;
+                    playedSide = bestMove.Side;
+                }
+                else
+                {
+                    // Medium AI (and Online/Friend): Standard optimal pip-dump
+                    ValidBotMove bestMove = validMoves[0];
+                    int maxPips = bestMove.Tile.TotalPips;
+                    for (int i = 1; i < validMoves.Count; i++)
+                    {
+                        if (validMoves[i].Tile.TotalPips > maxPips)
+                        {
+                            maxPips = validMoves[i].Tile.TotalPips;
+                            bestMove = validMoves[i];
+                        }
+                    }
+                    playedTile = bestMove.Tile;
+                    playedSide = bestMove.Side;
                 }
             }
 
             if (playedTile != null)
             {
+                lastPlacedTileRef = playedTile;
+                lastPlacedByHuman = false;
+
                 var placement = placementManager.PlaceTile(match.Board, bot, playedTile, playedSide);
                 if (placement.Success)
                 {
-                    DominoAudioManager.Instance?.PlayTileClack();
                     SetInstruction($"{bot.PlayerName} played [{playedTile.Left}|{playedTile.Right}].");
                 }
             }
@@ -1489,6 +2152,7 @@ namespace Dominoes
             if (completion.IsGameOver)
             {
                 match.GameState.SetState(MatchState.Finished);
+                botTurnCoroutine = null;
                 RefreshAll(animateBoard: true);
                 ShowResultModal();
                 yield break;
@@ -1496,6 +2160,7 @@ namespace Dominoes
 
             // 4. Advance Turn
             match.TurnManager.NextTurn(match.GameState);
+            botTurnCoroutine = null;
             RefreshAll(animateBoard: true);
 
             if (tutorialController != null && tutorialController.IsActive)
@@ -1641,9 +2306,14 @@ namespace Dominoes
                         DominoAudioManager.Instance?.PlayLoss();
                     }
 
+                    if (resultTrophyIcon != null)
+                    {
+                        resultTrophyIcon.text = isHumanWinner ? "🏆" : "🎖️";
+                    }
+
                     if (resultTitle != null)
                     {
-                        resultTitle.text = isHumanWinner ? "YOU WIN! 🏆" : "GOOD GAME!";
+                        resultTitle.text = isHumanWinner ? "YOU WIN!" : "ROUND COMPLETE";
                     }
 
                     if (resultWinnerLabel != null)
@@ -1669,11 +2339,25 @@ namespace Dominoes
                             var row = new VisualElement();
                             row.AddToClassList("result-score-row");
 
-                            var nameLbl = new Label(player.PlayerName);
+                            bool isPlayerWinner = completion.Winner != null && completion.Winner.Id == player.Id;
+                            if (isPlayerWinner)
+                            {
+                                row.AddToClassList("result-score-row--winner");
+                            }
+
+                            string displayName = player.IsHuman ? $"{player.PlayerName} (You)" : player.PlayerName;
+                            var nameLbl = new Label(displayName);
                             nameLbl.AddToClassList("result-score-name");
 
-                            var valLbl = new Label($"{player.HandCount} tiles remaining");
+                            string countText = isPlayerWinner
+                                ? "★ WINNER (0 tiles)"
+                                : (player.HandCount == 1 ? "1 tile remaining" : $"{player.HandCount} tiles remaining");
+                            var valLbl = new Label(countText);
                             valLbl.AddToClassList("result-score-val");
+                            if (isPlayerWinner)
+                            {
+                                valLbl.AddToClassList("result-score-val--winner");
+                            }
 
                             row.Add(nameLbl);
                             row.Add(valLbl);
@@ -1764,20 +2448,43 @@ namespace Dominoes
             }
         }
 
-        public void ShowGameScreen()
+        private Coroutine screenFadeCoroutine;
+
+        public void ShowGameScreen(bool animate = true)
         {
             if (!gameObject.activeSelf) gameObject.SetActive(true);
 
+            if (uiDocument == null) uiDocument = GetComponent<UIDocument>();
+            if (uiDocument != null)
+            {
+                uiDocument.sortingOrder = 10;
+                if (uiDocument.rootVisualElement != null)
+                {
+                    uiDocument.rootVisualElement.pickingMode = PickingMode.Position;
+                }
+            }
+
             if (rootElement == null && uiDocument != null && uiDocument.rootVisualElement != null)
             {
-                rootElement = uiDocument.rootVisualElement.Q<VisualElement>("game-root") ?? uiDocument.rootVisualElement;
-                safeContent = rootElement.Q<VisualElement>("safe-content") ?? rootElement;
+                RegisterUIElements();
             }
 
             if (rootElement != null)
             {
                 rootElement.style.display = DisplayStyle.Flex;
+                rootElement.pickingMode = PickingMode.Position;
                 ApplySafeArea();
+                StartCoroutine(DeferredApplySafeArea());
+
+                if (animate)
+                {
+                    if (screenFadeCoroutine != null) StopCoroutine(screenFadeCoroutine);
+                    screenFadeCoroutine = StartCoroutine(FadeInScreen(rootElement));
+                }
+                else
+                {
+                    rootElement.style.opacity = 1f;
+                }
             }
 
             if (resultModal != null)
@@ -1795,8 +2502,20 @@ namespace Dominoes
                 helpRulesModal.style.display = DisplayStyle.None;
             }
 
-            if (homeScreenController != null) homeScreenController.HideHomeScreen();
-            if (waitingScreenUIToolkitController != null) waitingScreenUIToolkitController.HideWaitingScreen();
+            if (homeScreenController != null) homeScreenController.HideHomeScreen(animate);
+            if (waitingScreenUIToolkitController != null) waitingScreenUIToolkitController.HideWaitingScreen(animate);
+
+            // Always synchronize game UI, hand state, and run bot turn check
+            RefreshAll(animateBoard: false);
+            CheckBotTurn();
+        }
+
+        private System.Collections.IEnumerator DeferredApplySafeArea()
+        {
+            yield return null;
+            ApplySafeArea();
+            yield return new WaitForSeconds(0.1f);
+            ApplySafeArea();
         }
 
         /// <summary>
@@ -1810,33 +2529,14 @@ namespace Dominoes
                 safeContent = rootElement.Q<VisualElement>("safe-content") ?? rootElement;
             }
 
-            Rect safeArea = Screen.safeArea;
-            if (Screen.width <= 0 || Screen.height <= 0) return;
-
-            float screenW = Screen.width;
-            float screenH = Screen.height;
-
-            float leftPercent = (safeArea.xMin / screenW) * 100f;
-            float rightPercent = ((screenW - safeArea.xMax) / screenW) * 100f;
-            float topPercent = ((screenH - safeArea.yMax) / screenH) * 100f;
-            float bottomPercent = (safeArea.yMin / screenH) * 100f;
-
-            safeContent.style.paddingLeft = Length.Percent(Mathf.Max(2.5f, leftPercent));
-            safeContent.style.paddingRight = Length.Percent(Mathf.Max(2.5f, rightPercent));
-            safeContent.style.paddingTop = Length.Percent(Mathf.Max(3f, topPercent));
-            safeContent.style.paddingBottom = Length.Percent(Mathf.Max(2f, bottomPercent));
+            DominoSafeAreaHandler.ApplySafeArea(safeContent, baseLeft: 10f, baseRight: 10f, baseTop: 24f, baseBottom: 10f);
         }
 
-        public void HideGameScreen()
+        public void HideGameScreen(bool animate = true, System.Action onComplete = null)
         {
             if (rootElement == null && uiDocument != null && uiDocument.rootVisualElement != null)
             {
                 rootElement = uiDocument.rootVisualElement.Q<VisualElement>("game-root") ?? uiDocument.rootVisualElement;
-            }
-
-            if (rootElement != null)
-            {
-                rootElement.style.display = DisplayStyle.None;
             }
 
             if (resultModal != null)
@@ -1867,6 +2567,67 @@ namespace Dominoes
             }
 
             StopAllGameCoroutines();
+
+            if (rootElement != null)
+            {
+                if (animate)
+                {
+                    if (screenFadeCoroutine != null) StopCoroutine(screenFadeCoroutine);
+                    screenFadeCoroutine = StartCoroutine(FadeOutScreen(rootElement, onComplete));
+                }
+                else
+                {
+                    rootElement.style.opacity = 0f;
+                    rootElement.style.display = DisplayStyle.None;
+                    onComplete?.Invoke();
+                }
+            }
+            else
+            {
+                onComplete?.Invoke();
+            }
+        }
+
+        private IEnumerator FadeInScreen(VisualElement element, float duration = 0.35f)
+        {
+            if (element == null) yield break;
+            element.style.display = DisplayStyle.Flex;
+            element.style.opacity = 0f;
+            element.pickingMode = PickingMode.Position;
+
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                element.style.opacity = Mathf.SmoothStep(0f, 1f, t);
+                yield return null;
+            }
+            element.style.opacity = 1f;
+            screenFadeCoroutine = null;
+        }
+
+        private IEnumerator FadeOutScreen(VisualElement element, System.Action onComplete = null, float duration = 0.35f)
+        {
+            if (element == null)
+            {
+                onComplete?.Invoke();
+                yield break;
+            }
+
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                element.style.opacity = Mathf.SmoothStep(1f, 0f, t);
+                yield return null;
+            }
+
+            element.style.opacity = 0f;
+            element.style.display = DisplayStyle.None;
+            screenFadeCoroutine = null;
+            onComplete?.Invoke();
         }
 
         #endregion

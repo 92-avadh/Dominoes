@@ -229,6 +229,35 @@ namespace Dominoes
         }
 
         /// <summary>
+        /// Forces a pass when the player has exhausted their maximum draw attempts
+        /// but still has no playable tile. Bypasses the "must draw first" rule.
+        /// </summary>
+        public PassDrawResult ForcePass(DominoBoard board, DominoPlayer player)
+        {
+            if (player == null)
+            {
+                return PassDrawResult.Fail(null, PassDrawMode.Pass, false, "Player reference cannot be null.");
+            }
+
+            if (board == null)
+            {
+                return PassDrawResult.Fail(player, PassDrawMode.Pass, false, "Board reference cannot be null.");
+            }
+
+            if (HasPlayableTile(board, player))
+            {
+                return PassDrawResult.Fail(
+                    player,
+                    PassDrawMode.Pass,
+                    true,
+                    "Cannot pass: You hold a playable domino in your hand!"
+                );
+            }
+
+            return PassDrawResult.Passed(player, $"Player '{player.PlayerName}' passed turn (max draws reached).");
+        }
+
+        /// <summary>
         /// Attempts to execute the configured Pass or Draw action for the specified player.
         /// Rejects the action if the player holds any playable tile.
         /// In Draw mode, automatically falls back to Pass when boneyard is empty.
